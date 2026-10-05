@@ -8,6 +8,8 @@ final_summary_version2.html
 
 Solution with dampening: previous_presentation_version1.html
 
+https://doi.org/10.5281/zenodo.23105187
+
 [![DOI](https://zenodo.org)](https://doi.org)
 [![Hosting: GitHub Pages](https://shields.io)](https://github.io)
 
