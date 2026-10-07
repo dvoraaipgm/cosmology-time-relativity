@@ -13,7 +13,7 @@ def calculate_lifespan_curve():
     # THE 3 FOUNDATIONAL OBSERVATIONAL ANCHORS (THE ONLY INPUTS)
     # -----------------------------------------------------------------
     h_initial = 67.40          # Early cosmic frame rate baseline (Planck CMB)
-    h_present = 73.50          # Modern local frame rate consensus (JWST) [noirlab2611]
+    h_present = 73.50          # Modern local frame rate consensus (JWST) 
     t_present = 5787.0         # Current elapsed solar loops (Modern Era today), current date hebraic calendar
     
     # -----------------------------------------------------------------
@@ -30,7 +30,7 @@ def calculate_lifespan_curve():
     phi_present = 1.0 - 0.01 * (t_present / 6000.0)
     mass_deficit_today = 1.0 - phi_present
     
-    # 2. Extract the telescope delay exponent (Beta) via pure log inversion [noirlab2611]
+    # 2. Extract the telescope delay exponent (Beta) via pure log inversion 
     beta_hubble = -np.log(h_present / h_initial) / np.log(phi_present)
     
     
