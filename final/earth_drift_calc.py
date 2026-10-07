@@ -18,7 +18,7 @@ def calculate_terrestrial_drift():
     beta_hubble = 8.9093       # Pristine geometric propagation delay exponent 
     y_atom = 4.7093            # Streamlined macro-quantum clock power 
     x_space = 4.20             # Fundamental index of 3D spatial elasticity 
-    t_present = 5787.0         # Modern Era elapsed solar loops
+    t_present = 5787.0         # Modern Era elapsed solar loops, current date hebraic calendar
 
     # Derived modern mass profile and linear alpha rate from the 9.05% telescope gap 
     phi_present = (67.40 / 73.50) ** (1.0 / beta_hubble)

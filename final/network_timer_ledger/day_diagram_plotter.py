@@ -22,7 +22,7 @@ def generate_rotational_diagram():
     for t in time_spectrum:
         phi_t = 1.0 - (alpha * t)
         
-        # Calculate the 3 metrics across the continuum [Vavryčuk (2025)]
+        # Calculate the 3 metrics across the continuum 
         dt = 24.0 * (phi_t ** -8.9593) * (phi_present ** 8.9593)
         ds = 24.0 * (phi_t ** -4.25)
         sv = (1.0 / (phi_t ** 4.20)) - 1.0  # Percentage speed increase

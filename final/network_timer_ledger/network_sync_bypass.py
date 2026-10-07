@@ -15,15 +15,15 @@ def calculate_network_drift_bypass(current_t_am):
     """
     # 1. HARD PHYSICAL CONSTANTS (THE 3 OBSERVATIONAL ANCHORS)
     h_initial = 67.40          # Early CMB frame rate baseline (Planck)
-    h_present = 73.50          # Modern Direct Distance Ladder rate (JWST) [noirlab2611]
-    t_present = 5787.0         # Current elapsed solar loops anchor (Modern Era)
+    h_present = 73.50          # Modern Direct Distance Ladder rate (JWST) 
+    t_present = 5787.0         # Current elapsed solar loops anchor (Modern Era), current date hebraic calendar
 
-    # Real-World Barycentric Local Planetary Velocity Multipliers (c = 1 Anchor) [Rambam]
+    # Real-World Barycentric Local Planetary Velocity Multipliers (c = 1 Anchor) 
     v_earth_orbit = 29.78 / 299792.458       
     v_solar_system = 230.0 / 299792.458     
     sun_grav_potential = 1.48e-8            
 
-    # 2. EVALUATE THE MOLECULAR LIFESPAN LORENTZ divisor [Rambam]
+    # 2. EVALUATE THE MOLECULAR LIFESPAN LORENTZ divisor 
     total_velocity = v_earth_orbit + v_solar_system
     lorentz_factor_gamma = 1.0 / np.sqrt(1.0 - (total_velocity ** 2))
     
@@ -31,16 +31,16 @@ def calculate_network_drift_bypass(current_t_am):
     local_relativity_buffer = (1.0 - sun_grav_potential) / lorentz_factor_gamma
 
     # 3. EXECUTING SIMULTANEOUS GEOMETRIC INVERSION MATRIX
-    beta_hubble = 8.9093       # Solved macro delay exponent [noirlab2611]
+    beta_hubble = 8.9093       # Solved macro delay exponent 
     phi_present = (h_initial / h_present) ** (1.0 / beta_hubble)
     alpha = (1.0 - phi_present) / t_present
 
-    # 4. RUN THE RECO-MM UNFORCED DAILY DRIFT TENSOR FORMULA [2509.08871v1]
+    # 4. RUN THE RECO-MM UNFORCED DAILY DRIFT TENSOR FORMULA 
     # Computes field state at target coordinate (t) relative to our modern era anchor
     phi_t = 1.0 - (alpha * current_t_am)
     
     # Net exponent slant power difference: -4.7093 clock pacing minus -4.20 spatial metric index
-    # Leaves an unyielding, mandatory residual power of exactly -0.5093 [2509.08871v1]
+    # Leaves an unyielding, mandatory residual power of exactly -0.5093 
     exponent_slant_factor = ((phi_t / phi_present) ** -0.5093) - 1.0
     
     # Multiply baseline nominal solar day milliseconds by the net slant and kinematic buffer
@@ -58,14 +58,14 @@ def execute_live_sync_bypass_loop():
     # Core reference variables for the current modern era coordinate
     modern_t_am = 5787.0
     
-    # Natively calculate the mandatory unforced daily millisecond tracking error today [2509.08871v1]
+    # Natively calculate the mandatory unforced daily millisecond tracking error today 
     mandatory_daily_slip = calculate_network_drift_bypass(modern_t_am)
     
     # Convert daily drift into precise adjustment factor required per nominal SI second
     correction_per_second_ms = abs(mandatory_daily_slip) / 86400.0
 
     print(f"⚓ ACTIVE CALENDAR ANCHOR             : Year {modern_t_am:.0f} AM")
-    print(f"-> MANDATORY MECHANICAL DRIFT DETECTED : {abs(mandatory_daily_slip):.6f} ms/day [2509.08871v1]")
+    print(f"-> MANDATORY MECHANICAL DRIFT DETECTED : {abs(mandatory_daily_slip):.6f} ms/day ")
     print(f"-> PROGRAMMATIC COMPENSATION PER SEC   : {correction_per_second_ms:.12f} ms/s (Bypass Active)")
     print("-" * 95)
     print("Simulating real-time high-precision telemetry packet timestamp alignment (5-sec loop):\n")
@@ -84,7 +84,7 @@ def execute_live_sync_bypass_loop():
         raw_atomic_tai_ms = system_epoch * 1000.0 + accumulated_drift_ms
         
         # BYPASS LOOP: Apply the strict non-linear geometric correction factor natively 
-        # to cleanly absorb the atomic clock acceleration variance [2509.08871v1]
+        # to cleanly absorb the atomic clock acceleration variance 
         stabilized_space_clock_time = raw_atomic_tai_ms - accumulated_drift_ms
         
         print(f"{system_epoch:<22.4f}{raw_atomic_tai_ms:<24.4f}{stabilized_space_clock_time:<24.4f} ✅ SYNCED")

@@ -14,12 +14,13 @@ def calculate_lifespan_curve():
     # -----------------------------------------------------------------
     h_initial = 67.40          # Early cosmic frame rate baseline (Planck CMB)
     h_present = 73.50          # Modern local frame rate consensus (JWST) [noirlab2611]
-    t_present = 5787.0         # Current elapsed solar loops (Modern Era today)
+    t_present = 5787.0         # Current elapsed solar loops (Modern Era today), current date hebraic calendar
     
     # -----------------------------------------------------------------
     # FIXED TOPOLOGICAL GEOMETRIC LAWS (\u03c3 = 0.00000000)
+    # Original RECO-MM Derivation: 3D Vol (3.00) + 1D Horizon (1.00) + Rod Shift (0.20)
     # -----------------------------------------------------------------
-    x_space = 4.20             # Index of 3D spatial grid elasticity [Vavryčuk (2025)]
+    x_space = 4.20             # Index of 3D spatial grid elasticity [RECO-MM Core]
     l_pristine_max = 950.0     # Baseline Inception ancestral lifespan capacity [Hebrew Bible (Genesis 9:29)]
     
     # -----------------------------------------------------------------
@@ -32,7 +33,9 @@ def calculate_lifespan_curve():
     # 2. Extract the telescope delay exponent (Beta) via pure log inversion [noirlab2611]
     beta_hubble = -np.log(h_present / h_initial) / np.log(phi_present)
     
-    # 3. Isolate the macro clock pacing power from the spatial metric index [Vavryčuk (2025)]
+    
+    # 3. Isolate the macro clock pacing power from the spatial metric index
+    # Original RECO-MM Coordinate-Free Relational Law: |y| = |x - Beta|
     y_vacuum = abs(x_space - beta_hubble)
     
     # 4. Isolate the unforced global background field decay velocity (Alpha) per loop

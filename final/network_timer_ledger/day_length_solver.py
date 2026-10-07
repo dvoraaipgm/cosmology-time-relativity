@@ -20,7 +20,7 @@ def calculate_tri_metric_day(year_input, is_christian_ce=True):
         t_am = year_input
         calendar_label = f"{year_input} AM"
 
-    # Derive the unforced cosmic decay pacing velocity from telescope data [noirlab2611]
+    # Derive the unforced cosmic decay pacing velocity from telescope data 
     phi_present = (h_initial / h_present) ** (1.0 / beta_hubble)
     alpha = (1.0 - phi_present) / t_present
 
@@ -28,7 +28,7 @@ def calculate_tri_metric_day(year_input, is_christian_ce=True):
     if t_am > t_terminus:
         return f"ERROR: Input Year {calendar_label} extends beyond the 6,000 AM Saturation Wall!"
 
-    # 2. EVALUATE COMPOUNDING FIELD STATE AT THE TARGET DATE [Vavryčuk (2025)]
+    # 2. EVALUATE COMPOUNDING FIELD STATE AT THE TARGET DATE 
     phi_t = 1.0 - (alpha * t_am)
     
     # Value 1: Terrestrial Atomic Day Length (Hours measured by that date's clock)
@@ -39,7 +39,7 @@ def calculate_tri_metric_day(year_input, is_christian_ce=True):
     # Tracks pure unforced space size metric elongation power (-4.25)
     day_space = 24.0 * (phi_t ** -4.25)
     
-    # Value 3: True Mechanical Spin Speed Acceleration Velocity Ratio [Rambam]
+    # Value 3: True Mechanical Spin Speed Acceleration Velocity Ratio 
     # Proves the planet is physically rotating faster over history as confinement drops
     spin_velocity_ratio = 1.0 / (phi_t ** 4.20)
 

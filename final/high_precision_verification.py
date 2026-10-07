@@ -15,7 +15,7 @@ def verify_matrix_precision():
     beta_hubble = 8.9093       # Pristine geometric propagation delay exponent 
     y_atom = 4.7093            # Streamlined macro-quantum clock power 
     x_space = 4.20             # Fundamental index of 3D spatial elasticity 
-    t_present = 5787.0         # Current elapsed solar loops (Modern Era)
+    t_present = 5787.0         # Current elapsed solar loops (Modern Era), current date hebraic calendar
 
     # 1. Exact mass density ratio reached today (phi_present)
     phi_present = (h_initial / h_present) ** (1.0 / beta_hubble)

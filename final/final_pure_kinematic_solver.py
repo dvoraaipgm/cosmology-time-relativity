@@ -18,7 +18,7 @@ def resolve_pure_kinematic_matrix():
     # -----------------------------------------------------------------
     H_0 = 67.40                # Early CMB baseline (Planck)
     H_PRESENT = 73.50          # Modern Direct Distance Ladder rate (JWST) 
-    T_PRESENT = 5787.0         # Current elapsed solar loops (Modern Era)
+    T_PRESENT = 5787.0         # Current elapsed solar loops (Modern Era), current date hebraic calendar
 
     # Real-World Local Planetary Velocity Metrics (Normalized to c = 1) 
     v_earth_orbit = 29.78 / 299792.458       # Earth speed around the Sun
@@ -55,7 +55,9 @@ def resolve_pure_kinematic_matrix():
     beta_hubble = -np.log(H_PRESENT / H_0) / np.log(phi_present)
 
     # Step 4: Extract the macro clock pacing power from the spatial metric index 
-    y_vacuum = abs(X_SPACE - beta_hubble)
+        # 3. Isolate the macro clock pacing power from the spatial metric index
+    # Original RECO-MM Coordinate-Free Relational Law: |y| = |x - Beta|
+    y_vacuum = abs(x_space - beta_hubble)
 
     # Step 5: Isolate the unforced global background field decay velocity (Alpha) per year
     alpha = mass_deficit_today / T_PRESENT

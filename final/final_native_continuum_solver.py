@@ -18,7 +18,7 @@ def run_native_continuum():
     # -----------------------------------------------------------------
     H_0 = 67.40                # Early CMB frame gauge baseline (Planck)
     H_PRESENT = 73.50          # Modern Local Distance Ladder consensus 
-    T_PRESENT = 5787.0         # Current elapsed solar loops (Modern Era)
+    T_PRESENT = 5787.0         # Current elapsed solar loops (Modern Era), current date hebraic calendar
 
     # Laboratory Molecule Lorentz brake velocity vector components 
     v_earth = 29.78 / 299792.458
@@ -46,7 +46,9 @@ def run_native_continuum():
     beta_hubble = -np.log(H_PRESENT / H_0) / np.log(phi_present)
 
     # Step D: Extract the macro clock pacing power from the spatial metric index 
-    y_vacuum = abs(X_SPACE - beta_hubble)
+        # 3. Isolate the macro clock pacing power from the spatial metric index
+    # Original RECO-MM Coordinate-Free Relational Law: |y| = |x - Beta|
+    y_vacuum = abs(x_space - beta_hubble)
 
     # Step E: Isolate the unforced global background field decay velocity (Alpha) per year
     alpha = mass_deficit_today / T_PRESENT
