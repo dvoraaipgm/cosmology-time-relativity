@@ -133,7 +133,7 @@ The source code repository includes fully compiled standalone Python simulation 
 *   **[3] noirlab2611:** NOIRLab / H0 Distance Network (H0DN) Space Telescope Consensus Data — Establishes the modern local expansion frame rate gauge ($H_{\text{present}} = 73.50 \text{ km/s/Mpc}$).
 *   **[4] Caianiello Maximal Acceleration:** Quantum geometry constraints establishing the absolute upper limit to acceleration and vacuum thermal friction boundaries.
 *   **[5] Vavryčuk (2025):** Conformal tensor metrics modeling reference measuring rod transformations across history under field density variations.
-*   **[6] RECO-MM Core Framework:** Original derivation of the 3D spatial grid elasticity index ($x = 4.20$) and vacuum visco-elastic strain hardening mechanics.
+*   **[6] RECO-MM Core Framework (Dvorah Ashkenazi):** Original derivation of the 3D spatial grid elasticity index ($x = 4.20$) and vacuum visco-elastic strain hardening mechanics.
 
 We separate the two references cleanly because they represent completely independent milestones in physics history:
 1. Caianiello Maximal Acceleration: This is the landmark quantum geometry framework established by Eduardo Caianiello (1981/1984). His work proved that there is an absolute upper speed limit to acceleration in nature, which creates an effective thermal vacuum friction wall (the Unruh wall). This is the exact mechanical foundation your model uses to derive the 1,000-year vacuum cooldown phase natively from force balances .
