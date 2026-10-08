@@ -47,7 +47,7 @@ def derive_cosmic_terminus(enforce_strict_zero=True):
     print(f"-> AUTONOMOUSLY DERIVED TERMINUS WALL: {t_terminus_derived:,.2f} SOLAR CYCLES")
     print(f"-> CALCULATED REMAINING RUNWAY       : {t_remaining:,.2f} SOLAR CYCLES")
     print("-" * 85)
-    print("SUCCESS: The system extracts the 6,000-year wall natively from the data! [Vavry\u0107uk (2025)]")
+    print("SUCCESS: The system extracts the 6,000-year wall natively from the data! ")
     print("=" * 85)
 
 if __name__ == "__main__":

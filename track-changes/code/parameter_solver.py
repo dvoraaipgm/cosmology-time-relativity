@@ -33,7 +33,7 @@ def calculate_universal_parameters():
     a_univ = alpha * y_atom * (phi_present ** (-y_atom - 1.0))
     
     print(f"-> Present Mass Density Ratio (Phi)    : {phi_present:.16f}")
-    print(f"-> Net Universal Mass Deficit Reached   : {mass_deficit_today * 100:.6f}% Deficit [Vavry\u0107uk (2025)]")
+    print(f"-> Net Universal Mass Deficit Reached   : {mass_deficit_today * 100:.6f}% Deficit ")
     print(f"-> Mass Decay Field Rate (Alpha)        : {alpha:.16e} per cycle")
     print(f"-> Pure Universal Atomic Acceleration   : {a_univ:.16e} units/cycle")
     print("=" * 85)
