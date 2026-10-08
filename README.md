@@ -4,8 +4,8 @@ By proving that this framework resolves day-to-day computing bugs alongside the 
 
 https://doi.org/10.5281/zenodo.23105187
 
-[![DOI](https://zenodo.org)](https://doi.org)
-[![Hosting: GitHub Pages](https://shields.io)](https://github.io)
+[![Zenodo Archive](https://doi.org/10.5281/zenodo.23105187)](https://doi.org/10.5281/zenodo.23105187)
+[![Website: cosmology time relativity](https://dvoraaipgm.github.io/cosmology-time-relativity/)](https://dvoraaipgm.github.io/cosmology-time-relativity/)
 
 An unforced, coordinate-free cosmological framework that fundamentally eliminates absolute background spacetime and independent metrics. By anchoring physical laws natively to the invariant speed of light (\(c = 1\)), all properties emerge programmatically as pure relative scaling ratios between moving material gears.
 
@@ -94,7 +94,7 @@ To site or credit the mathematical formulas, coordinate-free structures, or quan
 I am pleased to share the official publication and live processing portal for the Relational Co-Evolution Cosmological Model (RECO-MM). This model provides complete mathematical and chronological closure for the Hubble Tension and Singularity Resolution using exactly three pure physical anchors.
 
 Permanent Citation Repository Ledger: https://doi.org/10.5281/zenodo.23105187
-Interactive Dashboard Website Portal: https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPOSITORY-NAME/
+Interactive Dashboard Website Portal: https://dvoraaipgm.github.io/cosmology-time-relativity/
 
 Core Structural Proofs Discovered:
 - Direct Inversion of the 9.05% Telescope Redshift Gap (67.40 -> 73.50 km/s/Mpc) as a frame-rate mismatch born from atomic clock acceleration.
