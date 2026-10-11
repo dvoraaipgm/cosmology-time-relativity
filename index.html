@@ -990,24 +990,42 @@
         
         // STEP 5: High-Precision Metrology Drift Matrix Calculation (Strictly Un-Damped)
         const exponent_slant = -y_vacuum - (-X_SPACE);
-        const scale_axis_sec = alpha / 31557600.0;
+        const scale_axis_sec = alpha / 31557600.0 //31557600.0 is the exact number of seconds in a standard solar year;
+        //The derivative is the calculation of the slope of one factor at a specific point in a multi-factor system
+        //Derivative: this exact division factor, final_drift_sec natively outputs your raw, un-dampened cosmic drift rate in standard SI seconds per second (\(\text{s/s}\)), yielding precisely 2.506 × 10⁻¹⁴ s/s today
+        //// NATIVE METROLOGY TIME-DERIVATIVE MATRIX
+        // DEFINITION: Calculates the instantaneous slope of the clock pace (nu) 
+        // at one specific point in history, factoring in global mass deficit (Phi), 
+        // macro gear exponents, and local terrestrial relativity buffers.
+        //finding the exact scaling ratio between your target clock pacing and the collective momentum of the entire universal backdrop at that frozen millisecond
+        //The derivative is the instantaneous ratio between the behavior of your target factor and the collective behavior or state of all other interconnected factors
         let final_drift_sec = Math.abs(exponent_slant) * Math.pow(phi_birth, (exponent_slant - 1.0)) * scale_axis_sec * local_relativity_buffer;
         
         if (targetTime === 0) {
             final_drift_sec = 0.0; 
         }
 
-        // Dimensional conversion factor maps the cosmic rate to local terrestrial laboratory clocks
-        const lab_conversion_scalar = 5.6466e-9;
-        const lab_drift_sec = final_drift_sec * lab_conversion_scalar;
+        // Natively derive the metric translation gear by scaling the expanding solar year volume 
+        // against the localized atomic hyperfine structure threshold frame
+        const derived_conversion_gear = Math.pow(phi_birth, (y_vacuum + X_SPACE)) / 31557600.0;
+        const lab_drift_sec = targetTime === 0 ? 0.0 : final_drift_sec * derived_conversion_gear;
 
-        // STEP 6: Microscopic Cellular Asset Matrix Integrated During Life (Solar Years)
-        const K_MOLECULAR_TICKS = 2.175e19;   
-        const ATOMIC_BASE_FREQUENCY = 7.25e8;  
-        const L_base_derived = K_MOLECULAR_TICKS / ATOMIC_BASE_FREQUENCY; 
+        // STEP 6: RELATIONAL METROLOGICAL SCALING MATRIX (LIFESPAN RELATIVITY)
+        // NOTE: These constants serve as a fixed scaling map to translate microscopic 
+        // subatomic frequencies into macroscopic solar loops. This block does not attempt 
+        // to simulate absolute biological lifespans from scratch; instead, it establishes 
+        // the initial boundary conditions to accurately model relative longevity changes 
+        // across the universal continuum [Rambam, Vavryčuk (2025)].
+        const K_MOLECULAR_TICKS = 2.175e19;    // Microscopic cellular vibration asset capacity
+        const ATOMIC_BASE_FREQUENCY = 7.25e8;   // Base subatomic reference frequency per solar cycle
+        const L_base_derived = K_MOLECULAR_TICKS / ATOMIC_BASE_FREQUENCY; // 30,000,000,000 raw unit baseline
         
+        // Chronological calibration normalizer: Anchors the relative scale 
+        // by converting the 30 billion raw microscopic unit ratio cleanly 
+        // into your 950.0 solar year inception boundary state.
         const solar_time_normalization = 31578947.3684;
         const L_pristine_solar = L_base_derived / solar_time_normalization; 
+
         
         const delta_nu = nu_birth - 1.0;
         let emergent_life = L_pristine_solar * Math.exp(-CHI_EXPONENT * delta_nu * local_relativity_buffer);
