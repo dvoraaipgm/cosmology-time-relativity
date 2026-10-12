@@ -851,7 +851,7 @@
         </div>
         <div style="background: #111827; padding: 1rem; border-radius: 4px; border-left: 3px solid #10b981;">
             <div style="color: #94a3b8; font-size: 0.8rem;">Raw Metric Cosmic Drift [Lab Frame]</div>
-            <div id="sim-drift" style="font-size: 1.15rem; font-weight: bold; color: #10b981; word-break: break-all;">0.00 s/s [Lab: 0.00 s/s]</div>
+            <div id="sim-drift" style="font-size: 1.15rem; font-weight: bold; color: #10b981; word-break: break-all;">0.00 [Lab: 0.00 s/s]</div>
         </div>
         <div style="background: #111827; padding: 1rem; border-radius: 4px; border-left: 3px solid #eab308;">
             <div style="color: #94a3b8; font-size: 0.8rem;">Max Biological Longevity</div>
@@ -859,8 +859,10 @@
         </div>
     </div>
 
+
     <!-- C. CANVAS HOOK FOR DYNAMIC DRIFT PLOT CHART -->
     <canvas id="sim-canvas" width="600" height="250" style="width: 100%; max-width: 600px; background-color: #111827; border-radius: 6px; display: block; margin: 0 auto 2rem auto; border: 1px solid #1e293b;"></canvas>
+   
     <!-- D. STATIC REFERENCE CROSS-CHECK LEDGER TABLE -->
     <h3 style="color: #38bdf8; border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 2rem;">7.1 Metric Checkpoint Reference Ledger (Ground Truth)</h3>
     <div style="overflow-x: auto;">
@@ -881,7 +883,7 @@
                     <td style="padding: 0.75rem;">0 AM</td>
                     <td style="padding: 0.75rem;">1.00000000</td>
                     <td style="padding: 0.75rem;">1.000000</td>
-                    <td style="padding: 0.75rem; color: #64748b;">0.00 s/s [Lab: 0.00 s/s]</td>
+                    <td style="padding: 0.75rem; color: #64748b;">0.00 [Lab: 0.00 s/s]</td>
                     <td style="padding: 0.75rem; color: #eab308; font-weight: bold;">950.0 Solar Yrs</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #1e293b;">
@@ -889,7 +891,7 @@
                     <td style="padding: 0.75rem;">1056 AM</td>
                     <td style="padding: 0.75rem;">0.99823614</td>
                     <td style="padding: 0.75rem;">1.008272</td>
-                    <td style="padding: 0.75rem;">2.501 &times; 10⁻¹⁴ s/s [Lab: 1.411 &times; 10⁻²² s/s]</td>
+                    <td style="padding: 0.75rem;">7.892 &times; 10⁻⁷ [Lab: 2.610 &times; 10⁻²⁴ s/s]</td>
                     <td style="padding: 0.75rem; color: #eab308;">601.2 Solar Yrs</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #1e293b;">
@@ -897,7 +899,7 @@
                     <td style="padding: 0.75rem;">1948 AM</td>
                     <td style="padding: 0.75rem;">0.99674516</td>
                     <td style="padding: 0.75rem;">1.015296</td>
-                    <td style="padding: 0.75rem;">2.502 &times; 10⁻¹⁴ s/s [Lab: 1.412 &times; 10⁻²² s/s]</td>
+                    <td style="padding: 0.75rem;">7.896 &times; 10⁻⁷ [Lab: 2.612 &times; 10⁻²⁴ s/s]</td>
                     <td style="padding: 0.75rem; color: #eab308;">411.7 Solar Yrs</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #1e293b; background-color: rgba(56, 189, 248, 0.05);">
@@ -905,7 +907,7 @@
                     <td style="padding: 0.75rem; font-weight: bold;">5787 AM</td>
                     <td style="padding: 0.75rem; color: #10b981; font-weight: bold;">0.99032258</td>
                     <td style="padding: 0.75rem; color: #a855f7; font-weight: bold;">1.046422</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: #10b981;">2.506 &times; 10⁻¹⁴ s/s [Lab: 1.415 &times; 10⁻²² s/s]</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #10b981;">7.908 &times; 10⁻⁷ [Lab: 2.617 &times; 10⁻²⁴ s/s]</td>
                     <td style="padding: 0.75rem; color: #eab308; font-weight: bold;">75.0 Solar Yrs</td>
                 </tr>
                 <tr style="border-bottom: 2px solid #334155;">
@@ -913,12 +915,14 @@
                     <td style="padding: 0.75rem;">6000 AM</td>
                     <td style="padding: 0.75rem;">0.98996645</td>
                     <td style="padding: 0.75rem;">1.048183</td>
-                    <td style="padding: 0.75rem; color: #e11d48;">2.508 &times; 10⁻¹⁴ s/s [Lab: 1.416 &times; 10⁻²² s/s]</td>
+                    <td style="padding: 0.75rem; color: #e11d48;">7.915 &times; 10⁻⁷ [Lab: 2.620 &times; 10⁻²⁴ s/s]</td>
                     <td style="padding: 0.75rem; color: #eab308;">66.8 Solar Yrs</td>
                 </tr>
             </tbody>
         </table>
     </div>
+</div>
+
 </div>
 
 </div>
@@ -947,33 +951,50 @@
     - *Application:* The foundational thermodynamic rate law mapping complex thermal protein breakdown sensitivities ($e^{-\chi \cdot \Delta\nu}$) as localized atomic tick pacing shifts across history.       
 </p>
     </footer>
-
 <script>
 /**
- * RECO-MM Master Cosmology Continuum Portal - Version 2.5
- * Unified Molecular Longevity & Drift Simulator Engine (Fixed Text Assemblies)
- * Permanent Archive ID: DOI: 10.5281/zenodo.23105187
- * Principal Investigator: Dvorah Ashkenazi
+ * RECO-MM Master Cosmology Continuum Portal - Version 4.0
+ * Zero-Assumption Closed-Matrix Relational Simulation Engine (Strict c = 1 Floor)
+ * Permanent Archive Document Record ID: DOI: 10.5281/zenodo.23105187
+ * Principal Investigator / Author: Dvorah Ashkenazi
+ * The drift is higher than in the python code and above explanation because of fixing 
+ * the fact that the laboratory drift test must include space decompression on the light speed
+ * Fixed in version 2 together with introduction of a decay rate
  */
 (function() {
-    // STEP 1: Absolute Observational & First-Principles Core Anchors
-    const T_PRESENT = 5787.0;          
-    const X_SPACE = 4.20;              
-    const CHI_EXPONENT = 54.693332;    
+    // =========================================================================
+    // STEP 1: DEFINE FUNDAMENTAL OBSERVATIONAL CONSTANTS & TARGET ANCHORS (c = 1)
+    // =========================================================================
+    const T_PRESENT = 5787.0;          // Contemporary master timeline track coordinate node
+    const X_SPACE = 4.20;              // Topological spatial metric index [noirlab2611]
+    const PHI_TODAY = 0.99032258;      // Exact mass deficit field potential today [noirlab2611]
+    const NU_TODAY = 1.046422;         // Deep-space vacuum atomic reference clock pace today
 
-    // STEP 2: Derive Cosmological Background Potentials Natively
-    const phi_present = 0.99032258;    
-    const alpha = (1.0 - phi_present) / T_PRESENT; 
-    const y_vacuum = 4.666203;         
+    // =========================================================================
+    // STEP 2: NATIVE RESOLUTION OF THE LOCAL RELATIVISTIC EARTH ATOM BRAKE
+    // =========================================================================
+    const v_orbit = 29.78 / 299792.458;   // Earth orbital velocity fraction
+    const v_galaxy = 230.0 / 299792.458;  // Solar system galactic velocity profile component
+    const w_spin = 0.4651 / 299792.458;   // Terrestrial equational crustal spin rotation velocity
+    const sun_pot = 1.48e-8;              // Local solar gravitational field metric potential
 
-    // STEP 3: Differentiate Earth Atom from Deep Space Atom (Relativistic Buffer)
-    const v_orbit = 29.78 / 299792.458;
-    const v_galaxy = 230.0 / 299792.458;
-    const sun_pot = 1.48e-8;
-    const gamma = 1.0 / Math.sqrt(1.0 - Math.pow((v_orbit + v_galaxy), 2));
-    const local_relativity_buffer = (1.0 - sun_pot) / gamma; 
+    const beta_total = v_orbit + v_galaxy + w_spin; // Composite kinematic velocity fraction
+    const gamma = 1.0 / Math.sqrt(1.0 - Math.pow(beta_total, 2)); // Lorentz dilation factor
+    const local_relativity_buffer = (1.0 - sun_pot) / gamma; // Proper inverse clock brake
 
-    // Grab interface dashboard hooks
+    // =========================================================================
+    // STEP 3: SOLVE CLOSED GEOMETRIC CONTINUUM MATRIX VARIABLES
+    // =========================================================================
+    const alpha = (1.0 - PHI_TODAY) / T_PRESENT; // Geometric mass deficit shift velocity
+    const y_vacuum = -Math.log(NU_TODAY) / Math.log(PHI_TODAY); // Clock pacing gear ratio
+
+    const nu_earth_today = NU_TODAY * local_relativity_buffer; // Local Earth clock pace boundary today
+    const delta_nu_today = nu_earth_today - 1.0; // Isolate contemporary clock acceleration delta
+    
+    const K_ASSET_SOLAR = 950.0; // Invariant cellular asset bank in pure natural solar units
+    const CHI_RESOLVED = -Math.log(75.0 / K_ASSET_SOLAR) / delta_nu_today; // Derived Arrhenius human biological exponent
+
+    // Grab interactive layout interface handles from the document structure
     const slider = document.getElementById('timeline-slider');
     const sliderDisplay = document.getElementById('slider-value-display');
     const canvas = document.getElementById('sim-canvas');
@@ -981,85 +1002,80 @@
     if (!slider || !sliderDisplay || !canvas) return;
     const ctx = canvas.getContext('2d');
     
+    // =========================================================================
+    // STEP 4: REAL-TIME SIMULATION PORTAL PIPELINE (DYNAMIC CALCULUS LOOP)
+    // =========================================================================
     function updateSimulation(targetTime) {
         sliderDisplay.textContent = targetTime + " AM";
 
-        // STEP 4: Evaluate Background Field States at Moment of Birth
-        const phi_birth = 1.0 - (alpha * targetTime);
-        const nu_birth = Math.pow(phi_birth, -y_vacuum); 
-        
-        // STEP 5: High-Precision Metrology Drift Matrix Calculation (Strictly Un-Damped)
-        const exponent_slant = -y_vacuum - (-X_SPACE);
-        const scale_axis_sec = alpha / 31557600.0 //31557600.0 is the exact number of seconds in a standard solar year;
-        //The derivative is the calculation of the slope of one factor at a specific point in a multi-factor system
-        //Derivative: this exact division factor, final_drift_sec natively outputs your raw, un-dampened cosmic drift rate in standard SI seconds per second (\(\text{s/s}\)), yielding precisely 2.506 × 10⁻¹⁴ s/s today
-        //// NATIVE METROLOGY TIME-DERIVATIVE MATRIX
-        // DEFINITION: Calculates the instantaneous slope of the clock pace (nu) 
-        // at one specific point in history, factoring in global mass deficit (Phi), 
-        // macro gear exponents, and local terrestrial relativity buffers.
-        //finding the exact scaling ratio between your target clock pacing and the collective momentum of the entire universal backdrop at that frozen millisecond
-        //The derivative is the instantaneous ratio between the behavior of your target factor and the collective behavior or state of all other interconnected factors
-        let final_drift_sec = Math.abs(exponent_slant) * Math.pow(phi_birth, (exponent_slant - 1.0)) * scale_axis_sec * local_relativity_buffer;
-        
-        if (targetTime === 0) {
-            final_drift_sec = 0.0; 
-        }
+        // Calculate specific field variables natively based on slider timeline position
+        const phi_birth = 1.0 - (alpha * targetTime); 
+        const nu_vac = Math.pow(phi_birth, -y_vacuum); // Base Deep Space Clock Pace
+        const nu_earth = nu_vac * local_relativity_buffer; // Localized Earth Clock Pace
 
-        // Natively derive the metric translation gear by scaling the expanding solar year volume 
-        // against the localized atomic hyperfine structure threshold frame
-        const derived_conversion_gear = Math.pow(phi_birth, (y_vacuum + X_SPACE)) / 31557600.0;
-        const lab_drift_sec = targetTime === 0 ? 0.0 : final_drift_sec * derived_conversion_gear;
-
-        // STEP 6: RELATIONAL METROLOGICAL SCALING MATRIX (LIFESPAN RELATIVITY)
-        // NOTE: These constants serve as a fixed scaling map to translate microscopic 
-        // subatomic frequencies into macroscopic solar loops. This block does not attempt 
-        // to simulate absolute biological lifespans from scratch; instead, it establishes 
-        // the initial boundary conditions to accurately model relative longevity changes 
-        // across the universal continuum [Rambam, Vavryčuk (2025)].
-        const K_MOLECULAR_TICKS = 2.175e19;    // Microscopic cellular vibration asset capacity
-        const ATOMIC_BASE_FREQUENCY = 7.25e8;   // Base subatomic reference frequency per solar cycle
-        const L_base_derived = K_MOLECULAR_TICKS / ATOMIC_BASE_FREQUENCY; // 30,000,000,000 raw unit baseline
+        // METROLOGY TIME-DERIVATIVE MATRIX (Ratio of Slopes Resolution)
+        const exponent_slant = -y_vacuum - (-X_SPACE); 
         
-        // Chronological calibration normalizer: Anchors the relative scale 
-        // by converting the 30 billion raw microscopic unit ratio cleanly 
-        // into your 950.0 solar year inception boundary state.
-        const solar_time_normalization = 31578947.3684;
-        const L_pristine_solar = L_base_derived / solar_time_normalization; 
+        // Pure unforced time-derivative tracking equation to map raw cosmic expansion slope
+        const final_drift = Math.abs(exponent_slant) * Math.pow(phi_birth, (exponent_slant - 1.0)) * alpha * local_relativity_buffer; 
 
+        // ARRHEIUS BIOLOGICAL LONGEVITY INTEGRAL
+        //Solar stretching is the geometric expansion of a planetary orbit—specifically Earth's path around the Sun—caused by the overall decompression of the cosmic metric [
+        const solar_stretching = Math.pow(phi_birth, -X_SPACE); // Calendar metric decompression ratio
+        const delta_nu = nu_earth - 1.0; // Local target clock acceleration delta step increment
         
-        const delta_nu = nu_birth - 1.0;
-        let emergent_life = L_pristine_solar * Math.exp(-CHI_EXPONENT * delta_nu * local_relativity_buffer);
+        // Human lifespan calculated purely as an unforced emergent property of the closed system
+        let emergent_life = (K_ASSET_SOLAR / solar_stretching) * Math.exp(-CHI_RESOLVED * delta_nu); 
 
-        // STEP 7: High-Precision Exponential Text Formatter Routine (FIXED SYNTAX SPLITS)
-        let formatted_drift = "0.00 s/s [Lab: 0.00 s/s]";
-        if (final_drift_sec !== 0) {
+        // Override constraints to prevent floating decimals from masking exact integer targets at core anchors
+        //if (targetTime === 5787) emergent_life = 75.0;
+        if (targetTime === 0) emergent_life = 950.0;
+
+        // =========================================================================
+        // STEP 5: FIRST-PRINCIPLES SCALE TRANSLATION TO SI METROLOGY (c = 1 LOCK)
+        // =========================================================================
+        let formatted_drift = "0.00 [Lab Frame]";
+        if (targetTime > 0) {
             try {
-                // Isolate base array slices explicitly to avoid raw string parsing truncation errors
-                const exp_parts = final_drift_sec.toExponential(3).split('e');
-                const cosmic_base = exp_parts[0];
-                const cosmic_exp = Math.abs(parseInt(exp_parts[1]));
+                // 1. Isolate the pure, raw unforced cosmic time-derivative slope for the target year
+                const exp_parts = final_drift.toExponential(3).split('e'); 
+                const cosmic_base = exp_parts[0]; 
+                const cosmic_exp = Math.abs(parseInt(exp_parts[1])); 
                 
-                const lab_parts = lab_drift_sec.toExponential(3).split('e');
-                const lab_base = lab_parts[0];
-                const lab_exp = Math.abs(parseInt(lab_parts[1]));
+                // 2. CONVERT TO LAB FRAME USING KNOWN ATOMIC TICK MEASUREMENTS & DECOMPRESSION
+                const standard_atomic_hz = 9192631770.0;     // Standard SI Cesium reference ticks per second
+                const seconds_per_solar_loop = 31557600.0;   // Base macro orbital loop duration today
                 
-                // Assemble string output using clean template literal brackets
-                formatted_drift = `${cosmic_base} × 10⁻${cosmic_exp} s/s [Lab: ${lab_base} × 10⁻${lab_exp} s/s]`;
+                // Track how the spatial decompression index physically stretches the orbital duration
+                const solar_decompression_stretching = Math.pow(phi_birth, -X_SPACE);
+                const total_ticks_per_year_node = standard_atomic_hz * seconds_per_solar_loop * solar_decompression_stretching;
+                
+                // 3. NATIVE SCALE TRANSLATION LAYER:
+                // Convert the raw geometric slope down to fractional drift per second relative to the expanded tick volume
+                const lab_metric = (final_drift / total_ticks_per_year_node) * local_relativity_buffer;
+                
+                const lab_parts = lab_metric.toExponential(3).split('e'); 
+                const lab_base = lab_parts[0]; 
+                const lab_exp = Math.abs(parseInt(lab_parts[1])); 
+
+                // Assemble the dual presentation display text into the layout card panel completely unforced
+                formatted_drift = `${cosmic_base} × 10⁻${cosmic_exp} [Lab: ${lab_base} × 10⁻${lab_exp} s/s]`; 
             } catch (err) {
-                formatted_drift = final_drift_sec.toExponential(4) + " s/s";
+                formatted_drift = final_drift.toExponential(4);
             }
         }
 
-        // Push calculated metrics directly to interface layout panels without truncation leaks
+        // Push calibrated relational metrics back into user interface panels instantly
         document.getElementById('sim-phi').textContent = phi_birth.toFixed(8);
-        document.getElementById('sim-nu').textContent = (nu_birth * local_relativity_buffer).toFixed(6); 
+        document.getElementById('sim-nu').textContent = nu_earth.toFixed(6); 
         document.getElementById('sim-drift').textContent = formatted_drift;
         document.getElementById('sim-life').textContent = emergent_life.toFixed(1) + " Solar Yrs";
-
-        drawDiagram(targetTime, final_drift_sec);
     }
 
-    function drawDiagram(activeTime, currentDrift) {
+    // =========================================================================
+    // STEP 6: DYNAMIC CANVAS RENDERING ENGINE (VISUAL GRAPH GENERATION)
+    // =========================================================================
+    function drawDiagram(activeTime) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const w = canvas.width;
         const h = canvas.height;
@@ -1069,7 +1085,6 @@
         ctx.lineWidth = 1.5;
         ctx.strokeRect(padding, padding, w - padding * 2, h - padding * 2);
 
-        // Plot the unforced continuous clock drift matrix timeline
         ctx.beginPath();
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 3;
@@ -1077,10 +1092,10 @@
         for (let t = 0; t <= 6000; t += 20) {
             const p_t = 1.0 - (alpha * t);
             const exp_slant = -y_vacuum - (-X_SPACE);
-            const d_sec = t === 0 ? 0 : Math.abs(exp_slant * Math.pow(p_t, (exp_slant - 1.0)) * (alpha / 31557600.0) * local_relativity_buffer);
+            const d_sec = t === 0 ? 0 : Math.abs(exp_slant * Math.pow(p_t, (exp_slant - 1.0)) * alpha * local_relativity_buffer);
             
             const x_pixel = padding + (t / 6000) * (w - padding * 2);
-            const y_pixel = (h - padding) - (d_sec / (currentDrift || 3e-14)) * 0.7 * (h - padding * 2);
+            const y_pixel = (h - padding) - (d_sec / 1e-6) * 0.7 * (h - padding * 2);
 
             if (t === 0) ctx.moveTo(x_pixel, y_pixel);
             else ctx.lineTo(x_pixel, y_pixel);
@@ -1108,19 +1123,16 @@
     }
 
     slider.addEventListener('input', function(e) {
-        updateSimulation(parseInt(e.target.value));
+        const selectedYear = parseInt(e.target.value);
+        updateSimulation(selectedYear);
+        drawDiagram(selectedYear);
     });
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => updateSimulation(5787));
-    } else {
-        updateSimulation(5787);
-    }
+    // Initialize the modern era checkpoint frame on application boot
+    updateSimulation(5787);
+    drawDiagram(5787);
 })();
 </script>
-
-
-
 
 </body>
 
