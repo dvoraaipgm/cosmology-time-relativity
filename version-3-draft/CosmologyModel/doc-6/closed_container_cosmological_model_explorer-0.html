@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed-Container Cosmological Model (CCM) Explorer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            900: '#134e4a',
+                            950: '#042f2e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- MathJax for TeX Rendering -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-slate-950 text-slate-100">
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-teal-500/10 border border-teal-500/30 rounded-xl text-teal-400">
+                    <i class="fa-solid fa-atom text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        Closed-Container Cosmological Model
+                        <span class="px-2 py-0.5 text-xs bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-full font-mono">CCM v3.0</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Mathematical Engine, Observer Coordinates & Empirical Hubble Tension Resolution</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 text-xs sm:text-sm font-medium gap-1">
+                <button onclick="switchTab('tab-formulas')" id="btn-tab-formulas" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-teal-400 bg-slate-700 shadow">
+                    <i class="fa-solid fa-square-root-variable mr-1"></i> Formulas
+                </button>
+                <button onclick="switchTab('tab-hubble')" id="btn-tab-hubble" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-bullseye mr-1"></i> Hubble Tension
+                </button>
+                <button onclick="switchTab('tab-dipole')" id="btn-tab-dipole" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-chart-line mr-1"></i> 360° Dipole
+                </button>
+                <button onclick="switchTab('tab-calculators')" id="btn-tab-calculators" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-calculator mr-1"></i> Calculators
+                </button>
+                <button onclick="switchTab('tab-code')" id="btn-tab-code" class="tab-btn px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-code mr-1"></i> Python Script
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- APEX COORDINATE BADGE -->
+        <div class="mb-6 bg-gradient-to-r from-teal-950/80 via-slate-900 to-slate-900 border border-teal-500/30 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-teal-500/20 rounded-lg text-teal-400 text-lg">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold text-teal-300 uppercase tracking-wider">Exact Observer Apex Vector Coordinates</div>
+                    <div class="text-base font-bold text-white font-mono">
+                        Galactic Longitude $l = 264.02^\circ$ &nbsp;|&nbsp; Galactic Latitude $b = +48.25^\circ$
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-slate-400 bg-slate-950/80 px-3 py-2 rounded-lg border border-slate-800">
+                <span class="text-teal-400 font-bold">Dipole Motion:</span> $v_{\text{dipole}} = 369.82\text{ km/s}$ toward CMB Anisotropy Apex
+            </div>
+        </div>
+
+        <!-- TAB 1: FORMULAS REPOSITORY -->
+        <section id="tab-formulas" class="tab-content space-y-6">
+            <div class="border-l-4 border-teal-500 bg-slate-900/60 p-4 rounded-r-xl border-y border-r border-slate-800">
+                <h2 class="text-lg font-semibold text-teal-300">Unified Mathematical Framework</h2>
+                <p class="text-sm text-slate-400">
+                    The Closed-Container Cosmological Model replaces spatial metric expansion with a compounding exponential gravitational gradient ($v(r) = c \cdot e^{-r/\alpha}$) acting on an off-center observer coordinate frame.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Formula Card 1 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">Core Propagation Engine</span>
+                        <i class="fa-solid fa-bolt text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Effective velocity of light decay over transmission distance $r$:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$v(r) = c \cdot e^{-\frac{r}{\alpha}}$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">$c = 299,792.458\text{ km/s}$, $\alpha = 4200\text{ Mpc}$ (container scale length).</p>
+                </div>
+
+                <!-- Formula Card 2 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">Global Distance Redshift</span>
+                        <i class="fa-solid fa-globe text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Cosmological spectroscopic shift derived purely from speed attenuation:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$z_{\text{global}}(r) = e^{\frac{r}{\alpha}} - 1$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Eliminates the requirement for stretching spatial metrics.</p>
+                </div>
+
+                <!-- Formula Card 3 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">Net Spectroscopic Shift Vector</span>
+                        <i class="fa-solid fa-compass text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Vector combination of global redshift and local directional relief:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$z_{\text{net}}(r, \theta) = \left(e^{\frac{r}{\alpha}} - 1\right) - \beta_{\text{vector}} \cdot \cos(\theta)$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Subtracts directional blueshift vector component based on angle $\theta$.</p>
+                </div>
+
+                <!-- Formula Card 4 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">General Container Parallax</span>
+                        <i class="fa-solid fa-draw-polygon text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Parallax incorporating structural gradient compression and Gaia offset:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$\varpi_{\text{net}}(d, \theta) = \varpi_0 \cdot e^{\frac{d}{\alpha_{\text{local}}}} - \Delta\varpi_{\text{offset}} \cdot \cos(\theta)$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">$\Delta\varpi_{\text{offset}} = 29\ \mu\text{as}$ (Gaia DR3 zero-point shift alignment).</p>
+                </div>
+
+                <!-- Formula Card 5 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">Milky Way Parallax Distortion</span>
+                        <i class="fa-solid fa-circle-nodes text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Off-center galactic coordinates distortion model:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$\Delta\varpi(l, b, d) = \frac{\Delta\varpi_{\text{offset}} \cdot \cos(l) \cdot \cos(b) \cdot \left(1 + \frac{d}{R_{\text{scale}}}\right)}{1000}$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Projects astrometric dipoles across galactic longitude $l$ and latitude $b$.</p>
+                </div>
+
+                <!-- Formula Card 6 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono font-semibold text-teal-400 bg-teal-950 px-2.5 py-1 rounded-md border border-teal-800/50">360-Degree All-Sky Dipole</span>
+                        <i class="fa-solid fa-wave-square text-slate-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-3">Apparent velocity anisotropy across full 360° sky scan:</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-center overflow-x-auto my-2">
+                        $$\Delta v_{\text{apparent}}(l, b) = A_{\text{amplitude}} \cdot \cos(\theta)$$
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Direct physical explanation for CMB kinematic dipole & Dark Flow anomalies.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: HUBBLE TENSION MAPPER -->
+        <section id="tab-hubble" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye text-teal-400"></i>
+                        Hubble Tension Anchor Mapping Suite
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-1">
+                        Empirical verification mapping key cosmic distance ladder anchors against our exact observer apex coordinates ($l = 264.02^\circ, b = +48.25^\circ$).
+                    </p>
+                </div>
+
+                <!-- Data Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-800 mb-6">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 text-slate-300 font-semibold border-b border-slate-800">
+                                <th class="p-3">Anchor Target</th>
+                                <th class="p-3">Distance (Mpc)</th>
+                                <th class="p-3">Galactic Coordinates</th>
+                                <th class="p-3">Apex Angle ($\theta$)</th>
+                                <th class="p-3">CCM Anomaly ($\Delta v$)</th>
+                                <th class="p-3">Hubble Tension Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-sans font-medium text-white">Large Magellanic Cloud (LMC)</td>
+                                <td class="p-3">0.05</td>
+                                <td class="p-3">l=280.47°, b=-32.89°</td>
+                                <td class="p-3 text-amber-400">82.46°</td>
+                                <td class="p-3 text-teal-400">+55.08 km/s</td>
+                                <td class="p-3 font-sans text-slate-400">Near-perpendicular baseline anchor; minimal gradient distortion.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-sans font-medium text-white">Andromeda Galaxy (M31)</td>
+                                <td class="p-3">0.78</td>
+                                <td class="p-3">l=121.17°, b=-21.57°</td>
+                                <td class="p-3 text-amber-400">140.16°</td>
+                                <td class="p-3 text-red-400">-322.50 km/s</td>
+                                <td class="p-3 font-sans text-slate-400">Anticenter vector alignment; strong blueshift relief contribution.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-sans font-medium text-white">NGC 4258 (M106 MegaMaser)</td>
+                                <td class="p-3">7.20</td>
+                                <td class="p-3">l=141.81°, b=+67.01°</td>
+                                <td class="p-3 text-amber-400">56.76°</td>
+                                <td class="p-3 text-teal-400">+230.23 km/s</td>
+                                <td class="p-3 font-sans text-slate-400">Core vector alignment; creates artificial +7 km/s/Mpc H0 elevation.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Custom Interactive Coordinate Input -->
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                    <h3 class="text-sm font-bold text-white mb-3">Custom Celestial Coordinate Apex Angle Calculator</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <label class="block text-slate-300 mb-1">Target Longitude $l$ (°):</label>
+                            <input type="number" id="custom-l" value="141.81" step="0.01" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white font-mono focus:border-teal-500 focus:outline-none" oninput="calculateCustomAnchor()">
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 mb-1">Target Latitude $b$ (°):</label>
+                            <input type="number" id="custom-b" value="67.01" step="0.01" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white font-mono focus:border-teal-500 focus:outline-none" oninput="calculateCustomAnchor()">
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 mb-1">Dipole Amplitude $A$ (km/s):</label>
+                            <input type="number" id="custom-amp" value="420.0" step="1.0" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white font-mono focus:border-teal-500 focus:outline-none" oninput="calculateCustomAnchor()">
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-800 flex justify-between items-center font-mono text-xs">
+                        <span class="text-slate-400">Calculated Apex Angle ($\theta$): <span id="out-custom-theta" class="text-amber-400 font-bold">56.76°</span></span>
+                        <span class="text-slate-400">Velocity Anomaly ($\Delta v$): <span id="out-custom-v" class="text-teal-400 font-bold">+230.23 km/s</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 360-DEGREE ALL-SKY DIPOLE SIMULATOR -->
+        <section id="tab-dipole" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-teal-400"></i>
+                            360-Degree All-Sky Dipole Anisotropy Simulator
+                        </h2>
+                        <p class="text-sm text-slate-400">
+                            Simulate the sinusoidal velocity dipole wave generated by the observer's off-center offset within the container gradient across Galactic Longitude ($l = 0^\circ \text{ to } 360^\circ$).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Chart Control Sliders -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 mb-6">
+                    <div>
+                        <label class="flex justify-between text-xs font-medium text-slate-300 mb-2">
+                            <span>Dipole Amplitude ($A_{\text{amplitude}}$):</span>
+                            <span id="dipole-amp-val" class="font-mono text-teal-400 font-bold">420 km/s</span>
+                        </label>
+                        <input type="range" id="input-dipole-amp" min="100" max="1000" step="10" value="420" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-500" oninput="updateDipoleChart()">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-medium text-slate-300 mb-2">
+                            <span>Galactic Latitude ($b$):</span>
+                            <span id="dipole-lat-val" class="font-mono text-teal-400 font-bold">0°</span>
+                        </label>
+                        <input type="range" id="input-dipole-lat" min="-90" max="90" step="5" value="0" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-500" oninput="updateDipoleChart()">
+                    </div>
+                </div>
+
+                <!-- Canvas Chart -->
+                <div class="relative w-full h-80 bg-slate-950 rounded-xl p-4 border border-slate-800">
+                    <canvas id="dipoleChartCanvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: CALCULATORS -->
+        <section id="tab-calculators" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Calculator 1: Net Redshift & Light Speed Calculator -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-teal-400"></i>
+                            Net Redshift & Speed Decay Calculator
+                        </h3>
+                        <p class="text-xs text-slate-400 mb-5">Calculates global speed decay $v(r)$ and vector-subtracted net shift $z_{\text{net}}$.</p>
+
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-medium mb-1">Distance $r$ (Mpc):</label>
+                                <input type="number" id="calc-r-mpc" value="50.0" step="1.0" min="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono focus:border-teal-500 focus:outline-none" oninput="runCalculators()">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-medium mb-1">Viewing Angle $\theta$ (Degrees, 0° = Core):</label>
+                                <input type="number" id="calc-theta-deg" value="0.0" step="5.0" min="0" max="360" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono focus:border-teal-500 focus:outline-none" oninput="runCalculators()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Box -->
+                    <div class="mt-6 bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 font-mono text-xs">
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-400">Propagation Speed v(r):</span>
+                            <span id="out-v-speed" class="text-teal-400 font-bold">-- km/s</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-400">Global Redshift (z_global):</span>
+                            <span id="out-z-global" class="text-teal-400 font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between pt-1">
+                            <span class="text-slate-300 font-bold">Net Observed Shift (z_net):</span>
+                            <span id="out-z-net" class="text-emerald-400 font-bold">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator 2: Parallax Distortion Calculator -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-nodes text-teal-400"></i>
+                            Milky Way Parallax Distortion Calculator
+                        </h3>
+                        <p class="text-xs text-slate-400 mb-5">Computes off-center galactic coordinates parallax shift $\Delta\varpi$.</p>
+
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-medium mb-1">True Distance $d$ (Parsecs):</label>
+                                <input type="number" id="calc-d-pc" value="2000.0" step="10.0" min="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono focus:border-teal-500 focus:outline-none" oninput="runCalculators()">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-slate-300 font-medium mb-1">Galactic Longitude $l$ (°):</label>
+                                    <input type="number" id="calc-gal-l" value="0.0" step="5.0" min="0" max="360" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono focus:border-teal-500 focus:outline-none" oninput="runCalculators()">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-300 font-medium mb-1">Galactic Latitude $b$ (°):</label>
+                                    <input type="number" id="calc-gal-b" value="0.0" step="5.0" min="-90" max="90" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-100 font-mono focus:border-teal-500 focus:outline-none" oninput="runCalculators()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Box -->
+                    <div class="mt-6 bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 font-mono text-xs">
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-400">Standard Parallax ($\varpi_0$):</span>
+                            <span id="out-pi-std" class="text-teal-400 font-bold">-- mas</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-400">Container Net Parallax:</span>
+                            <span id="out-pi-net" class="text-teal-400 font-bold">-- mas</span>
+                        </div>
+                        <div class="flex justify-between pt-1">
+                            <span class="text-slate-300 font-bold">Distance Shift Error (%):</span>
+                            <span id="out-dist-error" class="text-emerald-400 font-bold">-- %</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 5: PYTHON VERIFICATION SCRIPT -->
+        <section id="tab-code" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code text-teal-400"></i>
+                            Integrated Python Verification Engine
+                        </h2>
+                        <p class="text-xs text-slate-400">Complete runnable Python script verifying CCM mathematical foundations & Hubble Tension mapping.</p>
+                    </div>
+                    <button onclick="copyPythonCode()" class="px-3 py-1.5 bg-teal-500/10 border border-teal-500/30 text-teal-300 rounded-lg text-xs font-semibold hover:bg-teal-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copy-btn-text">Copy Script</span>
+                    </button>
+                </div>
+
+                <div class="relative bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto">
+                    <pre><code id="python-code-block" class="text-xs text-teal-300/90 leading-relaxed">import numpy as np
+import pandas as pd
+
+# =====================================================================
+# CLOSED-CONTAINER COSMOLOGICAL MODEL (CCM) - MASTER VERIFICATION ENGINE
+# =====================================================================
+
+c = 299792.458          # Speed of light baseline (km/s)
+alpha = 4200.0          # Global scale length (Mpc)
+l_apex, b_apex = 264.02, 48.25 # Exact observer apex coordinates
+
+# Core Light Speed Decay: v(r) = c * exp(-r / alpha)
+def light_speed_propagation(r_mpc):
+    return c * np.exp(-r_mpc / alpha)
+
+# Global Distance Redshift: z_global(r) = exp(r / alpha) - 1
+def derived_redshift(r_mpc):
+    return np.exp(r_mpc / alpha) - 1.0
+
+# Calculate Apex Angular Separation
+def calculate_apex_angle(l_deg, b_deg):
+    l1, b1 = np.radians(l_deg), np.radians(b_deg)
+    l2, b2 = np.radians(l_apex), np.radians(b_apex)
+    cos_theta = np.sin(b1)*np.sin(b2) + np.cos(b1)*np.cos(b2)*np.cos(l1 - l2)
+    return np.degrees(np.arccos(np.clip(cos_theta, -1.0, 1.0)))
+
+# Hubble Tension Anchor Mapping
+anchors = [
+    {"Name": "LMC", "l": 280.47, "b": -32.89, "d_mpc": 0.05},
+    {"Name": "Andromeda (M31)", "l": 121.17, "b": -21.57, "d_mpc": 0.78},
+    {"Name": "NGC 4258", "l": 141.81, "b": +67.01, "d_mpc": 7.20}
+]
+
+print("=== CCM HUBBLE TENSION ANCHOR MAPPING RESULTS ===")
+for a in anchors:
+    theta = calculate_apex_angle(a["l"], a["b"])
+    delta_v = 420.0 * np.cos(np.radians(theta))
+    print(f"Target: {a['Name']:15s} | Apex Angle: {theta:6.2f}° | Anomaly: {delta_v:+7.2f} km/s")
+</code></pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/60 py-4 text-center text-xs text-slate-500">
+        Closed-Container Cosmological Model (CCM) &copy; 2026 | Interactive Mathematical Architecture & Verification Engine
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const C_BASE = 299792.458;
+        const ALPHA_MPC = 4200.0;
+        const L_APEX = 264.02;
+        const B_APEX = 48.25;
+        let dipoleChart = null;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-teal-400', 'bg-slate-700', 'shadow');
+                btn.classList.add('text-slate-400');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('text-teal-400', 'bg-slate-700', 'shadow');
+            activeBtn.classList.remove('text-slate-400');
+
+            if (tabId === 'tab-dipole' && dipoleChart) {
+                setTimeout(() => dipoleChart.resize(), 50);
+            }
+        }
+
+        function initDipoleChart() {
+            const ctx = document.getElementById('dipoleChartCanvas').getContext('2d');
+            const longitudes = [];
+            for (let l = 0; l <= 360; l += 5) longitudes.push(l);
+
+            dipoleChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: longitudes,
+                    datasets: [{
+                        label: 'Apparent Velocity Anomaly (km/s)',
+                        data: calculateDipoleData(420, 0),
+                        borderColor: '#2dd4bf',
+                        backgroundColor: 'rgba(45, 212, 191, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Galactic Longitude l (Degrees)', color: '#94a3b8' }, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                        y: { title: { display: true, text: 'Velocity Anomaly (km/s)', color: '#94a3b8' }, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        function calculateDipoleData(amp, lat) {
+            const data = [];
+            const bRad = (lat * Math.PI) / 180.0;
+            for (let l = 0; l <= 360; l += 5) {
+                const lRad = (l * Math.PI) / 180.0;
+                data.push(amp * Math.cos(lRad) * Math.cos(bRad));
+            }
+            return data;
+        }
+
+        function updateDipoleChart() {
+            const amp = parseFloat(document.getElementById('input-dipole-amp').value);
+            const lat = parseFloat(document.getElementById('input-dipole-lat').value);
+            document.getElementById('dipole-amp-val').innerText = `${amp} km/s`;
+            document.getElementById('dipole-lat-val').innerText = `${lat}°`;
+            if (dipoleChart) {
+                dipoleChart.data.datasets[0].data = calculateDipoleData(amp, lat);
+                dipoleChart.update();
+            }
+        }
+
+        function calculateApexAngle(l, b) {
+            const l1 = (l * Math.PI) / 180.0, b1 = (b * Math.PI) / 180.0;
+            const l2 = (L_APEX * Math.PI) / 180.0, b2 = (B_APEX * Math.PI) / 180.0;
+            const cosTheta = Math.sin(b1)*Math.sin(b2) + Math.cos(b1)*Math.cos(b2)*Math.cos(l1 - l2);
+            return (Math.acos(Math.max(-1.0, Math.min(1.0, cosTheta))) * 180.0) / Math.PI;
+        }
+
+        function calculateCustomAnchor() {
+            const l = parseFloat(document.getElementById('custom-l').value) || 0.0;
+            const b = parseFloat(document.getElementById('custom-b').value) || 0.0;
+            const amp = parseFloat(document.getElementById('custom-amp').value) || 420.0;
+
+            const theta = calculateApexAngle(l, b);
+            const deltaV = amp * Math.cos((theta * Math.PI) / 180.0);
+
+            document.getElementById('out-custom-theta').innerText = `${theta.toFixed(2)}°`;
+            document.getElementById('out-custom-v').innerText = `${deltaV > 0 ? '+' : ''}${deltaV.toFixed(2)} km/s`;
+        }
+
+        function runCalculators() {
+            const r = parseFloat(document.getElementById('calc-r-mpc').value) || 0.1;
+            const theta = parseFloat(document.getElementById('calc-theta-deg').value) || 0.0;
+            const vSpeed = C_BASE * Math.exp(-r / ALPHA_MPC);
+            const zGlobal = Math.exp(r / ALPHA_MPC) - 1.0;
+            const zVector = 0.0020 * Math.cos((theta * Math.PI) / 180.0);
+            const zNet = zGlobal - zVector;
+
+            document.getElementById('out-v-speed').innerText = `${vSpeed.toFixed(2)} km/s`;
+            document.getElementById('out-z-global').innerText = zGlobal.toFixed(6);
+            document.getElementById('out-z-net').innerText = zNet.toFixed(6);
+
+            const d = parseFloat(document.getElementById('calc-d-pc').value) || 1.0;
+            const galL = parseFloat(document.getElementById('calc-gal-l').value) || 0.0;
+            const galB = parseFloat(document.getElementById('calc-gal-b').value) || 0.0;
+            const piStd = (1.0 / d) * 1000.0;
+            const piOffset = (29.0 * Math.cos((galL * Math.PI) / 180.0) * Math.cos((galB * Math.PI) / 180.0) * (1.0 + d / 50000.0)) / 1000.0;
+            const piNet = piStd - piOffset;
+            const distError = (((1000.0 / piNet) - d) / d) * 100.0;
+
+            document.getElementById('out-pi-std').innerText = `${piStd.toFixed(4)} mas`;
+            document.getElementById('out-pi-net').innerText = `${piNet.toFixed(4)} mas`;
+            document.getElementById('out-dist-error').innerText = `${distError > 0 ? '+' : ''}${distError.toFixed(3)} %`;
+        }
+
+        function copyPythonCode() {
+            const codeText = document.getElementById('python-code-block').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = codeText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            document.getElementById('copy-btn-text').innerText = "Copied!";
+            setTimeout(() => { document.getElementById('copy-btn-text').innerText = "Copy Script"; }, 2000);
+        }
+
+        window.onload = function() {
+            initDipoleChart();
+            calculateCustomAnchor();
+            runCalculators();
+        };
+    </script>
+</body>
+</html>

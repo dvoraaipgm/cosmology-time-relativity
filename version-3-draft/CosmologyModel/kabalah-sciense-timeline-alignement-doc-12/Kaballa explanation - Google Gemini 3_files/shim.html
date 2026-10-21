@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en" class="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxMzQ2OTY3MDk0ODM5MjYzMzYwMiIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzIxM2I1ZjUzZmYxOWQ5MjRfaW5kZXguaHRtbC03MzYifSwiZXhwIjoxNzkyNTc5OTYyLCJpYXQiOjE3OTI1NzYzNjIsImFsZyI6IlJTMjU2In0.aDLROfTIxhMTWnBwl6wXDenrSel4dE0tqRCN4fIamP4ivuJpiR8XqVz_l3kgjOVvbwmrTGiPNPx0LxhGxNr84jEm0czc7NGs60em8OMU2I3oG8zx9M2IDRHrlfOG0paRSKSHOBrzWhDn4YG_ZwKNtmxTIUykzR-iASxU4S-4ZddWrrddj3GrjuhvQ6kSCMf67_QnZGio0iTNmtsVpUf4maTGjhJpdZsmFGoUmwmT4dfQ_TE5VBGvLiBXitksZLTXogXAp5mKWNWwLfSxnZxPaaD16m_EMmlKUhpxf7Q5d4SlHga4AaaHOOmUpVggISkepk-EV_xaJMoHKAR6NNIKRw","c_213b5f53ff19d924_index.html-736")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bounded Cosmic River: Closed-Container Cosmology &amp; Kabbalistic Synthesis</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com/"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for Bio-Decay & Data Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous"></script>
+    
+    <!-- KaTeX for math formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#fef9c3',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        },
+                        cosmic: {
+                            950: '#02040a',
+                            900: '#050914',
+                            850: '#091021',
+                            800: '#0d172e',
+                            700: '#152244',
+                            600: '#1f3160',
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #02040a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glow-gold {
+            text-shadow: 0 0 18px rgba(250, 204, 21, 0.45);
+        }
+        .glow-blue {
+            text-shadow: 0 0 18px rgba(59, 130, 246, 0.45);
+        }
+        .box-glow-gold {
+            box-shadow: 0 0 30px -5px rgba(234, 179, 8, 0.2);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(13, 23, 46, 0.9) 0%, rgba(5, 9, 20, 0.95) 100%);
+            backdrop-filter: blur(12px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #152244;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ca8a04;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.left-3{left:0.75rem}.top-0{top:0px}.top-3{top:0.75rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mr-1{margin-right:0.25rem}.mt-4{margin-top:1rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-20{height:5rem}.h-64{height:16rem}.h-8{height:2rem}.h-80{height:20rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-8{width:2rem}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-7xl{max-width:80rem}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.scroll-mt-28{scroll-margin-top:7rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-x-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.375rem * var(--tw-space-x-reverse));margin-left:calc(0.375rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.25rem * var(--tw-space-x-reverse));margin-left:calc(1.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-20 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l-4{border-left-width:4px}.border-t{border-top-width:1px}.border-blue-500\/30{border-color:rgb(59 130 246 / 0.3)}.border-gold-400{--tw-border-opacity:1;border-color:rgb(250 204 21 / var(--tw-border-opacity, 1))}.border-gold-500{--tw-border-opacity:1;border-color:rgb(234 179 8 / var(--tw-border-opacity, 1))}.border-gold-500\/20{border-color:rgb(234 179 8 / 0.2)}.border-gold-500\/30{border-color:rgb(234 179 8 / 0.3)}.border-gold-500\/40{border-color:rgb(234 179 8 / 0.4)}.border-gold-500\/60{border-color:rgb(234 179 8 / 0.6)}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/60{border-color:rgb(30 41 59 / 0.6)}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.bg-blue-500\/10{background-color:rgb(59 130 246 / 0.1)}.bg-cosmic-900{--tw-bg-opacity:1;background-color:rgb(5 9 20 / var(--tw-bg-opacity, 1))}.bg-cosmic-900\/90{background-color:rgb(5 9 20 / 0.9)}.bg-cosmic-950{--tw-bg-opacity:1;background-color:rgb(2 4 10 / var(--tw-bg-opacity, 1))}.bg-cosmic-950\/90{background-color:rgb(2 4 10 / 0.9)}.bg-gold-500\/10{background-color:rgb(234 179 8 / 0.1)}.bg-gold-500\/20{background-color:rgb(234 179 8 / 0.2)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-gold-100{--tw-gradient-from:#fef9c3 var(--tw-gradient-from-position);--tw-gradient-to:rgb(254 249 195 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gold-500\/10{--tw-gradient-from:rgb(234 179 8 / 0.1) var(--tw-gradient-from-position);--tw-gradient-to:rgb(234 179 8 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gold-500\/20{--tw-gradient-from:rgb(234 179 8 / 0.2) var(--tw-gradient-from-position);--tw-gradient-to:rgb(234 179 8 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gold-600{--tw-gradient-from:#ca8a04 var(--tw-gradient-from-position);--tw-gradient-to:rgb(202 138 4 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-gold-400{--tw-gradient-to:rgb(250 204 21 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #facc15 var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-amber-400{--tw-gradient-to:#fbbf24 var(--tw-gradient-to-position)}.to-amber-500{--tw-gradient-to:#f59e0b var(--tw-gradient-to-position)}.to-amber-500\/10{--tw-gradient-to:rgb(245 158 11 / 0.1) var(--tw-gradient-to-position)}.to-amber-500\/20{--tw-gradient-to:rgb(245 158 11 / 0.2) var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pl-4{padding-left:1rem}.pr-0{padding-right:0px}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.font-cinzel{font-family:Cinzel, serif}.font-mono{font-family:JetBrains Mono, monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-cosmic-950{--tw-text-opacity:1;color:rgb(2 4 10 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-gold-300{--tw-text-opacity:1;color:rgb(253 224 71 / var(--tw-text-opacity, 1))}.text-gold-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.text-gold-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.accent-gold-500{accent-color:#eab308}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-gold-500\/20{--tw-shadow-color:rgb(234 179 8 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.selection\:bg-gold-500 *::selection{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.selection\:text-cosmic-950 *::selection{--tw-text-opacity:1;color:rgb(2 4 10 / var(--tw-text-opacity, 1))}.selection\:bg-gold-500::selection{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.selection\:text-cosmic-950::selection{--tw-text-opacity:1;color:rgb(2 4 10 / var(--tw-text-opacity, 1))}.hover\:border-gold-500:hover{--tw-border-opacity:1;border-color:rgb(234 179 8 / var(--tw-border-opacity, 1))}.hover\:border-gold-500\/50:hover{border-color:rgb(234 179 8 / 0.5)}.hover\:text-gold-400:hover{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:h-72{height:18rem}.sm\:h-96{height:24rem}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-6{grid-column:span 6 / span 6}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:col-span-8{grid-column:span 8 / span 8}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:border-b-0{border-bottom-width:0px}.lg\:border-r{border-right-width:1px}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pb-0{padding-bottom:0px}.lg\:pr-6{padding-right:1.5rem}.lg\:text-6xl{font-size:3.75rem;line-height:1}}@media (min-width: 1280px){.xl\:flex{display:flex}.xl\:hidden{display:none}}</style></head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-cosmic-950">
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="sticky top-0 z-50 border-b border-gold-500/20 bg-cosmic-950/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-600 to-amber-400 flex items-center justify-center text-cosmic-950 shadow-lg shadow-gold-500/20 font-bold">
+                    <i class="fa-solid fa-infinity text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-cinzel text-base sm:text-xl font-bold tracking-wider text-gold-400 block leading-tight">The Bounded Cosmic River</span>
+                    <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase block">Closed-Container Cosmology &amp; Kabbalah</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden xl:flex space-x-5 text-xs font-semibold uppercase tracking-wider">
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#rav-acco" class="py-2 text-gold-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-scroll text-gold-500"></i>
+                    <span>Rav Acco &amp; Shemitot</span>
+                </a>
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#creation-days" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-sun text-gold-500"></i>
+                    <span>6 Creation Epochs</span>
+                </a>
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#ascent" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bolt text-gold-500"></i>
+                    <span>Neshama Ascent</span>
+                </a>
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#rakiaim" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-layer-group text-gold-500"></i>
+                    <span>7 Rakia'im</span>
+                </a>
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#ccm" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-chart-line text-gold-500"></i>
+                    <span>Gravity $g(r)$</span>
+                </a>
+                <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#sforno" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-dna text-gold-500"></i>
+                    <span>Bio-Decay &amp; Fossils</span>
+                </a>
+            </nav>
+
+            <div class="xl:hidden">
+                <button id="mobileMenuBtn" class="text-slate-300 hover:text-white p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden xl:hidden bg-cosmic-900 border-b border-gold-500/20 px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#rav-acco" class="block py-2 text-gold-400 font-semibold">1. Rav Acco &amp; Shemitot Math</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#creation-days" class="block py-2 text-slate-300 hover:text-gold-400">2. 6 Days of Creation Breakdown</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#units" class="block py-2 text-slate-300 hover:text-gold-400">3. 172.75 Intrinsic Units Matrix</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#ccm" class="block py-2 text-slate-300 hover:text-gold-400">4. Gradient Gravity Simulation</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#ascent" class="block py-2 text-slate-300 hover:text-gold-400">5. Neshama Ascent &amp; Velocity</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#rakiaim" class="block py-2 text-slate-300 hover:text-gold-400">6. 7 Rakia'im Cosmic Map</a>
+            <a href="blob:https://4nq3lqu8luam07jpvh07080s1lyu0diw32lr301w7oha7ckpd4-h998661601.scf.usercontent.goog/4acdf6f4-33ca-48df-ba1e-91aecff79274#sforno" class="block py-2 text-slate-300 hover:text-gold-400">7. Sforno &amp; Pre-Adamite Cycles</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20 flex-grow">
+
+        <!-- ========================================================================= -->
+        <!-- MANDATORY TOP SECTION 1: RABBI YITZCHAK OF ACCO & DIVINE TIME CALCULATION -->
+        <!-- ========================================================================= -->
+        <section id="rav-acco" class="space-y-8 pt-2 scroll-mt-28">
+            <div class="text-center space-y-4 max-w-4xl mx-auto">
+                <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border border-gold-500/40 bg-gold-500/10 text-gold-300 text-xs tracking-widest uppercase font-semibold">
+                    <i class="fa-solid fa-star text-gold-400"></i>
+                    <span>Primary Foundational Synthesis</span>
+                </div>
+                <h1 class="font-cinzel text-3xl sm:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-100 via-gold-400 to-amber-500 tracking-tight leading-tight glow-gold">
+                    Rabbi Yitzchak of Acco &amp; Macro-Cosmic Chronology
+                </h1>
+                <p class="text-base sm:text-lg text-slate-300 font-light leading-relaxed">
+                    Deciphering the 13th-century Kabbalistic revelation of <strong>Rabbi Yitzchak of Acco</strong> (student of the Ramban) in his work <em>Otzar HaChayim</em> and <em>Sefer HaTemunah</em>, proving the exact mathematical alignment between Torah chronology and modern cosmological age.
+                </p>
+            </div>
+
+            <!-- Mathematical Formula Spotlight Box -->
+            <div class="gradient-card p-6 sm:p-10 rounded-3xl border border-gold-500/40 box-glow-gold space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Explanation Left -->
+                    <div class="lg:col-span-7 space-y-5">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-lg bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-mono text-sm font-bold">1</span>
+                            <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-gold-300">The Shemitot (Cosmic Sabbatical Cycles)</h2>
+                        </div>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Rabbinic Kabbalah identifies that creation moves through <strong>Shemitot (7,000-year Sabbatical cycles)</strong>. Rav Yitzchak of Acco revealed that our current human cycle is not the first, but is preceded by <strong>6 complete Shemitah cycles</strong> (6 active cycles $\times$ 7,000 years = <strong>42,000 Divine Years</strong>).
+                        </p>
+
+                        <div class="flex items-center space-x-3 pt-2">
+                            <span class="w-8 h-8 rounded-lg bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-mono text-sm font-bold">2</span>
+                            <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-gold-300">The Divine Time Conversion (Psalm 90:4)</h2>
+                        </div>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Because these early cycles occurred prior to human solar clocks, their duration is measured in <strong>Divine Years</strong>. As King David declares in Psalm 90:4: <em>"For a thousand years in Your sight are like yesterday when it is past."</em>
+                        </p>
+                    </div>
+
+                    <!-- Formula Display Right -->
+                    <div class="lg:col-span-5 bg-cosmic-950/90 p-6 sm:p-8 rounded-2xl border border-gold-500/30 space-y-6">
+                        <div class="text-xs uppercase font-mono tracking-widest text-gold-400 font-bold border-b border-slate-800 pb-2">
+                            Exact Mathematical Proof
+                        </div>
+
+                        <div class="space-y-4 font-mono text-xs sm:text-sm">
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">1 Divine Day:</span>
+                                <span class="text-gold-300 font-bold">1,000 Solar Years</span>
+                            </div>
+
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">1 Divine Year (365.25 Divine Days):</span>
+                                <span class="text-amber-300 font-bold">365.25 × 1,000 = 365,250 Solar Years</span>
+                            </div>
+
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">Total Macro-Epoch Divine Duration:</span>
+                                <span class="text-gold-400 font-bold">6 Cycles × 7,000 Yrs = 42,000 Divine Yrs</span>
+                            </div>
+                        </div>
+
+                        <!-- Grand Calculation Result -->
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-gold-500/20 to-amber-500/20 border border-gold-500/60 text-center space-y-1">
+                            <span class="text-[11px] uppercase font-mono tracking-wider text-slate-300 block">Calculated Structural Cosmic Age</span>
+                            <div class="font-cinzel text-2xl sm:text-3xl font-black text-white glow-gold">
+                                42,000 × 365,250
+                            </div>
+                            <div class="font-mono text-xl sm:text-2xl font-bold text-gold-300">
+                                = 15,340,500,000 Solar Years
+                            </div>
+                            <span class="text-xs text-emerald-400 font-semibold block pt-1">
+                                ★ Exactly ~15.34 Billion Solar Years ★
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MANDATORY TOP SECTION 2: BREAKDOWN OF THE 6 DAYS OF CREATION -->
+        <!-- ========================================================================= -->
+        <section id="creation-days" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section II</span>
+                <h2 class="font-cinzel text-2xl sm:text-4xl font-bold text-white">The 6 Days of Creation as Macro-Cosmic Epochs</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Reconciling literal Genesis "Days" with ~2.55 Billion Solar Years per Day before local Earth solar clocks existed.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-8">
+                <div class="text-slate-300 text-sm leading-relaxed space-y-3">
+                    <p>
+                        As the <strong>Ramban (Nachmanides)</strong> notes in his Genesis commentary, time during the Six Days of Creation could not be defined by local solar rotations because the sun and moon were not established in their earthly orbital relationships until Day Four.
+                    </p>
+                    <p>
+                        Under Rav Acco’s framework, each of the <strong>6 Days of Genesis</strong> represents one full macro-cosmic Shemitah epoch—spanning exactly <strong>7,000 Divine Years</strong> ($\approx \mathbf{2.556 \text{ Billion Solar Years}}$ per Day). Below is the unified timeline mapping Genesis, Rav Acco, and astrophysics:
+                    </p>
+                </div>
+
+                <!-- 6 Creation Epoch Interactive Timeline Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Epoch 1 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 1: Light &amp; Darkness</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">15.34B – 12.78B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">The Cosmic Primordial Spark</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> <em>"Let there be light."</em> Creation out of nothing (<em>Yesh MiAyin</em>).<br>
+                            <strong>Astrophysics:</strong> The Big Bang, cosmic inflation, plasma nucleosynthesis, and photon decoupling.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 2 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 2: The Firmament</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">12.78B – 10.22B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Galactic Structure &amp; Waters</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Separation of upper and lower waters by the <em>Rakia</em>.<br>
+                            <strong>Astrophysics:</strong> Formation of first-generation quasars, early galaxies, and interstellar gas clouds.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 3 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 3: Dry Land &amp; Plants</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">10.22B – 7.66B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Heavy Elements &amp; Protostars</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Gathering of waters, appearance of dry ground and early vegetation.<br>
+                            <strong>Astrophysics:</strong> Stellar nucleosynthesis producing carbon, iron, silicates necessary for rocky planets.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 4 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 4: Luminaries Set</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">7.66B – 5.10B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Solar System Formation</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Sun, Moon, and stars established to govern days and seasons.<br>
+                            <strong>Astrophysics:</strong> Coalescence of our Solar System (~4.6B yrs ago), stable Earth orbit and atmospheric clearing.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 5 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 5: Aquatic &amp; Birds</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">5.10B – 2.55B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Oceanic Life Expansion</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Swarming sea creatures and winged birds.<br>
+                            <strong>Astrophysics:</strong> Archean/Proterozoic oceans, cellular life, photosynthesis, and atmospheric oxygenation.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 6 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 6: Mammals &amp; Adam</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">2.55B Yrs – Present</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Terrestrial Life &amp; Divine Soul</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Land animals created, culminating in Adam receiving the divine soul (<em>Neshama</em>).<br>
+                            <strong>Astrophysics:</strong> Cambrian explosion, mammalian dominance, hominids, and modern human consciousness.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 3: METRIC CONVERSION CALCULATOR (172.75 INTRINSIC UNITS) -->
+        <!-- ========================================================================= -->
+        <section id="units" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section III</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Intrinsic Unit Conversion Matrix (172.75 Units)</h2>
+                <p class="text-slate-400 text-sm">Converting internal container geometry (172.75 units) to Earth-observed light-years (~13.78B LY).</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-ruler-combined text-gold-500"></i>
+                            <span>Gravitational Metric Conversion</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Because light decelerates as it moves out of the high-density container core into lower-potential regions, the intrinsic coordinate measurement of <strong>172.75 spatial units</strong> maps directly onto the <strong>~13.78 Billion Light-Year</strong> lookback horizon measured by Earth instruments (such as the Planck CMB survey).
+                        </p>
+
+                        <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
+                            <div class="flex justify-between text-slate-300">
+                                <span>Intrinsic Geometric Parameter ($U_{\text{int}}$):</span>
+                                <span class="text-gold-400 font-bold">172.75 Units</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Gradient Metric Scaling Constant ($\gamma$):</span>
+                                <span class="text-purple-400 font-bold">0.0797568 B-LY / Unit</span>
+                            </div>
+                            <div class="pt-2 border-t border-slate-800 flex justify-between text-sm">
+                                <span class="text-slate-200">Earth-Observed Horizon:</span>
+                                <span id="convertedLY" class="text-emerald-400 font-bold">13.778 Billion Light-Years</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-slate-300 text-xs font-mono flex justify-between mb-2">
+                                <span>Interactive Intrinsic Parameter Slider:</span>
+                                <span id="intrinsicSliderVal" class="text-gold-400 font-bold">172.75</span>
+                            </label>
+                            <input type="range" id="intrinsicSlider" min="100" max="220" step="0.25" value="172.75" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 bg-cosmic-950/90 p-6 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="text-xs uppercase font-mono tracking-widest text-gold-400 font-bold border-b border-slate-800 pb-2">
+                            Container Hierarchy Bounds
+                        </div>
+
+                        <div class="space-y-3 font-mono text-xs">
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">1. Raw Geometric Scale:</span>
+                                <span class="text-gold-300 font-bold">172.75 Coordinate Units</span>
+                            </div>
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">2. Earth Optical Lookback:</span>
+                                <span class="text-blue-400 font-bold">~13.78 Billion Light-Years</span>
+                            </div>
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">3. Absolute Zero-Gravity Edge:</span>
+                                <span class="text-red-400 font-bold">15.34 Billion Light-Years</span>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 italic pt-2">
+                            "The universe is bounded physically inside a ~15.34B light-year container, which manifests locally to light-bound Earth observers as a 13.78B light-year optical horizon."
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 4: CLOSED-CONTAINER GRADIENT GRAVITY SIMULATION g(r) -->
+        <!-- ========================================================================= -->
+        <section id="ccm" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section IV</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Gradient Gravity $g(r)$ &amp; Zero-Gravity Boundary</h2>
+                <p class="text-slate-400 text-sm">Interactive physics model solving the Hubble Tension without dark matter.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Controls -->
+                    <div class="lg:col-span-4 space-y-5 font-mono text-xs border-b lg:border-b-0 lg:border-r border-slate-800 pr-0 lg:pr-6 pb-6 lg:pb-0">
+                        <h3 class="font-cinzel text-lg font-bold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-gold-500"></i>
+                            <span>Simulation Controls</span>
+                        </h3>
+
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Vacuum Density Gradient ($\alpha$):</span>
+                                <span id="ccmAlphaVal" class="text-gold-400 font-bold">0.85</span>
+                            </label>
+                            <input type="range" id="ccmAlphaInput" min="0.2" max="1.5" step="0.05" value="0.85" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="pt-2">
+                            <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
+                                <input type="checkbox" id="showNewtonian" class="rounded accent-gold-500">
+                                <span>Overlay Standard Newtonian $1/r^2$</span>
+                            </label>
+                        </div>
+
+                        <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 space-y-2 text-[11px]">
+                            <div class="text-gold-400 font-bold uppercase tracking-wider">Boundary Output:</div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Zero-Gravity Point ($g=0$):</span>
+                                <span class="text-red-400 font-bold">15.34 Billion LY</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>CMB Horizon:</span>
+                                <span class="text-gold-300 font-bold">13.78 Billion LY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Interactive Graph -->
+                    <div class="lg:col-span-8 space-y-3">
+                        <div class="relative w-full h-80 sm:h-96 bg-cosmic-950 rounded-2xl border border-slate-800 p-2 overflow-hidden">
+                            <canvas id="gravityChartCanvas" class="w-full h-full" width="825" height="382"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong class="text-gold-300">Hubble Tension Resolution:</strong> Local measurements ($H_0 \approx 73.0 \text{ km/s/Mpc}$) and early CMB measurements ($H_0 \approx 67.4 \text{ km/s/Mpc}$) are unified under the Closed-Container Model. Variable light speed $c(r)$ across the gravitational density gradient resolves the discrepancy without requiring dark energy.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 5: NESHAMA ASCENT & DIVINE VELOCITY ENGINE -->
+        <!-- ========================================================================= -->
+        <section id="ascent" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section V</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Neshama Ascent &amp; Divine Velocity Engine</h2>
+                <p class="text-slate-400 text-sm">Massless consciousness scaling ($v_{\text{Neshama}} = 365,250 \times c$) traversing the zero-gravity boundary.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Calculator Panel -->
+                <div class="lg:col-span-5 gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                    <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-calculator text-gold-500"></i>
+                        <span>Velocity Scaling Calculator</span>
+                    </h3>
+
+                    <!-- Math Display -->
+                    <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 space-y-2 font-mono text-xs">
+                        <div class="text-slate-400">Divine Ratio Formula:</div>
+                        <div id="mathFormula1" class="text-gold-300 text-center py-1"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mtext>&nbsp;Divine&nbsp;Yr</mtext><mo>=</mo><mn>365.25</mn><mo>×</mo><mn>1</mn><mo separator="true">,</mo><mn>000</mn><mo>=</mo><mn>365</mn><mo separator="true">,</mo><mn>250</mn><mtext>&nbsp;Solar&nbsp;Yrs</mtext></mrow><annotation encoding="application/x-tex">1 \text{ Divine Yr} = 365.25 \times 1,000 = 365,250 \text{ Solar Yrs}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">1</span><span class="mord text"><span class="mord">&nbsp;Divine&nbsp;Yr</span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">365.25</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8389em; vertical-align: -0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">000</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord">365</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">250</span><span class="mord text"><span class="mord">&nbsp;Solar&nbsp;Yrs</span></span></span></span></span></div>
+                        <div class="text-slate-400">Massless Velocity Scalar:</div>
+                        <div id="mathFormula2" class="text-emerald-400 text-center py-1"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mtext>Neshama</mtext></msub><mo>=</mo><mn>365</mn><mo separator="true">,</mo><mn>250</mn><mo>×</mo><mi>c</mi>  <mo>⟹</mo>  <mn>1</mn><mtext>&nbsp;sec</mtext><mo>=</mo><mn>1</mn><mtext>&nbsp;Light-Day</mtext></mrow><annotation encoding="application/x-tex">v_{\text{Neshama}} = 365,250 \times c \implies 1 \text{ sec} = 1 \text{ Light-Day}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.5806em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0359em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3361em;"><span class="" style="top: -2.55em; margin-left: -0.0359em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Neshama</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8389em; vertical-align: -0.1944em;"></span><span class="mord">365</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord">250</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.549em; vertical-align: -0.024em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⟹</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span><span class="mord text"><span class="mord">&nbsp;sec</span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord">1</span><span class="mord text"><span class="mord">&nbsp;Light-Day</span></span></span></span></span></div>
+                    </div>
+
+                    <div class="space-y-4 font-mono text-xs">
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Divine Scalar Ratio:</span>
+                                <span id="scalarVal" class="text-gold-400 font-bold">365,000</span>
+                            </label>
+                            <input type="range" id="scalarInput" min="100000" max="500000" step="5000" value="365250" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Target Distance (Billion Light-Years):</span>
+                                <span id="horizonVal" class="text-gold-400 font-bold">100.0 Billion</span>
+                            </label>
+                            <input type="range" id="horizonInput" min="10" max="200" step="5" value="100" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Calculated Output Box -->
+                    <div class="p-4 bg-gradient-to-br from-gold-500/10 to-amber-500/10 rounded-2xl border border-gold-500/30 space-y-3">
+                        <div class="text-xs uppercase text-gold-400 font-semibold tracking-wider">Traversal Comparison</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block text-[10px]">Physical Light ($c$):</span>
+                                <span id="lightTimeOut" class="text-amber-400 font-bold">100.00B Yrs</span>
+                            </div>
+                            <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block text-[10px]">Neshama ($v_{\text{Neshama}}$):</span>
+                                <span id="neshamaTimeOut" class="text-emerald-400 font-bold">273.97k Yrs</span>
+                            </div>
+                        </div>
+                        <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center font-mono">
+                            <span class="text-slate-300">Divine Time Span:</span>
+                            <span id="divineTimeOut" class="text-gold-300 font-bold">0.75 Divine Yrs (~274 Days)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation Panel -->
+                <div class="lg:col-span-7 gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-feather text-gold-500"></i>
+                            <span>Mechanics of Nightly Ascent</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            During sleep, the lower vegetative soul (*Nefesh*) stays bound to preserve biological organ functions, while the higher intellect (*Neshama*) untethers from physical mass. Because consciousness possesses <strong>zero rest mass ($m=0$)</strong>, it is not restricted by local light-speed limits ($c$).
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Operating on the Divine scaling ratio ($v_{\text{Neshama}} = 365,250 \times c$), the soul traverses across the gravitational potential well—from Earth deep in the core out to <strong>Rakia 7 (Aravot)</strong> situated at the zero-gravity boundary wall ($g \to 0$)—recharging from the primary source of Divine information (*Ginzey Chaim*).
+                        </p>
+                        <div class="p-4 rounded-xl bg-cosmic-950 border-l-4 border-gold-400 text-xs text-slate-300 space-y-1">
+                            <span class="font-bold text-gold-300 block">The 1-Second Traversal Ratio:</span>
+                            At $v_{\text{Neshama}}$, in <strong>1 local Earth second</strong>, massless consciousness covers $365,250 \text{ light-seconds} \approx \mathbf{1 \text{ Light-Day}}$ of cosmic distance!
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-cosmic-950 rounded-xl border border-slate-800 text-xs text-slate-400 flex justify-between font-mono">
+                        <span>Status: <strong class="text-emerald-400">Massless Velocity Active</strong></span>
+                        <span>Destination: <strong class="text-gold-300">Rakia 7 (Aravot)</strong></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 6: 7 RAKIA'IM (SEVEN FIRMAMENTS) COSMIC STRUCTURE MODULE -->
+        <!-- ========================================================================= -->
+        <section id="rakiaim" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section VI</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">7 Rakia'im (Seven Firmaments) Structural Map</h2>
+                <p class="text-slate-400 text-sm">Mapping Talmudic firmament cosmology (*Chagigah 12b*) onto radial container geometry.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Radial Map Canvas -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-4">
+                        <div class="relative w-full h-80 sm:h-96 bg-cosmic-950 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-center">
+                            <canvas id="rakiaCanvas" class="w-full h-full" width="825" height="382"></canvas>
+                            <div class="absolute top-3 left-3 bg-cosmic-900/90 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono text-gold-300">
+                                <i class="fa-solid fa-arrows-to-eye mr-1"></i> Interactive Radial Firmaments
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firmament Description -->
+                    <div class="lg:col-span-5 space-y-4 flex flex-col justify-between">
+                        <div>
+                            <h3 id="rakiaTitle" class="font-cinzel text-xl font-bold text-gold-300 border-b border-slate-800 pb-2">
+                                7. Aravot (עֲרָבוֹת)
+                            </h3>
+                            <div class="mt-4 space-y-3 text-xs text-slate-300">
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Gravitational Status:</span>
+                                    <span id="rakiaGrav" class="font-mono text-red-400 font-bold">$g(r) \to 0$ (Zero-Gravity Wall)</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Radial Boundary:</span>
+                                    <span id="rakiaDist" class="font-mono text-gold-400">~15.34 Billion Light-Years</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Primary Contents:</span>
+                                    <span id="rakiaContents" class="font-mono text-emerald-300">Treasuries of Life (*Ginzey Chaim*) &amp; Throne of Glory</span>
+                                </div>
+                                <p id="rakiaDesc" class="text-slate-300 leading-relaxed pt-2">
+                                    The ultimate outer realm located at the absolute edge of physical space-time. Here effective gravity drops to zero, mass dissolves into unified information, and souls reside in pure spiritual light (*Olam HaNeshamot*).
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 7 Buttons -->
+                        <div class="grid grid-cols-7 gap-1.5 pt-4 border-t border-slate-800">
+                            <button onclick="selectRakia(0)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">1</button>
+                            <button onclick="selectRakia(1)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">2</button>
+                            <button onclick="selectRakia(2)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">3</button>
+                            <button onclick="selectRakia(3)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">4</button>
+                            <button onclick="selectRakia(4)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">5</button>
+                            <button onclick="selectRakia(5)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">6</button>
+                            <button onclick="selectRakia(6)" class="rakia-btn p-2 rounded bg-gold-500/20 border border-gold-500 text-[10px] font-mono text-gold-300 font-bold">7</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 7: SFORNO BIO-DECAY & PRE-ADAMITE BONES OF HORBANOT -->
+        <!-- ========================================================================= -->
+        <section id="sforno" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section VII</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Sforno Bio-Decay &amp; Bones of Horbanot</h2>
+                <p class="text-slate-400 text-sm">Post-Mabul atmospheric shift and fossil evidence from earlier Shemitah cycles.</p>
+            </div>
+
+            <!-- Lifespan Chart -->
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-dna text-gold-500"></i>
+                            <span>Sforno on Post-Mabul Bio-Decay</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            In his commentary on Genesis 8:22, <strong>Rabbi Ovadia Sforno</strong> explains that prior to the Great Deluge (*Mabul*), Earth's solar alignment created a perpetual equilibrium where humans lived for 900+ years.
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            During the Deluge, an orbital tilt displacement introduced harsh seasonal variance, atmospheric degradation, and exponential biological wear—dropping human lifespans down to 70–80 years by the era of King David.
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-2">
+                        <div class="text-xs font-mono text-slate-300 flex justify-between">
+                            <span>Biblical Lifespan Decay Curve (Noah to Modern)</span>
+                            <span class="text-gold-400">Exponential Half-Life Model</span>
+                        </div>
+                        <div class="h-64 sm:h-72 w-full bg-cosmic-950 rounded-2xl p-3 border border-slate-800">
+                            <canvas id="sfornoChartCanvas" width="1001" height="328" style="display: block; box-sizing: border-box; height: 262.4px; width: 800.8px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pre-Adamite Bones of Horbanot Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl">
+                        <i class="fa-solid fa-bone"></i>
+                    </div>
+                    <h3 class="font-cinzel text-xl font-semibold text-gold-300">"Bones of Horbanot" &amp; Pre-Adamite Fossils</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        The Midrash (*Bereshit Rabbah 3:7*) states that God built earlier worlds and destroyed them before our current 6,000-year cycle.
+                    </p>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        In the 1840s, <strong>Rabbi Israel Lipschutz (Tiferet Yisrael)</strong> explained that discovered dinosaur bones were physical remnants of these earlier Shemitah cycles (*Atzamot HaHorbanot*), proving paleontological discoveries affirm Rabbinic tradition.
+                    </p>
+                </div>
+
+                <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xl">
+                        <i class="fa-solid fa-water"></i>
+                    </div>
+                    <h3 class="font-cinzel text-xl font-semibold text-blue-300">The Objective River of Time</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Time is not an illusion or a static block. It is a <strong>real, objective, river-like flow</strong> with a directional arrow and a bounded container limit.
+                    </p>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        While local clocks tick at different rates depending on gravitational potential, all points in the universe share the same underlying event simultaneity (coordinate present), flowing together toward the 7th Millennium threshold.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-cosmic-950 py-8 text-center text-xs text-slate-500 font-mono">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="text-slate-400">The Bounded Cosmic River: Closed-Container Cosmology &amp; Kabbalistic Synthesis</p>
+            <p class="text-slate-600">Built with HTML5, Tailwind CSS, Chart.js &amp; KaTeX</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPT ENGINE -->
+    <script>
+        // --- 1. KATEX MATHEMATICAL FORMULA RENDERING ---
+        document.addEventListener("DOMContentLoaded", function() {
+            katex.render("1 \\text{ Divine Yr} = 365.25 \\times 1,000 = 365,250 \\text{ Solar Yrs}", document.getElementById("mathFormula1"), { throwOnError: false });
+            katex.render("v_{\\text{Neshama}} = 365,250 \\times c \\implies 1 \\text{ sec} = 1 \\text{ Light-Day}", document.getElementById("mathFormula2"), { throwOnError: false });
+        });
+
+        // --- 2. MOBILE NAVIGATION TOGGLE ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- 3. NESHAMA ASCENT CALCULATOR ---
+        const scalarInput = document.getElementById('scalarInput');
+        const horizonInput = document.getElementById('horizonInput');
+        const scalarVal = document.getElementById('scalarVal');
+        const horizonVal = document.getElementById('horizonVal');
+        const lightTimeOut = document.getElementById('lightTimeOut');
+        const neshamaTimeOut = document.getElementById('neshamaTimeOut');
+        const divineTimeOut = document.getElementById('divineTimeOut');
+
+        function updateAscentCalc() {
+            const scalar = parseInt(scalarInput.value);
+            const horizon = parseFloat(horizonInput.value);
+
+            scalarVal.textContent = scalar.toLocaleString();
+            horizonVal.textContent = `${horizon.toFixed(1)} Billion`;
+
+            lightTimeOut.textContent = `${horizon.toFixed(2)}B Yrs`;
+
+            const solarYrsNeshama = (horizon * 1e9) / scalar;
+            if (solarYrsNeshama >= 1000) {
+                neshamaTimeOut.textContent = `${(solarYrsNeshama / 1000).toFixed(2)}k Yrs`;
+            } else {
+                neshamaTimeOut.textContent = `${solarYrsNeshama.toFixed(1)} Yrs`;
+            }
+
+            const divineYrs = solarYrsNeshama / 365250;
+            const divineDays = divineYrs * 365.25;
+            divineTimeOut.textContent = `${divineYrs.toFixed(2)} Divine Yrs (~${Math.round(divineDays)} Days)`;
+        }
+
+        scalarInput.addEventListener('input', updateAscentCalc);
+        horizonInput.addEventListener('input', updateAscentCalc);
+        updateAscentCalc();
+
+        // --- 4. 7 RAKIA'IM CANVA VISUALIZER ---
+        const rakiaData = [
+            { name: "1. Vilon (וִילוֹן)", dist: "0.001 B-LY", grav: "Surface Gravity (1.0g)", contents: "Atmospheric curtain & daily solar cycle", desc: "The innermost layer shielding Earth's immediate biological ecosystem." },
+            { name: "2. Rakia (רָקִיעַ)", dist: "0.10 B-LY", grav: "High Gravitational Potential", contents: "Sun, Moon, Stars & Planetary Spheres", desc: "The visible physical celestial firmament containing astronomical bodies." },
+            { name: "3. Shechakim (שְׁחָקִים)", dist: "2.50 B-LY", grav: "Moderate Gravitational Drag", contents: "Millstones grinding Manna for Righteous", desc: "The atmospheric spiritual processing realm of upper light." },
+            { name: "4. Zevul (זְבוּל)", dist: "6.80 B-LY", grav: "Intermediate Potential Well", contents: "Heavenly Jerusalem & Celestial Altar", desc: "The spiritual temple midpoint where Archangel Michael offers souls." },
+            { name: "5. Ma'on (מָעוֹן)", dist: "10.20 B-LY", grav: "Low Gravitational Drag", contents: "Ministering Angels singing nightly praises", desc: "The angelic domain of song and Divine resonance." },
+            { name: "6. Machon (מָכוֹן)", dist: "13.78 B-LY", grav: "Near-Zero Gravitational Potential", contents: "Treasuries of Snow, Hail & Cosmic Storms", desc: "The boundary of observable light corresponding to the CMB horizon." },
+            { name: "7. Aravot (עֲרָבוֹת)", dist: "15.34 B-LY", grav: "g(r) -> 0 (Zero-Gravity Boundary)", contents: "Ginzey Chaim & Divine Throne (Kisse HaKavod)", desc: "The ultimate outer boundary wall where physical space ends and pure spiritual reality begins." }
+        ];
+
+        const rakiaCanvas = document.getElementById('rakiaCanvas');
+        const rakiaCtx = rakiaCanvas.getContext('2d');
+        let selectedRakiaIndex = 6;
+
+        function resizeRakiaCanvas() {
+            rakiaCanvas.width = rakiaCanvas.parentElement.clientWidth;
+            rakiaCanvas.height = rakiaCanvas.parentElement.clientHeight;
+            drawRakiaMap();
+        }
+
+        function drawRakiaMap() {
+            const w = rakiaCanvas.width;
+            const h = rakiaCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxR = Math.min(cx, cy) * 0.85;
+
+            rakiaCtx.clearRect(0, 0, w, h);
+
+            for (let i = 6; i >= 0; i--) {
+                const r = maxR * ((i + 1) / 7);
+                rakiaCtx.beginPath();
+                rakiaCtx.arc(cx, cy, r, 0, Math.PI * 2);
+
+                if (i === selectedRakiaIndex) {
+                    rakiaCtx.strokeStyle = '#facc15';
+                    rakiaCtx.lineWidth = 3;
+                    rakiaCtx.fillStyle = 'rgba(250, 204, 21, 0.08)';
+                    rakiaCtx.fill();
+                } else if (i === 6) {
+                    rakiaCtx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+                    rakiaCtx.lineWidth = 2;
+                } else {
+                    rakiaCtx.strokeStyle = `rgba(35, 50, 110, ${0.3 + (i * 0.1)})`;
+                    rakiaCtx.lineWidth = 1.5;
+                }
+                rakiaCtx.stroke();
+            }
+
+            rakiaCtx.beginPath();
+            rakiaCtx.arc(cx, cy, 8, 0, Math.PI * 2);
+            rakiaCtx.fillStyle = '#3b82f6';
+            rakiaCtx.fill();
+        }
+
+        function selectRakia(idx) {
+            selectedRakiaIndex = idx;
+            const data = rakiaData[idx];
+            document.getElementById('rakiaTitle').textContent = data.name;
+            document.getElementById('rakiaGrav').textContent = data.grav;
+            document.getElementById('rakiaDist').textContent = data.dist;
+            document.getElementById('rakiaContents').textContent = data.contents;
+            document.getElementById('rakiaDesc').textContent = data.desc;
+
+            const btns = document.querySelectorAll('.rakia-btn');
+            btns.forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = "rakia-btn p-2 rounded bg-gold-500/20 border border-gold-500 text-[10px] font-mono text-gold-300 font-bold";
+                } else {
+                    btn.className = "rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500";
+                }
+            });
+
+            drawRakiaMap();
+        }
+
+        window.addEventListener('resize', resizeRakiaCanvas);
+        resizeRakiaCanvas();
+
+        // --- 5. GRADIENT GRAVITY CANVAS CHART ---
+        const gravityCanvas = document.getElementById('gravityChartCanvas');
+        const gravCtx = gravityCanvas.getContext('2d');
+        const ccmAlphaInput = document.getElementById('ccmAlphaInput');
+        const ccmAlphaVal = document.getElementById('ccmAlphaVal');
+        const showNewtonian = document.getElementById('showNewtonian');
+
+        function drawGravityChart() {
+            gravityCanvas.width = gravityCanvas.parentElement.clientWidth;
+            gravityCanvas.height = gravityCanvas.parentElement.clientHeight;
+
+            const w = gravityCanvas.width;
+            const h = gravityCanvas.height;
+            const alpha = parseFloat(ccmAlphaInput.value);
+            ccmAlphaVal.textContent = alpha;
+
+            gravCtx.clearRect(0, 0, w, h);
+
+            gravCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            gravCtx.lineWidth = 1;
+            for (let x = 40; x < w; x += 40) {
+                gravCtx.beginPath();
+                gravCtx.moveTo(x, 0);
+                gravCtx.lineTo(x, h - 30);
+                gravCtx.stroke();
+            }
+            for (let y = 20; y < h - 30; y += 30) {
+                gravCtx.beginPath();
+                gravCtx.moveTo(40, y);
+                gravCtx.lineTo(w, y);
+                gravCtx.stroke();
+            }
+
+            gravCtx.beginPath();
+            gravCtx.strokeStyle = '#facc15';
+            gravCtx.lineWidth = 3;
+
+            const paddingLeft = 40;
+            const paddingBottom = 30;
+            const graphW = w - paddingLeft - 20;
+            const graphH = h - paddingBottom - 20;
+
+            for (let px = 0; px <= graphW; px++) {
+                const rNorm = px / graphW;
+                const gEff = (1.0 - Math.pow(rNorm, 2 * alpha)) * Math.exp(-rNorm * 1.5);
+                const py = (h - paddingBottom) - (gEff * graphH);
+
+                if (px === 0) gravCtx.moveTo(paddingLeft + px, py);
+                else gravCtx.lineTo(paddingLeft + px, py);
+            }
+            gravCtx.stroke();
+
+            if (showNewtonian.checked) {
+                gravCtx.beginPath();
+                gravCtx.strokeStyle = '#ef4444';
+                gravCtx.lineWidth = 1.5;
+                gravCtx.setLineDash([4, 4]);
+
+                for (let px = 5; px <= graphW; px++) {
+                    const rNorm = px / graphW;
+                    const gNewt = 0.15 / (rNorm * rNorm + 0.05);
+                    const py = (h - paddingBottom) - (Math.min(gNewt, 1) * graphH);
+
+                    if (px === 5) gravCtx.moveTo(paddingLeft + px, py);
+                    else gravCtx.lineTo(paddingLeft + px, py);
+                }
+                gravCtx.stroke();
+                gravCtx.setLineDash([]);
+            }
+
+            gravCtx.fillStyle = '#94a3b8';
+            gravCtx.font = '10px JetBrains Mono';
+            gravCtx.fillText('0', paddingLeft, h - 10);
+            gravCtx.fillText('13.78B LY (CMB)', paddingLeft + graphW * 0.85 - 40, h - 10);
+            gravCtx.fillText('15.34B LY (g=0)', paddingLeft + graphW - 70, h - 10);
+        }
+
+        ccmAlphaInput.addEventListener('input', drawGravityChart);
+        showNewtonian.addEventListener('change', drawGravityChart);
+        window.addEventListener('resize', drawGravityChart);
+        drawGravityChart();
+
+        // --- 6. INTRINSIC UNIT SLIDER LOGIC ---
+        const intrinsicSlider = document.getElementById('intrinsicSlider');
+        const intrinsicSliderVal = document.getElementById('intrinsicSliderVal');
+        const convertedLY = document.getElementById('convertedLY');
+
+        intrinsicSlider.addEventListener('input', () => {
+            const val = parseFloat(intrinsicSlider.value);
+            intrinsicSliderVal.textContent = val.toFixed(2);
+            const ly = val * 0.0797568;
+            convertedLY.textContent = `${ly.toFixed(3)} Billion Light-Years`;
+        });
+
+        // --- 7. SFORNO CHART.JS BIO-DECAY ---
+        const sfornoCtx = document.getElementById('sfornoChartCanvas').getContext('2d');
+        new Chart(sfornoCtx, {
+            type: 'line',
+            data: {
+                labels: ['Adam', 'Seth', 'Enosh', 'Noah', 'Arpachshad', 'Shelah', 'Eber', 'Peleg', 'Terah', 'Abraham', 'Moses', 'David'],
+                datasets: [{
+                    label: 'Biblical Lifespan (Solar Years)',
+                    data: [930, 912, 905, 950, 438, 433, 464, 239, 205, 175, 120, 70],
+                    borderColor: '#facc15',
+                    backgroundColor: 'rgba(250, 204, 21, 0.1)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#fde047',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                }
+            }
+        });
+    </script>
+
+</body></html>

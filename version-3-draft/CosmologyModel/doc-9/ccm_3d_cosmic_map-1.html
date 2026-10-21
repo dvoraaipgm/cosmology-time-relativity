@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed-Container Cosmological Model (CCM) Universe Explorer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #030712;
+            color: #f3f4f6;
+            user-select: none;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(17, 24, 39, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 3px;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-btn {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+        .glass-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(96, 165, 250, 0.6);
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden bg-gray-950 text-gray-100">
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing"></div>
+
+    <!-- Header HUD -->
+    <div class="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+        <div class="glass-panel px-4 py-2.5 rounded-xl flex items-center gap-3 pointer-events-auto border border-cyan-500/40 shadow-xl shadow-cyan-950/30">
+            <div class="w-3.5 h-3.5 rounded-full bg-cyan-400 animate-pulse"></div>
+            <div>
+                <h1 class="text-sm font-bold tracking-wider text-cyan-300 uppercase">Closed-Container Cosmological Model</h1>
+                <p class="text-xs text-gray-400">3D Explorer & $360^\circ$ Mapping Engine</p>
+            </div>
+        </div>
+
+        <!-- Target Search & Actions -->
+        <div class="glass-panel p-1.5 rounded-xl flex items-center gap-2 pointer-events-auto border border-gray-700/60 shadow-2xl">
+            <i data-lucide="search" class="w-4 h-4 text-cyan-400 ml-2"></i>
+            <select id="target-select" class="bg-gray-900/90 text-gray-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 border border-gray-700 code-font max-w-xs">
+                <option value="earth">Target: Earth / Solar System (Observer Origin)</option>
+                <option value="center">Target: Container Geometric Center (r = 0)</option>
+                <option value="apex">Target: Apex Wall Boundary (l=264.02°, b=+48.25°)</option>
+                <option value="anti_apex">Target: Anti-Apex Wall Boundary</option>
+                <optgroup label="Nearby Stars">
+                    <option value="alpha_centauri">Alpha Centauri</option>
+                    <option value="sirius">Sirius</option>
+                    <option value="vega">Vega</option>
+                    <option value="betelgeuse">Betelgeuse</option>
+                    <option value="rigel">Rigel</option>
+                    <option value="polaris">Polaris</option>
+                </optgroup>
+                <optgroup label="Local Group & Galaxies">
+                    <option value="m31">Andromeda Galaxy (M31)</option>
+                    <option value="m33">Triangulum Galaxy (M33)</option>
+                    <option value="lmc">Large Magellanic Cloud (LMC)</option>
+                    <option value="smc">Small Magellanic Cloud (SMC)</option>
+                    <option value="m87">Messier 87 (M87)</option>
+                </optgroup>
+                <optgroup label="Galaxy Clusters & Superstructures">
+                    <option value="virgo">Virgo Supercluster</option>
+                    <option value="coma">Coma Cluster</option>
+                    <option value="perseus">Perseus Cluster</option>
+                    <option value="great_attractor">Great Attractor</option>
+                </optgroup>
+                <optgroup label="Quasars & High-z Objects">
+                    <option value="ton618">TON 618 Quasar (z = 2.219)</option>
+                    <option value="3c273">3C 273 Quasar (z = 0.158)</option>
+                    <option value="earendel">Earendel Star (z = 6.20)</option>
+                    <option value="ulas">Quasar ULAS J1120+0641 (z = 7.08)</option>
+                    <option value="gnz11">GN-z11 Galaxy (z = 10.60)</option>
+                    <option value="glassz12">GLASS-z12 Galaxy (z = 12.10)</option>
+                    <option value="jades">JADES-GS-z14-0 Galaxy (z = 14.32)</option>
+                </optgroup>
+            </select>
+            <button id="btn-jump" class="glass-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-300 hover:text-white flex items-center gap-1">
+                <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i> Focus
+            </button>
+            <button id="btn-formula" class="glass-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-300 hover:text-white flex items-center gap-1 border-purple-500/30">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-purple-400"></i> Math Blueprint
+            </button>
+        </div>
+    </div>
+
+    <!-- Left Dashboard Sidebar -->
+    <div class="absolute top-20 left-4 z-10 w-80 max-h-[calc(100vh-6rem)] flex flex-col gap-3 pointer-events-auto overflow-y-auto pr-1">
+        
+        <!-- Specs Panel -->
+        <div class="glass-panel p-4 rounded-xl border border-gray-800 shadow-xl">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-800">
+                <span class="text-xs font-bold uppercase text-gray-300 tracking-wider flex items-center gap-2">
+                    <i data-lucide="shield" class="w-4 h-4 text-cyan-400"></i> Engine Metrics
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">Static Container</span>
+            </div>
+            
+            <div class="space-y-2 text-xs code-font">
+                <div class="flex justify-between items-center bg-gray-900/60 p-2 rounded border border-gray-800/50">
+                    <span class="text-gray-400">Radius ($R_{\text{core}}$):</span>
+                    <span class="text-cyan-300 font-semibold">52,965.56 Mpc</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-900/60 p-2 rounded border border-gray-800/50">
+                    <span class="text-gray-400">Physical Radius:</span>
+                    <span class="text-yellow-400 font-semibold">~172.75 Billion ly</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-900/60 p-2 rounded border border-gray-800/50">
+                    <span class="text-gray-400">Earth Offset:</span>
+                    <span class="text-green-400 font-semibold">150 Mpc (0.28%)</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-900/60 p-2 rounded border border-gray-800/50">
+                    <span class="text-gray-400">Apex Angle Vector:</span>
+                    <span class="text-gray-200">l=264.02°, b=+48.25°</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-900/60 p-2 rounded border border-gray-800/50">
+                    <span class="text-gray-400">Scale Constant ($\alpha$):</span>
+                    <span class="text-purple-300">4,200 Mpc</span>
+                </div>
+                <div class="bg-gray-900/90 p-2.5 rounded border border-cyan-900/40 text-center">
+                    <div class="text-[10px] text-gray-400 mb-1">Velocity Gradient Equation</div>
+                    <div class="text-xs font-bold text-cyan-300">v(r) = c · e<sup>r / 4200</sup></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layer Display Toggles -->
+        <div class="glass-panel p-4 rounded-xl border border-gray-800 shadow-xl space-y-2.5">
+            <span class="text-xs font-bold uppercase text-gray-300 tracking-wider flex items-center gap-2 mb-2">
+                <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i> Visual Display Toggles
+            </span>
+
+            <label class="flex items-center justify-between text-xs text-gray-300 cursor-pointer hover:text-white">
+                <span class="flex items-center gap-2"><i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-400"></i> Outer Container Shell</span>
+                <input type="checkbox" id="toggle-shell" checked class="accent-cyan-500 rounded cursor-pointer">
+            </label>
+
+            <label class="flex items-center justify-between text-xs text-gray-300 cursor-pointer hover:text-white">
+                <span class="flex items-center gap-2"><i data-lucide="move-up-right" class="w-3.5 h-3.5 text-green-400"></i> Earth Offset Apex Vector</span>
+                <input type="checkbox" id="toggle-axis" checked class="accent-cyan-500 rounded cursor-pointer">
+            </label>
+
+            <label class="flex items-center justify-between text-xs text-gray-300 cursor-pointer hover:text-white">
+                <span class="flex items-center gap-2"><i data-lucide="grid" class="w-3.5 h-3.5 text-purple-400"></i> Reference Coordinate Grid</span>
+                <input type="checkbox" id="toggle-grid" checked class="accent-cyan-500 rounded cursor-pointer">
+            </label>
+
+            <label class="flex items-center justify-between text-xs text-gray-300 cursor-pointer hover:text-white">
+                <span class="flex items-center gap-2"><i data-lucide="tag" class="w-3.5 h-3.5 text-yellow-400"></i> Target Labels</span>
+                <input type="checkbox" id="toggle-labels" checked class="accent-cyan-500 rounded cursor-pointer">
+            </label>
+
+            <label class="flex items-center justify-between text-xs text-gray-300 cursor-pointer hover:text-white">
+                <span class="flex items-center gap-2"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-pink-400"></i> Speed Gradient Glow Field</span>
+                <input type="checkbox" id="toggle-field" checked class="accent-cyan-500 rounded cursor-pointer">
+            </label>
+        </div>
+
+        <div class="glass-panel p-3 rounded-xl border border-gray-800 text-[11px] text-gray-400 space-y-1">
+            <div class="font-semibold text-gray-300 flex items-center gap-1">
+                <i data-lucide="navigation" class="w-3.5 h-3.5 text-cyan-400"></i> Navigation:
+            </div>
+            <p>• <b>Rotate:</b> Left Click + Drag</p>
+            <p>• <b>Pan:</b> Right Click + Drag</p>
+            <p>• <b>Zoom:</b> Scroll / Pinch</p>
+            <p>• <b>Inspect:</b> Click any object point</p>
+        </div>
+    </div>
+
+    <!-- Right HUD Panel: Inspector -->
+    <div id="inspector-panel" class="absolute bottom-6 right-6 z-10 w-80 glass-panel p-5 rounded-2xl border border-cyan-500/40 shadow-2xl transition-all duration-300">
+        <div class="flex items-start justify-between border-b border-gray-800 pb-3 mb-3">
+            <div>
+                <span id="obj-type" class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                    Observer Core
+                </span>
+                <h2 id="obj-name" class="text-base font-bold text-white mt-1">Earth / Solar System</h2>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
+                <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i>
+            </div>
+        </div>
+
+        <div class="space-y-2 text-xs code-font">
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Redshift ($z$):</span>
+                <span id="obj-redshift" class="text-yellow-400 font-bold">0.000</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Distance (Mpc):</span>
+                <span id="obj-dist-mpc" class="text-cyan-300 font-semibold">0.00 Mpc</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Distance (Light-Years):</span>
+                <span id="obj-dist-ly" class="text-green-400 font-semibold">0.00 Light Years</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Local Light Speed $v(r)$:</span>
+                <span id="obj-speed" class="text-purple-300 font-semibold">1.000 · c</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Earth Lookback Time:</span>
+                <span id="obj-lookback" class="text-orange-300 font-semibold">0.00 yrs</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+                <span class="text-gray-400">Coords (RA / Dec):</span>
+                <span id="obj-coords" class="text-gray-300">00h 00m / +00°</span>
+            </div>
+        </div>
+
+        <p id="obj-description" class="text-[11px] text-gray-400 mt-3 leading-relaxed border-t border-gray-800/80 pt-2 italic">
+            Earth observer base anchor located 150 Mpc offset from the container's core center.
+        </p>
+    </div>
+
+    <!-- Mathematical Blueprint Modal Drawer -->
+    <div id="formula-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center hidden p-4">
+        <div class="glass-panel w-full max-w-3xl max-h-[85vh] rounded-2xl border border-cyan-500/40 p-6 overflow-y-auto space-y-5 shadow-2xl relative">
+            <button id="btn-close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-lg bg-gray-900 border border-gray-800">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="border-b border-gray-800 pb-3">
+                <h2 class="text-lg font-bold text-cyan-300 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-400"></i> Closed-Container Cosmological Model (CCM) Blueprint
+                </h2>
+                <p class="text-xs text-gray-400 mt-1">Mathematical Architecture & Physical Principles</p>
+            </div>
+
+            <!-- Major Discovery 1 -->
+            <div class="bg-gray-900/80 p-4 rounded-xl border border-cyan-900/50 space-y-2">
+                <h3 class="text-sm font-bold text-yellow-300 flex items-center gap-2">
+                    <i data-lucide="compass" class="w-4 h-4"></i> Discovery 1: $360^\circ$ Precision Cosmos Mapping Engine
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    By replacing metric space expansion with a static geometric 3D container, every star and galaxy occupies a permanent coordinate. Earth's $150\text{ Mpc}$ offset creates a mild directional anisotropy ($172.26\text{ B light-years}$ toward Apex vs $173.24\text{ B light-years}$ Anti-Apex) that explains CMB and radio flux dipoles cleanly.
+                </p>
+            </div>
+
+            <!-- Major Discovery 2 -->
+            <div class="bg-gray-900/80 p-4 rounded-xl border border-purple-900/50 space-y-2">
+                <h3 class="text-sm font-bold text-purple-300 flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Discovery 2: Black-Hole-to-Galaxy Conversion Lifecycle
+                </h3>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Supermassive Black Holes (SMBHs) act as primary cosmic converters. Matter and energy entering black holes are converted and re-radiated as high-energy jets and matter seed clouds, fueling stellar formation and driving galactic structural evolution in a continuous steady-state cycle.
+                </p>
+            </div>
+
+            <!-- Mathematical Formulas -->
+            <div class="space-y-3 text-xs code-font">
+                <div class="p-3 bg-gray-900 rounded-lg border border-gray-800">
+                    <div class="text-cyan-400 font-bold mb-1">1. Variable Speed Gradient</div>
+                    <div class="text-gray-200">v(r) = c · e<sup>r / 4200</sup></div>
+                    <p class="text-[11px] text-gray-400 mt-1 font-sans">Speed of light increases exponentially outward toward the wall ($R_{\text{core}} = 52,965.56\text{ Mpc}$). At local Earth anchor ($r=0$), $v = c$.</p>
+                </div>
+
+                <div class="p-3 bg-gray-900 rounded-lg border border-gray-800">
+                    <div class="text-cyan-400 font-bold mb-1">2. Redshift-to-Distance Relation</div>
+                    <div class="text-gray-200">r(z) = 4200 · ln(1 + z)  [Mpc]</div>
+                    <p class="text-[11px] text-gray-400 mt-1 font-sans">Predicts a distance of ~27.04 billion light-years for $z = 6.2$, matching mainstream comoving distances without expanding space.</p>
+                </div>
+
+                <div class="p-3 bg-gray-900 rounded-lg border border-gray-800">
+                    <div class="text-cyan-400 font-bold mb-1">3. Transit Time Integral Saturation</div>
+                    <div class="text-gray-200">t = ∫ (dr / v(r)) = (α / c) · (1 - e<sup>-R / α</sup>)</div>
+                    <p class="text-[11px] text-gray-400 mt-1 font-sans">Because light accelerates outward, transit time across a 172.75 billion light-year physical container compresses to saturate at ~13.7 billion Earth observer years.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Labels Container Overlay -->
+    <div id="labels-container" class="absolute inset-0 z-5 pointer-events-none overflow-hidden"></div>
+
+    <script>
+        // --- MATHEMATICAL MODEL & CONSTANTS ---
+        const SCALE_FACTOR = 0.01; 
+        const R_CORE_MPC = 52965.56; 
+        const ALPHA_MPC = 4200.0;
+        const EARTH_OFFSET_MPC = 150.0;
+
+        const APEX_L_RAD = THREE.MathUtils.degToRad(264.02);
+        const APEX_B_RAD = THREE.MathUtils.degToRad(48.25);
+
+        const apexDir = new THREE.Vector3(
+            Math.cos(APEX_B_RAD) * Math.cos(APEX_L_RAD),
+            Math.sin(APEX_B_RAD),
+            Math.cos(APEX_B_RAD) * Math.sin(APEX_L_RAD)
+        ).normalize();
+
+        const CONTAINER_CENTER = new THREE.Vector3(0, 0, 0);
+        const EARTH_POS = apexDir.clone().multiplyScalar(EARTH_OFFSET_MPC * SCALE_FACTOR);
+
+        function ccmDistanceMpc(z) {
+            if (z <= 0) return 0;
+            return ALPHA_MPC * Math.log(1 + z);
+        }
+
+        function ccmLocalLightSpeed(rMpc) {
+            return Math.exp(rMpc / ALPHA_MPC);
+        }
+
+        function ccmLookbackYears(rMpc) {
+            // Integration result: t = (alpha / c) * (1 - exp(-r / alpha)) in years
+            const alphaYears = ALPHA_MPC * 3261563.7; // Mpc to light years
+            return alphaYears * (1 - Math.exp(-rMpc / ALPHA_MPC));
+        }
+
+        // --- CATALOG OF CELESTIAL TARGETS ---
+        const CELESTIAL_CATALOG = [
+            {
+                id: 'earth',
+                name: 'Earth / Solar System',
+                type: 'Observer Core Anchor',
+                z: 0.0,
+                ra: '00h 00m',
+                dec: '+00°',
+                desc: 'Local observer anchor sitting 150 Mpc offset along vector l=264.02°, b=+48.25°.',
+                posMpc: EARTH_POS.clone().divideScalar(SCALE_FACTOR),
+                color: 0x38bdf8,
+                size: 1.5
+            },
+            {
+                id: 'center',
+                name: 'Container Geometric Center',
+                type: 'Container Core',
+                z: 0.0,
+                ra: 'N/A',
+                dec: 'N/A',
+                desc: 'Mathematical core center of the 52,965.56 Mpc static universe container.',
+                posMpc: CONTAINER_CENTER.clone(),
+                color: 0xf59e0b,
+                size: 2.0
+            },
+            {
+                id: 'apex',
+                name: 'Container Apex Wall',
+                type: 'Short Edge Boundary',
+                z: 280000.0,
+                ra: '12h 49m',
+                dec: '-27°',
+                desc: 'Nearest container boundary edge (172.26 Billion light-years physical distance).',
+                posMpc: apexDir.clone().multiplyScalar(R_CORE_MPC),
+                color: 0x10b981,
+                size: 2.5
+            },
+            {
+                id: 'anti_apex',
+                name: 'Container Anti-Apex Wall',
+                type: 'Long Edge Boundary',
+                z: 300000.0,
+                ra: '00h 49m',
+                dec: '+27°',
+                desc: 'Farthest boundary edge through container core (173.24 Billion light-years distance).',
+                posMpc: apexDir.clone().negate().multiplyScalar(R_CORE_MPC),
+                color: 0xef4444,
+                size: 2.5
+            },
+            {
+                id: 'alpha_centauri',
+                name: 'Alpha Centauri',
+                type: 'Stellar System',
+                z: 0.0000003,
+                ra: '14h 39m',
+                dec: '-60° 50′',
+                desc: 'Nearest star system at 4.37 light-years.',
+                dir: new THREE.Vector3(-0.7, -0.5, 0.5).normalize(),
+                color: 0xfde047,
+                size: 1.0
+            },
+            {
+                id: 'sirius',
+                name: 'Sirius',
+                type: 'Star',
+                z: 0.0000006,
+                ra: '06h 45m',
+                dec: '-16° 42′',
+                desc: 'Brightest star in night sky (8.6 ly).',
+                dir: new THREE.Vector3(0.4, -0.2, -0.8).normalize(),
+                color: 0x60a5fa,
+                size: 1.0
+            },
+            {
+                id: 'vega',
+                name: 'Vega',
+                type: 'Main Sequence Star',
+                z: 0.000002,
+                ra: '18h 36m',
+                dec: '+38° 47′',
+                desc: 'Luminous blue star 25 light-years away.',
+                dir: new THREE.Vector3(0.2, 0.7, -0.6).normalize(),
+                color: 0xa5f3fc,
+                size: 1.0
+            },
+            {
+                id: 'betelgeuse',
+                name: 'Betelgeuse',
+                type: 'Red Supergiant',
+                z: 0.00004,
+                ra: '05h 55m',
+                dec: '+07° 24′',
+                desc: 'Massive red supergiant in Orion (~640 ly).',
+                dir: new THREE.Vector3(0.8, 0.1, -0.5).normalize(),
+                color: 0xf97316,
+                size: 1.2
+            },
+            {
+                id: 'rigel',
+                name: 'Rigel',
+                type: 'Blue Supergiant',
+                z: 0.00006,
+                ra: '05h 14m',
+                dec: '-08° 12′',
+                desc: 'Luminous supergiant in Orion (~860 ly).',
+                dir: new THREE.Vector3(0.75, -0.15, -0.6).normalize(),
+                color: 0x93c5fd,
+                size: 1.2
+            },
+            {
+                id: 'polaris',
+                name: 'Polaris (North Star)',
+                type: 'Multiple Star',
+                z: 0.00003,
+                ra: '02h 31m',
+                dec: '+89° 15′',
+                desc: 'North pole star ~433 light-years distant.',
+                dir: new THREE.Vector3(0.01, 0.99, 0.01).normalize(),
+                color: 0xfef08a,
+                size: 1.1
+            },
+            {
+                id: 'm31',
+                name: 'Andromeda Galaxy (M31)',
+                type: 'Spiral Galaxy',
+                z: -0.00100,
+                ra: '00h 42m',
+                dec: '+41° 16′',
+                desc: 'Local Group spiral galaxy distant 0.78 Mpc.',
+                dir: new THREE.Vector3(0.5, 0.6, 0.6).normalize(),
+                distMpcOverride: 0.78,
+                color: 0x38bdf8,
+                size: 1.6
+            },
+            {
+                id: 'm33',
+                name: 'Triangulum Galaxy (M33)',
+                type: 'Spiral Galaxy',
+                z: -0.0006,
+                ra: '01h 33m',
+                dec: '+30° 39′',
+                desc: 'Third-largest Local Group member (~0.85 Mpc).',
+                dir: new THREE.Vector3(0.4, 0.5, 0.7).normalize(),
+                distMpcOverride: 0.85,
+                color: 0x818cf8,
+                size: 1.4
+            },
+            {
+                id: 'lmc',
+                name: 'Large Magellanic Cloud (LMC)',
+                type: 'Satellite Galaxy',
+                z: 0.0009,
+                ra: '05h 23m',
+                dec: '-69° 45′',
+                desc: 'Milky Way satellite galaxy (0.05 Mpc).',
+                dir: new THREE.Vector3(-0.3, -0.8, -0.5).normalize(),
+                distMpcOverride: 0.05,
+                color: 0xc084fc,
+                size: 1.3
+            },
+            {
+                id: 'smc',
+                name: 'Small Magellanic Cloud (SMC)',
+                type: 'Dwarf Galaxy',
+                z: 0.0005,
+                ra: '00h 52m',
+                dec: '-72° 48′',
+                desc: 'Dwarf galaxy satellite at ~0.06 Mpc.',
+                dir: new THREE.Vector3(-0.2, -0.9, -0.3).normalize(),
+                distMpcOverride: 0.06,
+                color: 0xe879f9,
+                size: 1.2
+            },
+            {
+                id: 'm87',
+                name: 'Messier 87 (M87)',
+                type: 'Elliptical / SMBH',
+                z: 0.00428,
+                ra: '12h 30m',
+                dec: '+12° 23′',
+                desc: 'Supergiant galaxy hosting black hole M87* (~16.4 Mpc).',
+                dir: new THREE.Vector3(-0.8, 0.25, 0.45).normalize(),
+                color: 0xf43f5e,
+                size: 1.8
+            },
+            {
+                id: 'virgo',
+                name: 'Virgo Cluster',
+                type: 'Galaxy Cluster',
+                z: 0.0038,
+                ra: '12h 27m',
+                dec: '+12° 43′',
+                desc: 'Heart of local supercluster at 16.5 Mpc.',
+                dir: new THREE.Vector3(-0.8, 0.2, 0.5).normalize(),
+                color: 0xa855f7,
+                size: 1.8
+            },
+            {
+                id: 'coma',
+                name: 'Coma Cluster',
+                type: 'Dense Cluster',
+                z: 0.0231,
+                ra: '12h 59m',
+                dec: '+27° 58′',
+                desc: 'Massive cluster containing 1000+ galaxies (~99 Mpc).',
+                dir: new THREE.Vector3(-0.7, 0.5, 0.4).normalize(),
+                color: 0xec4899,
+                size: 1.8
+            },
+            {
+                id: 'perseus',
+                name: 'Perseus Cluster',
+                type: 'Supercluster Core',
+                z: 0.0179,
+                ra: '03h 19m',
+                dec: '+41° 30′',
+                desc: 'X-ray bright cluster at ~75 Mpc in CCM space.',
+                dir: new THREE.Vector3(0.5, 0.6, -0.4).normalize(),
+                color: 0xf472b6,
+                size: 1.7
+            },
+            {
+                id: 'great_attractor',
+                name: 'Great Attractor',
+                type: 'Gravitational Anomaly',
+                z: 0.0157,
+                ra: '10h 32m',
+                dec: '-46° 00′',
+                desc: 'Laniakea supercluster core center (~68 Mpc).',
+                dir: new THREE.Vector3(-0.5, -0.6, -0.6).normalize(),
+                color: 0xf43f5e,
+                size: 2.0
+            },
+            {
+                id: 'ton618',
+                name: 'TON 618 Quasar',
+                type: 'Hyperluminous Quasar',
+                z: 2.219,
+                ra: '12h 28m',
+                dec: '+31° 28′',
+                desc: 'Houses one of the largest known SMBHs (66 billion solar masses). CCM Dist: 4,911 Mpc.',
+                dir: new THREE.Vector3(-0.65, 0.55, 0.35).normalize(),
+                color: 0xf97316,
+                size: 2.1
+            },
+            {
+                id: '3c273',
+                name: '3C 273 Quasar',
+                type: 'Active Quasar',
+                z: 0.158,
+                ra: '12h 29m',
+                dec: '+02° 03′',
+                desc: 'First quasar ever identified (~616 Mpc distance).',
+                dir: new THREE.Vector3(-0.75, 0.05, 0.5).normalize(),
+                color: 0xfacc15,
+                size: 1.9
+            },
+            {
+                id: 'earendel',
+                name: 'Earendel Star (WHL0137-LS)',
+                type: 'High-z Star',
+                z: 6.20,
+                ra: '01h 37m',
+                dec: '-08° 24′',
+                desc: 'Farthest individual star spotted. CCM Distance: 8,291 Mpc (27.04 Billion ly).',
+                dir: new THREE.Vector3(0.2, -0.1, 0.9).normalize(),
+                color: 0xfacc15,
+                size: 2.2
+            },
+            {
+                id: 'ulas',
+                name: 'Quasar ULAS J1120+0641',
+                type: 'High-z Quasar',
+                z: 7.08,
+                ra: '11h 20m',
+                dec: '+06° 41′',
+                desc: 'Luminous ancient quasar. CCM Distance: 8,775 Mpc.',
+                dir: new THREE.Vector3(-0.6, 0.1, 0.7).normalize(),
+                color: 0xf97316,
+                size: 2.2
+            },
+            {
+                id: 'gnz11',
+                name: 'GN-z11 Galaxy',
+                type: 'High-z Galaxy',
+                z: 10.60,
+                ra: '12h 36m',
+                dec: '+62° 14′',
+                desc: 'Luminous high-z galaxy. CCM Distance: 10,293 Mpc.',
+                dir: new THREE.Vector3(-0.4, 0.8, 0.4).normalize(),
+                color: 0xef4444,
+                size: 2.3
+            },
+            {
+                id: 'glassz12',
+                name: 'GLASS-z12 Galaxy',
+                type: 'High-z Galaxy',
+                z: 12.10,
+                ra: '00h 13m',
+                dec: '-30° 19′',
+                desc: 'JWST bright early galaxy. CCM Distance: 10,805 Mpc.',
+                dir: new THREE.Vector3(0.1, -0.5, -0.8).normalize(),
+                color: 0xd946ef,
+                size: 2.4
+            },
+            {
+                id: 'jades',
+                name: 'JADES-GS-z14-0 Galaxy',
+                type: 'Record High-z Galaxy',
+                z: 14.32,
+                ra: '03h 32m',
+                dec: '-27° 46′',
+                desc: 'Record redshift galaxy. CCM Distance: 11,462 Mpc.',
+                dir: new THREE.Vector3(0.3, -0.4, -0.85).normalize(),
+                color: 0xec4899,
+                size: 2.5
+            }
+        ];
+
+        // Global Scene Variables
+        let scene, camera, renderer, controls;
+        let objectsMap = new Map();
+        let labelElements = [];
+        let shellMesh, axisLine, gridHelper, fieldPoints;
+        let selectedObjectData = CELESTIAL_CATALOG[0];
+
+        function initScene() {
+            const container = document.getElementById('canvas-container');
+
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030712, 0.00012);
+
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1500);
+            camera.position.set(EARTH_POS.x + 12, EARTH_POS.y + 12, EARTH_POS.z + 28);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x030712, 1);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.copy(EARTH_POS);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+            scene.add(ambientLight);
+
+            const earthLight = new THREE.PointLight(0x38bdf8, 2, 120);
+            earthLight.position.copy(EARTH_POS);
+            scene.add(earthLight);
+
+            buildContainerBoundaryShell();
+            buildOffsetAxisAndGrid();
+            buildCatalogObjects();
+            buildProceduralDeepSpace();
+            buildVelocityGradientField();
+
+            setupEventListeners();
+            updateInspectorHUD(selectedObjectData);
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function buildContainerBoundaryShell() {
+            const shellRadius = R_CORE_MPC * SCALE_FACTOR;
+            const geometry = new THREE.IcosahedronGeometry(shellRadius, 4);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x06b6d4,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.12
+            });
+            shellMesh = new THREE.Mesh(geometry, material);
+            shellMesh.position.copy(CONTAINER_CENTER);
+            scene.add(shellMesh);
+        }
+
+        function buildOffsetAxisAndGrid() {
+            const axisPoints = [
+                apexDir.clone().multiplyScalar(-R_CORE_MPC * SCALE_FACTOR),
+                CONTAINER_CENTER,
+                EARTH_POS,
+                apexDir.clone().multiplyScalar(R_CORE_MPC * SCALE_FACTOR)
+            ];
+            const axisGeometry = new THREE.BufferGeometry().setFromPoints(axisPoints);
+            const axisMaterial = new THREE.LineDashedMaterial({
+                color: 0x10b981,
+                dashSize: 3,
+                gapSize: 2,
+                transparent: true,
+                opacity: 0.65
+            });
+            axisLine = new THREE.Line(axisGeometry, axisMaterial);
+            axisLine.computeLineDistances();
+            scene.add(axisLine);
+
+            gridHelper = new THREE.GridHelper(R_CORE_MPC * SCALE_FACTOR * 1.5, 30, 0x1e293b, 0x0f172a);
+            gridHelper.position.copy(CONTAINER_CENTER);
+            scene.add(gridHelper);
+        }
+
+        function buildCatalogObjects() {
+            const labelsContainer = document.getElementById('labels-container');
+
+            CELESTIAL_CATALOG.forEach(item => {
+                let pos;
+                if (item.posMpc) {
+                    pos = item.posMpc.clone().multiplyScalar(SCALE_FACTOR);
+                } else if (item.dir) {
+                    const distMpc = item.distMpcOverride || ccmDistanceMpc(item.z);
+                    pos = EARTH_POS.clone().add(item.dir.clone().multiplyScalar(distMpc * SCALE_FACTOR));
+                }
+
+                const geom = new THREE.SphereGeometry(item.size * 0.45, 16, 16);
+                const mat = new THREE.MeshBasicMaterial({ color: item.color });
+                const mesh = new THREE.Mesh(geom, mat);
+                mesh.position.copy(pos);
+                mesh.userData = item;
+                scene.add(mesh);
+                objectsMap.set(item.id, mesh);
+
+                if (item.z > 1.0) {
+                    const haloGeom = new THREE.RingGeometry(item.size * 0.5, item.size * 0.9, 16);
+                    const haloMat = new THREE.MeshBasicMaterial({
+                        color: item.color,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.5
+                    });
+                    const halo = new THREE.Mesh(haloGeom, haloMat);
+                    halo.position.copy(pos);
+                    halo.lookAt(camera.position);
+                    scene.add(halo);
+                }
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'absolute text-[10px] font-semibold code-font px-1.5 py-0.5 rounded bg-gray-950/80 border border-gray-800 text-gray-200 pointer-events-none transition-opacity duration-200 whitespace-nowrap shadow-md';
+                labelDiv.style.borderColor = '#' + item.color.toString(16);
+                labelDiv.innerText = item.name;
+                labelsContainer.appendChild(labelDiv);
+
+                labelElements.push({
+                    element: labelDiv,
+                    position: pos,
+                    data: item
+                });
+            });
+        }
+
+        function buildProceduralDeepSpace() {
+            const count = 10000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                const u = Math.random();
+                const rMpc = Math.pow(u, 0.8) * R_CORE_MPC;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+
+                positions[i * 3] = rMpc * Math.sin(phi) * Math.cos(theta) * SCALE_FACTOR;
+                positions[i * 3 + 1] = rMpc * Math.sin(phi) * Math.sin(theta) * SCALE_FACTOR;
+                positions[i * 3 + 2] = rMpc * Math.cos(phi) * SCALE_FACTOR;
+
+                const ratio = rMpc / R_CORE_MPC;
+                const color = new THREE.Color();
+                color.setHSL(0.55 - ratio * 0.5, 0.8, 0.6);
+
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.6,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            scene.add(new THREE.Points(geometry, material));
+        }
+
+        function buildVelocityGradientField() {
+            const fieldCount = 1500;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(fieldCount * 3);
+            const colors = new Float32Array(fieldCount * 3);
+
+            for (let i = 0; i < fieldCount; i++) {
+                const rMpc = Math.random() * R_CORE_MPC;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+
+                positions[i * 3] = rMpc * Math.sin(phi) * Math.cos(theta) * SCALE_FACTOR;
+                positions[i * 3 + 1] = rMpc * Math.sin(phi) * Math.sin(theta) * SCALE_FACTOR;
+                positions[i * 3 + 2] = rMpc * Math.cos(phi) * SCALE_FACTOR;
+
+                const speedRatio = Math.exp(rMpc / ALPHA_MPC) / Math.exp(R_CORE_MPC / ALPHA_MPC);
+                const color = new THREE.Color();
+                color.setHSL(0.6 - speedRatio * 0.55, 0.9, 0.5);
+
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 1.8,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.4
+            });
+
+            fieldPoints = new THREE.Points(geometry, material);
+            scene.add(fieldPoints);
+        }
+
+        function updateInspectorHUD(data) {
+            selectedObjectData = data;
+
+            let posMpc;
+            if (data.posMpc) {
+                posMpc = data.posMpc;
+            } else if (data.dir) {
+                const dist = data.distMpcOverride || ccmDistanceMpc(data.z);
+                posMpc = EARTH_POS.clone().divideScalar(SCALE_FACTOR).add(data.dir.clone().multiplyScalar(dist));
+            } else {
+                posMpc = new THREE.Vector3();
+            }
+
+            const rContainerMpc = posMpc.distanceTo(CONTAINER_CENTER);
+            const distFromEarthMpc = posMpc.distanceTo(EARTH_POS.clone().divideScalar(SCALE_FACTOR));
+            const distLightYearsBillion = (distFromEarthMpc * 3.26156 / 1000).toFixed(2);
+
+            const vLocalRatio = ccmLocalLightSpeed(rContainerMpc).toFixed(3);
+            const lookbackYrs = ccmLookbackYears(distFromEarthMpc);
+            const lookbackFormatted = (lookbackYrs / 1e9).toFixed(2) + ' Billion yrs';
+
+            document.getElementById('obj-name').innerText = data.name;
+            document.getElementById('obj-type').innerText = data.type;
+            document.getElementById('obj-redshift').innerText = data.z > 1000 ? 'N/A' : data.z.toFixed(4);
+            document.getElementById('obj-dist-mpc').innerText = `${distFromEarthMpc.toLocaleString('en-US', {maximumFractionDigits: 1})} Mpc`;
+            document.getElementById('obj-dist-ly').innerText = `${distLightYearsBillion} Billion ly`;
+            document.getElementById('obj-speed').innerText = `${vLocalRatio} · c`;
+            document.getElementById('obj-lookback').innerText = lookbackFormatted;
+            document.getElementById('obj-coords').innerText = `${data.ra} / ${data.dec}`;
+            document.getElementById('obj-description').innerText = data.desc;
+        }
+
+        function jumpToTarget(targetId) {
+            const targetMesh = objectsMap.get(targetId);
+            if (!targetMesh) return;
+
+            const targetPos = targetMesh.position;
+            const targetData = targetMesh.userData;
+
+            updateInspectorHUD(targetData);
+
+            const offset = new THREE.Vector3(15, 10, 15);
+            if (targetId === 'apex' || targetId === 'anti_apex') offset.set(100, 50, 100);
+
+            const destination = targetPos.clone().add(offset);
+
+            let progress = 0;
+            const startCamPos = camera.position.clone();
+            const startTarget = controls.target.clone();
+
+            function animateCameraJump() {
+                progress += 0.03;
+                if (progress <= 1) {
+                    camera.position.lerpVectors(startCamPos, destination, progress);
+                    controls.target.lerpVectors(startTarget, targetPos, progress);
+                    controls.update();
+                    requestAnimationFrame(animateCameraJump);
+                } else {
+                    camera.position.copy(destination);
+                    controls.target.copy(targetPos);
+                    controls.update();
+                }
+            }
+            animateCameraJump();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('btn-jump').addEventListener('click', () => {
+                const targetId = document.getElementById('target-select').value;
+                jumpToTarget(targetId);
+            });
+
+            // Modal Handlers
+            const modal = document.getElementById('formula-modal');
+            document.getElementById('btn-formula').addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+            document.getElementById('btn-close-modal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            document.getElementById('toggle-shell').addEventListener('change', (e) => {
+                shellMesh.visible = e.target.checked;
+            });
+            document.getElementById('toggle-axis').addEventListener('change', (e) => {
+                axisLine.visible = e.target.checked;
+            });
+            document.getElementById('toggle-grid').addEventListener('change', (e) => {
+                gridHelper.visible = e.target.checked;
+            });
+            document.getElementById('toggle-labels').addEventListener('change', (e) => {
+                document.getElementById('labels-container').style.display = e.target.checked ? 'block' : 'none';
+            });
+            document.getElementById('toggle-field').addEventListener('change', (e) => {
+                fieldPoints.visible = e.target.checked;
+            });
+
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            window.addEventListener('click', (event) => {
+                if (event.target.closest('#inspector-panel') || event.target.closest('.glass-panel') || event.target.closest('#formula-modal')) return;
+
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(Array.from(objectsMap.values()));
+
+                if (intersects.length > 0) {
+                    const clickedData = intersects[0].object.userData;
+                    updateInspectorHUD(clickedData);
+                    document.getElementById('target-select').value = clickedData.id;
+                }
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function updateLabelsPosition() {
+            const tempV = new THREE.Vector3();
+            labelElements.forEach(item => {
+                tempV.copy(item.position);
+                tempV.project(camera);
+
+                if (tempV.z > 1) {
+                    item.element.style.opacity = '0';
+                    return;
+                }
+
+                const x = (tempV.x * .5 + .5) * window.innerWidth;
+                const y = (tempV.y * -.5 + .5) * window.innerHeight;
+
+                item.element.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
+                const distToCam = camera.position.distanceTo(item.position);
+                item.element.style.opacity = distToCam < 800 ? '1' : '0';
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            updateLabelsPosition();
+
+            if (shellMesh) shellMesh.rotation.y += 0.0002;
+            if (fieldPoints) fieldPoints.rotation.y += 0.0001;
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => {
+            initScene();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>

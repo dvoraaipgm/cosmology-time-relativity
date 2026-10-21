@@ -33,7 +33,7 @@ def run_unforced_metrology_check():
     # 3. COUPLE ATOMIC TICKS WITH COGNATE LATTICE DECOMPRESSION
     # In modern metrology, standard Cesium frequency is 9,192,631,770 Hz.
     # To map the unitless calendar track node cleanly, we must account for the fact that 
-    # the spatial grid expands by Phi^(-X_SPACE), stretching the physical orbital track [2509.08871v1].
+    # the spatial grid expands by Phi^(-X_SPACE), stretching the physical orbital track .
     standard_atomic_hz = 9192631770.0
     seconds_per_solar_loop_base = 31557600.0
     

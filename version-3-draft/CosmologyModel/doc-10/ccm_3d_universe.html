@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed-Container Cosmological Model (CCM) - Earth-Anchored 3D Universe Explorer</title>
+    <!-- Tailwind CSS for modern UI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #030712; font-family: ui-sans-serif, system-ui, sans-serif; color: #f3f4f6; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 h-screen w-screen flex flex-col overflow-hidden">
+
+    <!-- Top Navigation Bar -->
+    <header class="glass-panel z-20 flex items-center justify-between px-6 py-3 border-b border-slate-800 shadow-xl">
+        <div class="flex items-center space-x-3">
+            <div class="h-4 w-4 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_12px_rgba(6,182,212,0.8)]"></div>
+            <h1 class="text-lg font-bold tracking-wider text-cyan-400">CCM UNIVERSE EXPLORER <span class="text-xs font-normal text-slate-400 ml-2">(Earth-Anchored Model)</span></h1>
+        </div>
+        <div class="flex items-center space-x-4 text-xs">
+            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-700">Earth $c$: <strong class="text-cyan-400">299,792.458 km/s</strong></span>
+            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-700">Center $c$: <strong class="text-amber-400">289,274.523 km/s</strong></span>
+            <span class="px-3 py-1 rounded bg-slate-900 border border-slate-700">Container Radius: <strong class="text-emerald-400">52,965.56 Mpc</strong></span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="relative flex-1 flex overflow-hidden">
+        
+        <!-- 3D Viewport -->
+        <div id="canvas-container" class="flex-1 relative"></div>
+
+        <!-- Floating Sidebar Controls & Inspector -->
+        <aside class="absolute top-4 right-4 z-10 w-96 max-h-[calc(100vh-6rem)] flex flex-col space-y-4 pointer-events-none">
+            
+            <!-- Inspector Panel -->
+            <div id="inspector-panel" class="glass-panel rounded-xl p-4 pointer-events-auto shadow-2xl transition-all duration-300">
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-cyan-400 mb-2">Object Inspector</h2>
+                <div id="inspector-content" class="space-y-2 text-sm">
+                    <p class="text-slate-400 italic text-xs">Click any celestial object in the 3D space or select from the quick finder below to inspect its coordinates and velocity parameters.</p>
+                </div>
+            </div>
+
+            <!-- Quick Jump & Search -->
+            <div class="glass-panel rounded-xl p-4 pointer-events-auto shadow-2xl">
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-cyan-400 mb-2">Quick Navigation</h2>
+                <select id="object-selector" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    <option value="">-- Select Celestial Target --</option>
+                </select>
+            </div>
+
+            <!-- View Toggles -->
+            <div class="glass-panel rounded-xl p-4 pointer-events-auto shadow-2xl space-y-3">
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-cyan-400">Display Toggles</h2>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="toggle-boundary" checked class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+                        <span>Container Shell</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="toggle-offset-axis" checked class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+                        <span>Offset Vector</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="toggle-procedural" checked class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+                        <span>Deep Galaxies (10k)</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="toggle-grid" checked class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+                        <span>Grid Plane</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Mathematical Framework Drawer -->
+            <div class="glass-panel rounded-xl p-4 pointer-events-auto shadow-2xl overflow-y-auto max-h-48 text-xs space-y-2">
+                <h2 class="text-xs font-semibold uppercase tracking-widest text-cyan-400">CCM Core Formulas</h2>
+                <p class="text-slate-300"><strong>Earth Baseline:</strong> $c_{\text{earth}} = 299,792.458 \text{ km/s}$ at $r_{\text{earth}} = 150 \text{ Mpc}$.</p>
+                <p class="text-slate-300"><strong>Center Speed:</strong> $c_{\text{center}} = c_{\text{earth}} \cdot e^{-r_{\text{earth}}/\alpha} = 289,274.52 \text{ km/s}$.</p>
+                <p class="text-slate-300"><strong>Velocity Gradient:</strong> $v(r) = c_{\text{earth}} \cdot e^{(r - r_{\text{earth}}) / \alpha}$ ($\alpha = 4200 \text{ Mpc}$).</p>
+                <p class="text-slate-300"><strong>Redshift Distance:</strong> $r(z) = \alpha \cdot \ln(1 + z)$.</p>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- Three.js Simulation Script -->
+    <script>
+        // Constants & Parameters
+        const C_EARTH = 299792.458; // km/s
+        const ALPHA = 4200.0; // Mpc
+        const R_EARTH_OFFSET = 150.0; // Mpc
+        const R_CONTAINER = 52965.56; // Mpc
+
+        // Calculate Center Speed
+        const C_CENTER = C_EARTH * Math.exp(-R_EARTH_OFFSET / ALPHA);
+
+        // Celestial Catalog
+        const catalog = [
+            { name: "Earth / Milky Way Origin", type: "Observer", r: 150.0, z: 0.0, ra: "00h 00m", dec: "+00° 00'", desc: "Our home location, offset 150 Mpc toward the CMB Apex.", color: 0x00ffff, size: 4.0 },
+            { name: "Container Center (r=0)", type: "Core Origin", r: 0.0, z: -0.035, ra: "--", dec: "--", desc: "The foundational core where local light speed is 289,274.523 km/s.", color: 0xf59e0b, size: 5.0 },
+            { name: "Alpha Centauri", type: "Nearby Star", r: 150.001, z: 0.0, ra: "14h 39m", dec: "-60° 50'", desc: "Nearest stellar system to Earth.", color: 0xfef08a, size: 1.5 },
+            { name: "Sirius", type: "Nearby Star", r: 150.003, z: 0.0, ra: "06h 45m", dec: "-16° 43'", desc: "Brightest star in the night sky.", color: 0x93c5fd, size: 1.8 },
+            { name: "Andromeda Galaxy (M31)", type: "Local Galaxy", r: 150.77, z: 0.001, ra: "00h 42m", dec: "+41° 16'", desc: "Nearest major spiral galaxy.", color: 0xec4899, size: 2.5 },
+            { name: "Virgo Cluster Center", type: "Galaxy Cluster", r: 166.5, z: 0.0036, ra: "12h 27m", dec: "+12° 43'", desc: "Massive nearby cluster of over 1,300 galaxies.", color: 0xa855f7, size: 3.0 },
+            { name: "3C 273 Quasar", type: "Active Quasar", r: 350.2, z: 0.158, ra: "12h 29m", dec: "+02° 03'", desc: "First identified quasar, exceptionally luminous active galactic nucleus.", color: 0xef4444, size: 3.0 },
+            { name: "TON 618", type: "Supermassive BH", r: 1580.4, z: 0.2219, ra: "12h 28m", dec: "+31° 28'", desc: "Ultra-massive black hole powering a hyper-luminous quasar.", color: 0xd946ef, size: 3.5 },
+            { name: "Earendel (WHL0137-ZD)", type: "High-z Star", r: 7578.5, z: 6.2, ra: "01h 37m", dec: "-08h 27'", desc: "Most distant individual star detected in the early universe.", color: 0x38bdf8, size: 3.5 },
+            { name: "GN-z11", type: "Early Galaxy", r: 10423.1, z: 10.6, ra: "12h 36m", dec: "+62° 14'", desc: "Luminous high-redshift galaxy discovered by JWST/HST.", color: 0x6366f1, size: 3.5 },
+            { name: "GLASS-z12", type: "Early Galaxy", r: 11195.4, z: 12.1, ra: "00h 14m", dec: "-30° 23'", desc: "Early galaxy formed shortly after cosmic dawn.", color: 0x8b5cf6, size: 3.5 },
+            { name: "JADES-GS-z14-0", type: "Record Galaxy", r: 12154.2, z: 14.32, ra: "03h 32m", dec: "-27° 48'", desc: "Current record-holder for highest confirmed redshift galaxy.", color: 0xec4899, size: 4.0 }
+        ];
+
+        // Three.js Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030712, 0.00005);
+
+        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 200000);
+        camera.position.set(0, 15000, 25000);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxDistance = 120000;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        // Groups for Toggles
+        const boundaryGroup = new THREE.Group();
+        const vectorGroup = new THREE.Group();
+        const objectGroup = new THREE.Group();
+        const proceduralGroup = new THREE.Group();
+        scene.add(boundaryGroup);
+        scene.add(vectorGroup);
+        scene.add(objectGroup);
+        scene.add(proceduralGroup);
+
+        // 1. Container Boundary Wireframe Shell
+        const containerGeo = new THREE.SphereGeometry(R_CONTAINER, 64, 64);
+        const containerMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, wireframe: true, transparent: true, opacity: 0.15 });
+        const containerMesh = new THREE.Mesh(containerGeo, containerMat);
+        boundaryGroup.add(containerMesh);
+
+        // 2. Center & Earth markers
+        const centerVector = new THREE.Vector3(0, 0, 0);
+        // Earth offset direction along l=264.02, b=+48.25 converted to cartesian
+        const l_rad = 264.02 * (Math.PI / 180);
+        const b_rad = 48.25 * (Math.PI / 180);
+        const earthX = R_EARTH_OFFSET * Math.cos(b_rad) * Math.cos(l_rad);
+        const earthY = R_EARTH_OFFSET * Math.sin(b_rad);
+        const earthZ = R_EARTH_OFFSET * Math.cos(b_rad) * Math.sin(l_rad);
+        const earthVector = new THREE.Vector3(earthX, earthY, earthZ);
+
+        // Offset Axis Line
+        const axisGeo = new THREE.BufferGeometry().setFromPoints([centerVector, earthVector]);
+        const axisMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 2 });
+        const axisLine = new THREE.Line(axisGeo, axisMat);
+        vectorGroup.add(axisLine);
+
+        // Grid Plane
+        const gridHelper = new THREE.GridHelper(R_CONTAINER * 2, 64, 0x334155, 0x1e293b);
+        gridHelper.position.y = -500;
+        scene.add(gridHelper);
+
+        // Interactive Raycaster
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const interactiveObjects = [];
+
+        // Populate Catalog Objects
+        catalog.forEach((item, index) => {
+            let pos;
+            if (item.type === "Observer") {
+                pos = earthVector;
+            } else if (item.type === "Core Origin") {
+                pos = centerVector;
+            } else {
+                // Distribute spherically based on redshift distance r(z) = alpha * ln(1 + z)
+                const dist = ALPHA * Math.log(1 + item.z);
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                pos = new THREE.Vector3(
+                    dist * Math.sin(phi) * Math.cos(theta),
+                    dist * Math.sin(phi) * Math.sin(theta),
+                    dist * Math.cos(phi)
+                );
+            }
+
+            const geometry = new THREE.SphereGeometry(item.size * 150, 16, 16);
+            const material = new THREE.MeshBasicMaterial({ color: item.color });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.copy(pos);
+            sphere.userData = item;
+            objectGroup.add(sphere);
+            interactiveObjects.push(sphere);
+
+            // Add to Selector dropdown
+            const selector = document.getElementById('object-selector');
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = `${item.name} (z = ${item.z})`;
+            selector.appendChild(opt);
+        });
+
+        // Procedural Deep Sky Objects (10,000+ density representation)
+        const procGeo = new THREE.BufferGeometry();
+        const procPositions = [];
+        const procColors = [];
+        const colorPalette = [new THREE.Color(0x38bdf8), new THREE.Color(0xa855f7), new THREE.Color(0xec4899), new THREE.Color(0xfbbf24)];
+
+        for (let i = 0; i < 8000; i++) {
+            const zRand = Math.random() * 14.3;
+            const dist = ALPHA * Math.log(1 + zRand);
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+
+            procPositions.push(
+                dist * Math.sin(phi) * Math.cos(theta),
+                dist * Math.sin(phi) * Math.sin(theta),
+                dist * Math.cos(phi)
+            );
+
+            const col = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+            procColors.push(col.r, col.g, col.b);
+        }
+
+        procGeo.setAttribute('position', new THREE.Float32BufferAttribute(procPositions, 3));
+        procGeo.setAttribute('color', new THREE.Float32BufferAttribute(procColors, 3));
+        const procMat = new THREE.PointsMaterial({ size: 120, vertexColors: true, transparent: true, opacity: 0.6 });
+        const procPoints = new THREE.Points(procGeo, procMat);
+        proceduralGroup.add(procPoints);
+
+        // UI Event Listeners
+        document.getElementById('toggle-boundary').addEventListener('change', (e) => { boundaryGroup.visible = e.target.checked; });
+        document.getElementById('toggle-offset-axis').addEventListener('change', (e) => { vectorGroup.visible = e.target.checked; });
+        document.getElementById('toggle-procedural').addEventListener('change', (e) => { proceduralGroup.visible = e.target.checked; });
+        document.getElementById('toggle-grid').addEventListener('change', (e) => { gridHelper.visible = e.target.checked; });
+
+        document.getElementById('object-selector').addEventListener('change', (e) => {
+            const idx = e.target.value;
+            if (idx === "") return;
+            const targetObj = objectGroup.children[idx];
+            if (targetObj) {
+                controls.target.copy(targetObj.position);
+                camera.position.set(targetObj.position.x + 2000, targetObj.position.y + 1500, targetObj.position.z + 4000);
+                updateInspector(targetObj.userData);
+            }
+        });
+
+        function updateInspector(data) {
+            const currentSpeed = C_EARTH * Math.exp((ALPHA * Math.log(1 + Math.max(0, data.z)) - R_EARTH_OFFSET) / ALPHA);
+            document.getElementById('inspector-content').innerHTML = `
+                <div class="space-y-1">
+                    <p class="text-cyan-400 font-bold text-base">${data.name}</p>
+                    <p class="text-slate-300 text-xs">${data.desc}</p>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-xs">
+                        <div>Type: <span class="text-white">${data.type}</span></div>
+                        <div>Redshift (z): <span class="text-amber-400">${data.z}</span></div>
+                        <div>Distance: <span class="text-emerald-400">${data.r.toFixed(1)} Mpc</span></div>
+                        <div>Local v(r): <span class="text-cyan-400">${currentSpeed.toFixed(0)} km/s</span></div>
+                        <div>RA: <span class="text-white">${data.ra}</span></div>
+                        <div>Dec: <span class="text-white">${data.dec}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Mouse Click Raycasting
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveObjects);
+            if (intersects.length > 0) {
+                const selected = intersects[0].object;
+                updateInspector(selected.userData);
+            }
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>
