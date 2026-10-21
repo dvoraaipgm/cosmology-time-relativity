@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCM Inside-Out Galaxy Evolutionary Cycle</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+            background: #60a5fa;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .stage-btn.active {
+            background-color: rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.6);
+            color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { border-color: rgba(239, 68, 68, 0.8); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+            50% { border-color: rgba(245, 158, 11, 1); box-shadow: 0 0 30px rgba(245, 158, 11, 0.7); }
+        }
+
+        .critical-alert {
+            animation: pulse-red 1s infinite alternate;
+        }
+    </style>
+</head>
+<body class="min-h-screen custom-scroll flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-white/10 glass-panel sticky top-0 z-30 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 text-cyan-400">
+                    <i data-lucide="orbit" class="w-6 h-6 animate-spin" style="animation-duration: 15s;"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white tracking-wide flex items-center gap-2">
+                        CCM INSIDE-OUT GALAXY ENGINE
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Intra-Core Fracture Simulation</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Single Star Collapse $\rightarrow$ Core Shatter INSIDE Black Hole $\rightarrow$ Ejection $\rightarrow$ Rotation $\rightarrow$ Light Escape</p>
+                </div>
+            </div>
+
+            <!-- Global Action Controls -->
+            <div class="flex items-center gap-2">
+                <button id="btn-prev" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 font-medium text-xs flex items-center gap-1 transition">
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                    <span>Prev</span>
+                </button>
+                <button id="btn-play-pause" class="px-3.5 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/30 font-medium text-xs flex items-center gap-1.5 transition">
+                    <i data-lucide="pause" id="play-pause-icon" class="w-3.5 h-3.5"></i>
+                    <span id="play-pause-text">Pause</span>
+                </button>
+                <button id="btn-next" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 font-medium text-xs flex items-center gap-1 transition">
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
+                <button id="btn-reset" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 font-medium text-xs flex items-center gap-1.5 transition">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Viewport -->
+    <main class="max-w-7xl w-full mx-auto p-4 flex-1 flex flex-col gap-6">
+
+        <!-- Stage Timeline Ribbon -->
+        <div class="glass-panel p-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 border-white/10">
+            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 flex items-center gap-1">
+                <i data-lucide="git-commit" class="w-4 h-4 text-cyan-400"></i> Sequence:
+            </span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 w-full lg:w-auto flex-1">
+                <button data-stage="1" class="stage-btn active px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>1. Progenitor Collapse</span>
+                </button>
+                <button data-stage="2" class="stage-btn px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>2. Dark Core Trap</span>
+                </button>
+                <button data-stage="3" class="stage-btn px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>3. Fracture INSIDE Core</span>
+                </button>
+                <button data-stage="4" class="stage-btn px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>4. Stars & Rotation</span>
+                </button>
+                <button data-stage="5" class="stage-btn px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>5. Core Gravity Drop</span>
+                </button>
+                <button data-stage="6" class="stage-btn px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-gray-300 font-medium text-xs flex items-center justify-center gap-1.5 hover:border-cyan-500/50 transition">
+                    <span>6. Light Escape</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Simulation Grid: Visual Canvas + Live Telemetry -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Canvas Visualizer Box -->
+            <div class="lg:col-span-3 relative glass-panel rounded-2xl overflow-hidden aspect-[16/9] min-h-[380px] sm:min-h-[480px] flex items-center justify-center border-white/10">
+                <canvas id="sim-canvas" class="w-full h-full block cursor-crosshair"></canvas>
+
+                <!-- Stage Overlay Box (Top Left Canvas) -->
+                <div class="absolute top-4 left-4 z-10 pointer-events-none max-w-sm">
+                    <div class="glass-panel px-3.5 py-2 rounded-xl border-cyan-500/30 flex items-center gap-2">
+                        <span id="stage-badge" class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                        <span id="stage-title" class="text-xs font-bold tracking-wider uppercase text-cyan-300">Stage 1: Single Progenitor Star Collapse</span>
+                    </div>
+                </div>
+
+                <!-- CRITICAL BREAK POINT WARNING BADGE (Stage 3 Overlay) -->
+                <div id="break-alert-badge" class="hidden absolute top-16 left-4 right-4 sm:right-auto z-20 pointer-events-none">
+                    <div class="glass-panel critical-alert px-4 py-2.5 rounded-xl border bg-rose-950/80 text-rose-200 flex items-center gap-3">
+                        <i data-lucide="zap" class="w-5 h-5 text-amber-400 animate-bounce"></i>
+                        <div>
+                            <div class="text-[11px] font-bold text-amber-300 uppercase tracking-widest">Mechanical Yield Limit Reached</div>
+                            <div class="text-xs font-extrabold text-white">CRITICAL BREAK POINT: INTRA-CORE FRACTURE OCCURRING INSIDE THE BLACK HOLE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Camera Zoom Indicator (Top Right Canvas) -->
+                <div class="absolute top-4 right-4 z-10 pointer-events-none">
+                    <div class="glass-panel px-3 py-1.5 rounded-xl border-amber-500/30 flex items-center gap-2 text-xs font-mono text-amber-300">
+                        <i data-lucide="zoom-in" class="w-4 h-4 text-amber-400"></i>
+                        <span>Camera View Scale: <strong id="zoom-readout" class="text-white">1.00x</strong></span>
+                    </div>
+                </div>
+
+                <!-- Interactive Canvas Control Overlay (Bottom) -->
+                <div class="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 glass-panel p-2.5 rounded-xl border-white/10 text-xs text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <button id="btn-auto-zoom" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/30 text-[11px] font-semibold flex items-center gap-1 transition">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span id="auto-zoom-text">Auto-Zoom: ON</span>
+                        </button>
+                        <div class="hidden sm:flex items-center gap-2">
+                            <span class="text-gray-400 text-[11px]">Manual Zoom:</span>
+                            <input type="range" id="zoom-slider" min="0.5" max="4.5" step="0.1" value="1.0" class="w-24">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="gauge" class="w-3.5 h-3.5 text-cyan-400"></i>
+                            <span class="text-gray-400 text-[11px]">Sim Speed:</span>
+                            <input type="range" id="sim-speed" min="0.2" max="2.5" step="0.1" value="1.0" class="w-20">
+                            <span id="speed-val" class="font-mono text-cyan-400 text-[11px]">1.0x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telemetry Dashboard Sidebar -->
+            <div class="lg:col-span-1 glass-panel rounded-2xl p-4 flex flex-col justify-between gap-4 border-white/10">
+                <div class="space-y-3.5">
+                    <div class="flex items-center justify-between border-b border-gray-700/50 pb-2 text-xs font-semibold text-gray-200">
+                        <span class="flex items-center gap-1.5"><i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> Core Physics Telemetry</span>
+                        <span id="tele-status" class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full uppercase font-mono">Running</span>
+                    </div>
+
+                    <!-- Mechanical Intra-Core Pressure -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Intra-Core Stress / Fracturing:</span>
+                            <span id="tele-stress" class="font-mono text-rose-400 font-semibold">15.0 %</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                            <div id="bar-stress" class="h-full bg-rose-500 transition-all duration-300" style="width: 15%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Core Density Gauge -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Central Core Density:</span>
+                            <span id="tele-density" class="font-mono text-cyan-400 font-semibold">25.0 %</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                            <div id="bar-density" class="h-full bg-cyan-400 transition-all duration-300" style="width: 25%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vacuum Gravity Level -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Vacuum Gravity Level:</span>
+                            <span id="tele-vacuum-gravity" class="font-mono text-purple-400 font-semibold">95.0 %</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                            <div id="bar-vacuum-gravity" class="h-full bg-purple-500 transition-all duration-300" style="width: 95%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Disk Orbital Momentum -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Disk Orbital Momentum:</span>
+                            <span id="tele-momentum" class="font-mono text-amber-400 font-semibold">0.0 %</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                            <div id="bar-momentum" class="h-full bg-amber-400 transition-all duration-300" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Core Light Emission % -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">Core Light Emission:</span>
+                            <span id="tele-light" class="font-mono text-yellow-300 font-semibold">0.0 %</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+                            <div id="bar-light" class="h-full bg-yellow-300 transition-all duration-300" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Core Photons Escape Status Badge -->
+                    <div class="flex items-center justify-between text-xs py-2 border-t border-gray-800">
+                        <span class="text-gray-400 flex items-center gap-1.5"><i data-lucide="sun" class="w-3.5 h-3.5 text-yellow-400"></i> Core Light Status:</span>
+                        <span id="tele-visibility" class="font-mono text-rose-300 font-semibold">Trapped (Black Hole)</span>
+                    </div>
+                </div>
+
+                <!-- Stage Physics Explanation Card -->
+                <div class="bg-cyan-950/30 border border-cyan-500/20 rounded-xl p-3 space-y-1 text-xs text-gray-300">
+                    <span class="font-semibold text-cyan-400 flex items-center gap-1">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i> Active Phase Logic
+                    </span>
+                    <p id="stage-desc" class="text-gray-400 leading-relaxed text-[11px]">
+                        Stage 1: Single Progenitor Star Collapse — ONE giant star collapses into its center under self-gravity. The camera zooms inward as the core hyper-compresses.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive Educational Physics Section -->
+        <section class="glass-panel rounded-2xl p-6 border-white/10 space-y-6">
+            <div class="border-b border-gray-700/60 pb-4">
+                <h2 class="text-xl font-bold text-white tracking-wide flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-cyan-400"></i> CCM Physics: Intra-Core Fracture & Galaxy Awakening
+                </h2>
+                <p class="text-xs text-gray-400 mt-1">Detailed breakdown of the physical mechanism: Intra-core mechanical breaking INSIDE the dark black hole boundary, followed by 360° fragment ejection, disk rotation, vacuum gravity drop, and light release.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs leading-relaxed text-gray-300">
+                
+                <!-- Card 1 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-cyan-500/30 transition">
+                    <div class="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs">1</span>
+                        <span>Single Progenitor Collapse</span>
+                    </div>
+                    <p class="text-gray-400">
+                        A giant parent star collapses under self-gravity toward its absolute center. Mass packs into an increasingly dense central point, forming a dark boundary layer.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-indigo-500/30 transition">
+                    <div class="flex items-center gap-2 text-indigo-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs">2</span>
+                        <span>Dark Core / Black Hole Trap</span>
+                    </div>
+                    <p class="text-gray-400">
+                        The collapsed mass forms a pitch-black central core (black hole boundary). Vacuum gravity around the core is so intense that light is completely trapped within the dark horizon.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-rose-500/30 transition">
+                    <div class="flex items-center gap-2 text-rose-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-xs">3</span>
+                        <span>Fracture INSIDE the Black Hole</span>
+                    </div>
+                    <p class="text-gray-400">
+                     Internal structure BEFORE blasting fragments inside the black all and also some fragment through the event horizon into space.
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-yellow-500/30 transition">
+                    <div class="flex items-center gap-2 text-yellow-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center text-xs">4</span>
+                        <span>Multi-Star Coalescence & Rotation</span>
+                    </div>
+                    <p class="text-gray-400">
+                        The ejected fragments condense into <strong class="text-gray-200">MULTIPLE new stars</strong>. Conservation of angular momentum sets these stars into stable orbital rotation around the center, forming a sprawling galactic disk.
+                    </p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-purple-500/30 transition">
+                    <div class="flex items-center gap-2 text-purple-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">5</span>
+                        <span>Mass Redistribution & Gravity Drop</span>
+                    </div>
+                    <p class="text-gray-400">
+                        As orbital rotation carries stellar mass outward away from the center, the central core density drops significantly. This causes the vacuum gravity in the central region to weaken.
+                    </p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-emerald-500/30 transition">
+                    <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs">6</span>
+                        <span>Galaxy Awakening & Light Escape</span>
+                    </div>
+                    <p class="text-gray-400">
+                        With vacuum gravity dropped below the light-trapping threshold, light emitted from the center escapes freely into space. The dark black hole core opens up, becoming a brightly shining galactic nucleus.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 text-center py-4 text-xs text-gray-500 mt-auto">
+        <p>CCM Inside-Out Galaxy Simulator &copy; 2026 | Interactive Physics Engine</p>
+    </footer>
+
+    <!-- Interactive Canvas & Engine Script -->
+    <script>
+        lucide.createIcons();
+
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Control DOM Elements
+        const stageBtns = document.querySelectorAll('.stage-btn');
+        const btnPlayPause = document.getElementById('btn-play-pause');
+        const playPauseIcon = document.getElementById('play-pause-icon');
+        const playPauseText = document.getElementById('play-pause-text');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnReset = document.getElementById('btn-reset');
+        const btnAutoZoom = document.getElementById('btn-auto-zoom');
+        const autoZoomText = document.getElementById('auto-zoom-text');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomReadout = document.getElementById('zoom-readout');
+        const inputSpeed = document.getElementById('sim-speed');
+        const speedVal = document.getElementById('speed-val');
+        const breakAlertBadge = document.getElementById('break-alert-badge');
+
+        // Telemetry DOM Elements
+        const stageTitle = document.getElementById('stage-title');
+        const teleStatus = document.getElementById('tele-status');
+        const teleStress = document.getElementById('tele-stress');
+        const barStress = document.getElementById('bar-stress');
+        const teleDensity = document.getElementById('tele-density');
+        const barDensity = document.getElementById('bar-density');
+        const teleVacuumGravity = document.getElementById('tele-vacuum-gravity');
+        const barVacuumGravity = document.getElementById('bar-vacuum-gravity');
+        const teleMomentum = document.getElementById('tele-momentum');
+        const barMomentum = document.getElementById('bar-momentum');
+        const teleLight = document.getElementById('tele-light');
+        const barLight = document.getElementById('bar-light');
+        const teleVisibility = document.getElementById('tele-visibility');
+        const stageDesc = document.getElementById('stage-desc');
+
+        // Simulation State
+        let currentStage = 1;
+        let isPaused = false;
+        let simTime = 0;
+        let speed = 1.0;
+        let autoZoom = true;
+        let cameraZoom = 1.0;
+        let targetZoom = 1.0;
+
+        // Telemetry Variables
+        let coreStress = 15.0;
+        let coreDensity = 25.0;
+        let vacuumGravity = 95.0;
+        let diskMomentum = 0.0;
+        let lightEmission = 0.0;
+
+        // Animation Assets
+        let progenitorRadius = 140;
+        let fragmentList = [];
+        let coalescedStars = [];
+        let internalCracks = [];
+        let shockwaves = [];
+
+        const stageDescriptions = {
+            1: "Stage 1: Single Progenitor Star Collapse — ONE giant star collapses into its center under self-gravity. Camera auto-zooms inward as the core hyper-compresses.",
+            2: "Stage 2: Dark Core / Black Hole Trap — Mass is compressed within a pitch-black central region. Vacuum gravity traps all light behind the event horizon.",
+            3: "Stage 3: Core Fracture INSIDE Black Hole — CRITICAL BREAK! Mechanical pressure shatters the core structure DEEP INSIDE the dark event horizon, blasting fragments outward.",
+            4: "Stage 4: Multi-Star Coalescence & Disk Rotation — Fragments condense into MULTIPLE new stars that begin orbiting in a rotating galactic disk.",
+            5: "Stage 5: Mass Redistribution & Core Gravity Drop — Orbital rotation carries stellar mass outward away from the center. Central density drops, weakening vacuum gravity.",
+            6: "Stage 6: Galaxy Awakening & Light Escape — Vacuum gravity drops below trapping threshold; core light escapes, turning the dark black hole into a glowing galactic nucleus!"
+        };
+
+        class InternalCrack {
+            constructor(cx, cy, r) {
+                this.cx = cx;
+                this.cy = cy;
+                this.maxR = r;
+                this.branches = [];
+                const numMain = 6 + Math.floor(Math.random() * 4);
+                for (let i = 0; i < numMain; i++) {
+                    const angle = (i / numMain) * Math.PI * 2 + (Math.random() * 0.4 - 0.2);
+                    this.branches.push({ angle, length: 0, maxLen: this.maxR * (0.6 + Math.random() * 0.4) });
+                }
+            }
+
+            update() {
+                this.branches.forEach(b => {
+                    if (b.length < b.maxLen) b.length += 2.5 * speed;
+                });
+            }
+
+            draw() {
+                ctx.save();
+                this.branches.forEach(b => {
+                    const ex = this.cx + Math.cos(b.angle) * b.length;
+                    const ey = this.cy + Math.sin(b.angle) * b.length;
+                    ctx.beginPath();
+                    ctx.moveTo(this.cx, this.cy);
+                    ctx.lineTo(ex, ey);
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.lineWidth = 2.5;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = '#ef4444';
+                    ctx.stroke();
+
+                    // Lightning-like sub-fracture
+                    if (b.length > b.maxLen * 0.5) {
+                        const subAngle = b.angle + 0.5;
+                        const sex = ex + Math.cos(subAngle) * (b.length * 0.3);
+                        const sey = ey + Math.sin(subAngle) * (b.length * 0.3);
+                        ctx.beginPath();
+                        ctx.moveTo(ex, ey);
+                        ctx.lineTo(sex, sey);
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                });
+                ctx.restore();
+            }
+        }
+
+        class Fragment {
+            constructor(cx, cy) {
+                const angle = Math.random() * Math.PI * 2;
+                const force = Math.random() * 7 + 3;
+                this.x = cx;
+                this.y = cy;
+                this.vx = Math.cos(angle) * force;
+                this.vy = Math.sin(angle) * force;
+                this.size = Math.random() * 3.5 + 1.5;
+                this.color = Math.random() > 0.5 ? '#f59e0b' : '#38bdf8';
+            }
+
+            update() {
+                this.x += this.vx * speed;
+                this.y += this.vy * speed;
+                this.vx *= 0.985;
+                this.vy *= 0.985;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class CoalescedStar {
+            constructor(cx, cy) {
+                this.cx = cx;
+                this.cy = cy;
+                this.orbitAngle = Math.random() * Math.PI * 2;
+                this.orbitRadius = Math.random() * 180 + 60;
+                this.size = Math.random() * 3.5 + 2.5;
+                this.color = Math.random() > 0.3 ? '#fef08a' : '#60a5fa';
+            }
+
+            update(radiusExpand = 1.0) {
+                const currentRadius = this.orbitRadius * radiusExpand;
+                this.orbitAngle += (0.008 / (currentRadius * 0.008)) * speed;
+            }
+
+            draw(radiusExpand = 1.0) {
+                const currentRadius = this.orbitRadius * radiusExpand;
+                const x = this.cx + Math.cos(this.orbitAngle) * currentRadius;
+                const y = this.cy + Math.sin(this.orbitAngle) * currentRadius;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(x, y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class Shockwave {
+            constructor(cx, cy) {
+                this.cx = cx;
+                this.cy = cy;
+                this.r = 10;
+                this.alpha = 1.0;
+            }
+
+            update() {
+                this.r += 7 * speed;
+                this.alpha -= 0.015 * speed;
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.cx, this.cy, this.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(245, 158, 11, ${this.alpha})`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function triggerIntraCoreShatter() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            internalCracks = [new InternalCrack(cx, cy, 40)];
+            shockwaves.push(new Shockwave(cx, cy));
+            fragmentList = [];
+            for (let i = 0; i < 240; i++) {
+                fragmentList.push(new Fragment(cx, cy));
+            }
+        }
+
+        function spawnChildStars() {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            coalescedStars = [];
+            for (let i = 0; i < 32; i++) {
+                coalescedStars.push(new CoalescedStar(cx, cy));
+            }
+        }
+
+        function setStage(s) {
+            currentStage = parseInt(s);
+            stageBtns.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.getAttribute('data-stage')) === currentStage);
+            });
+
+            stageTitle.innerText = `Stage ${currentStage}: ${getStageName(currentStage)}`;
+            stageDesc.innerText = stageDescriptions[currentStage];
+
+            // Toggle Alert Badge
+            breakAlertBadge.classList.toggle('hidden', currentStage !== 3);
+
+            if (currentStage === 1) {
+                progenitorRadius = 140;
+                coreStress = 15.0;
+                coreDensity = 25.0;
+                vacuumGravity = 95.0;
+                diskMomentum = 0.0;
+                lightEmission = 0.0;
+                fragmentList = [];
+                coalescedStars = [];
+                internalCracks = [];
+                if (autoZoom) targetZoom = 1.0;
+            } else if (currentStage === 2) {
+                progenitorRadius = 35;
+                coreStress = 85.0;
+                coreDensity = 98.0;
+                vacuumGravity = 99.0;
+                diskMomentum = 0.0;
+                lightEmission = 0.0;
+                internalCracks = [];
+                if (autoZoom) targetZoom = 3.2; // Auto-zoom deep into black hole
+            } else if (currentStage === 3) {
+                progenitorRadius = 0;
+                coreStress = 100.0;
+                triggerIntraCoreShatter();
+                coreDensity = 65.0;
+                vacuumGravity = 85.0;
+                diskMomentum = 20.0;
+                lightEmission = 15.0;
+                if (autoZoom) targetZoom = 4.0; // Deep Intra-Core Zoom
+            } else if (currentStage === 4) {
+                if (coalescedStars.length === 0) spawnChildStars();
+                coreStress = 25.0;
+                coreDensity = 45.0;
+                vacuumGravity = 65.0;
+                diskMomentum = 75.0;
+                lightEmission = 30.0;
+                if (autoZoom) targetZoom = 1.2;
+            } else if (currentStage === 5) {
+                if (coalescedStars.length === 0) spawnChildStars();
+                coreStress = 10.0;
+                coreDensity = 20.0;
+                vacuumGravity = 28.0;
+                diskMomentum = 92.0;
+                lightEmission = 65.0;
+                if (autoZoom) targetZoom = 1.0;
+            } else if (currentStage === 6) {
+                if (coalescedStars.length === 0) spawnChildStars();
+                coreStress = 5.0;
+                coreDensity = 10.0;
+                vacuumGravity = 12.0;
+                diskMomentum = 98.0;
+                lightEmission = 100.0;
+                if (autoZoom) targetZoom = 1.0;
+            }
+
+            updateTelemetryUI();
+        }
+
+        function getStageName(s) {
+            switch(s) {
+                case 1: return "Single Progenitor Star Collapse";
+                case 2: return "Dark Core / Black Hole Trap";
+                case 3: return "Fracture INSIDE Black Hole";
+                case 4: return "Multi-Star Coalescence & Rotation";
+                case 5: return "Core Gravity Drop";
+                case 6: return "Galaxy Awakening & Light Escape";
+                default: return "";
+            }
+        }
+
+        function updateTelemetryUI() {
+            teleStress.innerText = `${coreStress.toFixed(1)} %`;
+            barStress.style.width = `${coreStress}%`;
+
+            teleDensity.innerText = `${coreDensity.toFixed(1)} %`;
+            barDensity.style.width = `${coreDensity}%`;
+
+            teleVacuumGravity.innerText = `${vacuumGravity.toFixed(1)} %`;
+            barVacuumGravity.style.width = `${vacuumGravity}%`;
+
+            teleMomentum.innerText = `${diskMomentum.toFixed(1)} %`;
+            barMomentum.style.width = `${diskMomentum}%`;
+
+            teleLight.innerText = `${lightEmission.toFixed(1)} %`;
+            barLight.style.width = `${lightEmission}%`;
+
+            if (currentStage === 6) {
+                teleVisibility.innerText = "ESCAPED (AWAKENED GALAXY CORE)";
+                teleVisibility.className = "font-mono text-emerald-400 font-bold";
+            } else if (currentStage === 5) {
+                teleVisibility.innerText = "UNTRAPPING (LIGHT BREAKOUT)";
+                teleVisibility.className = "font-mono text-yellow-300 font-semibold";
+            } else if (currentStage === 3) {
+                teleVisibility.innerText = "INTERNAL FRACTURE FLASH";
+                teleVisibility.className = "font-mono text-rose-400 font-bold animate-pulse";
+            } else if (currentStage === 4) {
+                teleVisibility.innerText = "PARTIAL STARK SHATTER";
+                teleVisibility.className = "font-mono text-amber-300 font-semibold";
+            } else {
+                teleVisibility.innerText = "TRAPPED (BLACK HOLE)";
+                teleVisibility.className = "font-mono text-rose-300 font-semibold";
+            }
+
+            zoomReadout.innerText = `${cameraZoom.toFixed(2)}x`;
+        }
+
+        // Button Event Handlers
+        stageBtns.forEach(btn => {
+            btn.addEventListener('click', () => setStage(btn.getAttribute('data-stage')));
+        });
+
+        btnPlayPause.addEventListener('click', () => {
+            isPaused = !isPaused;
+            playPauseText.innerText = isPaused ? "Resume" : "Pause";
+            playPauseIcon.setAttribute('data-lucide', isPaused ? 'play' : 'pause');
+            lucide.createIcons();
+            teleStatus.innerText = isPaused ? "Paused" : "Running";
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentStage > 1) setStage(currentStage - 1);
+        });
+
+        btnNext.addEventListener('click', () => {
+            if (currentStage < 6) setStage(currentStage + 1);
+        });
+
+        btnReset.addEventListener('click', () => setStage(1));
+
+        btnAutoZoom.addEventListener('click', () => {
+            autoZoom = !autoZoom;
+            autoZoomText.innerText = `Auto-Zoom: ${autoZoom ? 'ON' : 'OFF'}`;
+            btnAutoZoom.classList.toggle('bg-cyan-500/20', autoZoom);
+            btnAutoZoom.classList.toggle('bg-white/5', !autoZoom);
+        });
+
+        zoomSlider.addEventListener('input', () => {
+            autoZoom = false;
+            autoZoomText.innerText = "Auto-Zoom: OFF";
+            targetZoom = parseFloat(zoomSlider.value);
+        });
+
+        inputSpeed.addEventListener('input', () => {
+            speed = parseFloat(inputSpeed.value);
+            speedVal.innerText = `${speed.toFixed(1)}x`;
+        });
+
+        // Main Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Smooth Camera Zoom Interpolation
+            cameraZoom += (targetZoom - cameraZoom) * 0.05;
+            zoomSlider.value = cameraZoom;
+
+            if (!isPaused) {
+                simTime += 0.02 * speed;
+
+                if (currentStage === 1) {
+                    if (progenitorRadius > 35) {
+                        progenitorRadius -= 0.35 * speed;
+                    } else {
+                        setStage(2);
+                    }
+                } else if (currentStage === 2) {
+                    if (simTime % 4 < 0.05) setStage(3);
+                } else if (currentStage === 3) {
+                    if (simTime % 5 < 0.05) setStage(4);
+                } else if (currentStage === 4) {
+                    if (simTime % 6 < 0.05) setStage(5);
+                } else if (currentStage === 5) {
+                    if (vacuumGravity > 15) vacuumGravity -= 0.15 * speed;
+                    if (lightEmission < 95) lightEmission += 0.25 * speed;
+                    if (vacuumGravity <= 18) setStage(6);
+                }
+            }
+
+            // Canvas Background
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.save();
+            // Apply Camera Transform
+            ctx.translate(cx, cy);
+            ctx.scale(cameraZoom, cameraZoom);
+            ctx.translate(-cx, -cy);
+
+            // STAGE 1: Single Progenitor Star Collapse
+            if (currentStage === 1) {
+                const starGlow = ctx.createRadialGradient(cx, cy, 5, cx, cy, progenitorRadius * 1.5);
+                starGlow.addColorStop(0, '#ffffff');
+                starGlow.addColorStop(0.4, '#f59e0b');
+                starGlow.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, progenitorRadius * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = starGlow;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, progenitorRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#fbbf24';
+                ctx.shadowBlur = 25;
+                ctx.shadowColor = '#f59e0b';
+                ctx.fill();
+            }
+
+            // Draw Shockwaves
+            shockwaves.forEach((sw, idx) => {
+                if (!isPaused) sw.update();
+                sw.draw();
+                if (sw.alpha <= 0) shockwaves.splice(idx, 1);
+            });
+
+            // Draw Ejected Fragments
+            fragmentList.forEach(f => {
+                if (!isPaused) f.update();
+                f.draw();
+            });
+
+            // Draw Coalesced Stars (Disk Expansion in Stages 5 & 6)
+            const diskRadiusExpand = currentStage >= 5 ? 1.3 : 1.0;
+            coalescedStars.forEach(s => {
+                if (!isPaused) s.update(diskRadiusExpand);
+                s.draw(diskRadiusExpand);
+            });
+
+            // CENTRAL CORE & BLACK HOLE BOUNDARY RENDER LOGIC
+            if (currentStage > 1) {
+                if (currentStage === 6 || currentStage === 5) {
+                    // Stages 5 & 6: Core Light Escape / Awakened Nucleus
+                    const lightGlowRadius = 20 + (lightEmission / 100) * 110;
+                    const glow = ctx.createRadialGradient(cx, cy, 5, cx, cy, lightGlowRadius);
+                    glow.addColorStop(0, '#ffffff');
+                    glow.addColorStop(0.3, `rgba(56, 189, 248, ${lightEmission / 100})`);
+                    glow.addColorStop(0.7, `rgba(168, 85, 247, ${(lightEmission / 100) * 0.4})`);
+                    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, lightGlowRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = glow;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowBlur = 30 * (lightEmission / 100);
+                    ctx.shadowColor = '#38bdf8';
+                    ctx.fill();
+                } else {
+                    // STAGES 2, 3, 4: PITCH-BLACK CORE / EVENT HORIZON BOUNDARY
+
+                    // 1. Dark Black Hole Body
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+                    ctx.fillStyle = '#020617';
+                    ctx.shadowBlur = currentStage === 3 ? 35 : 18;
+                    ctx.shadowColor = currentStage === 3 ? '#ef4444' : '#38bdf8';
+                    ctx.fill();
+
+                    // 2. Pitch Black Boundary Ring (Event Horizon Shell)
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+                    ctx.strokeStyle = currentStage === 3 ? 'rgba(239, 68, 68, 0.9)' : 'rgba(56, 189, 248, 0.6)';
+                    ctx.lineWidth = currentStage === 3 ? 3.5 : 2;
+                    ctx.stroke();
+
+                    // 3. STAGE 3 SPECIFIC: Draw Internal Cracks INSIDE the Black Hole
+                    if (currentStage === 3) {
+                        internalCracks.forEach(c => {
+                            if (!isPaused) c.update();
+                            c.draw();
+                        });
+
+                        // Blinking Intra-Core Flare Pulse INSIDE the Black Hole
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(245, 158, 11, ${0.4 + Math.sin(simTime * 15) * 0.3})`;
+                        ctx.shadowBlur = 20;
+                        ctx.shadowColor = '#f59e0b';
+                        ctx.fill();
+                    }
+                }
+            }
+
+            ctx.restore();
+            updateTelemetryUI();
+        }
+
+        setStage(1);
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bounded Cosmic River: Closed-Container Cosmology & Kabbalistic Synthesis</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for Bio-Decay & Data Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- KaTeX for math formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#fef9c3',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        },
+                        cosmic: {
+                            950: '#02040a',
+                            900: '#050914',
+                            850: '#091021',
+                            800: '#0d172e',
+                            700: '#152244',
+                            600: '#1f3160',
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #02040a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glow-gold {
+            text-shadow: 0 0 18px rgba(250, 204, 21, 0.45);
+        }
+        .glow-blue {
+            text-shadow: 0 0 18px rgba(59, 130, 246, 0.45);
+        }
+        .box-glow-gold {
+            box-shadow: 0 0 30px -5px rgba(234, 179, 8, 0.2);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(13, 23, 46, 0.9) 0%, rgba(5, 9, 20, 0.95) 100%);
+            backdrop-filter: blur(12px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #152244;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ca8a04;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-cosmic-950">
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="sticky top-0 z-50 border-b border-gold-500/20 bg-cosmic-950/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-600 to-amber-400 flex items-center justify-center text-cosmic-950 shadow-lg shadow-gold-500/20 font-bold">
+                    <i class="fa-solid fa-infinity text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-cinzel text-base sm:text-xl font-bold tracking-wider text-gold-400 block leading-tight">The Bounded Cosmic River</span>
+                    <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase block">Closed-Container Cosmology & Kabbalah</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden xl:flex space-x-5 text-xs font-semibold uppercase tracking-wider">
+                <a href="#rav-acco" class="py-2 text-gold-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-scroll text-gold-500"></i>
+                    <span>Rav Acco & Shemitot</span>
+                </a>
+                <a href="#creation-days" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-sun text-gold-500"></i>
+                    <span>6 Creation Epochs</span>
+                </a>
+                <a href="#ascent" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bolt text-gold-500"></i>
+                    <span>Neshama Ascent</span>
+                </a>
+                <a href="#rakiaim" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-layer-group text-gold-500"></i>
+                    <span>7 Rakia'im</span>
+                </a>
+                <a href="#ccm" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-chart-line text-gold-500"></i>
+                    <span>Gravity $g(r)$</span>
+                </a>
+                <a href="#sforno" class="py-2 text-slate-300 hover:text-gold-400 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-dna text-gold-500"></i>
+                    <span>Bio-Decay & Fossils</span>
+                </a>
+            </nav>
+
+            <div class="xl:hidden">
+                <button id="mobileMenuBtn" class="text-slate-300 hover:text-white p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden xl:hidden bg-cosmic-900 border-b border-gold-500/20 px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a href="#rav-acco" class="block py-2 text-gold-400 font-semibold">1. Rav Acco & Shemitot Math</a>
+            <a href="#creation-days" class="block py-2 text-slate-300 hover:text-gold-400">2. 6 Days of Creation Breakdown</a>
+            <a href="#units" class="block py-2 text-slate-300 hover:text-gold-400">3. 172.75 Intrinsic Units Matrix</a>
+            <a href="#ccm" class="block py-2 text-slate-300 hover:text-gold-400">4. Gradient Gravity Simulation</a>
+            <a href="#ascent" class="block py-2 text-slate-300 hover:text-gold-400">5. Neshama Ascent & Velocity</a>
+            <a href="#rakiaim" class="block py-2 text-slate-300 hover:text-gold-400">6. 7 Rakia'im Cosmic Map</a>
+            <a href="#sforno" class="block py-2 text-slate-300 hover:text-gold-400">7. Sforno & Pre-Adamite Cycles</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20 flex-grow">
+
+        <!-- ========================================================================= -->
+        <!-- MANDATORY TOP SECTION 1: RABBI YITZCHAK OF ACCO & DIVINE TIME CALCULATION -->
+        <!-- ========================================================================= -->
+        <section id="rav-acco" class="space-y-8 pt-2 scroll-mt-28">
+            <div class="text-center space-y-4 max-w-4xl mx-auto">
+                <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border border-gold-500/40 bg-gold-500/10 text-gold-300 text-xs tracking-widest uppercase font-semibold">
+                    <i class="fa-solid fa-star text-gold-400"></i>
+                    <span>Primary Foundational Synthesis</span>
+                </div>
+                <h1 class="font-cinzel text-3xl sm:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-100 via-gold-400 to-amber-500 tracking-tight leading-tight glow-gold">
+                    Rabbi Yitzchak of Acco & Macro-Cosmic Chronology
+                </h1>
+                <p class="text-base sm:text-lg text-slate-300 font-light leading-relaxed">
+                    Deciphering the 13th-century Kabbalistic revelation of <strong>Rabbi Yitzchak of Acco</strong> (student of the Ramban) in his work <em>Otzar HaChayim</em> and <em>Sefer HaTemunah</em>, proving the exact mathematical alignment between Torah chronology and modern cosmological age.
+                </p>
+            </div>
+
+            <!-- Mathematical Formula Spotlight Box -->
+            <div class="gradient-card p-6 sm:p-10 rounded-3xl border border-gold-500/40 box-glow-gold space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Explanation Left -->
+                    <div class="lg:col-span-7 space-y-5">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-lg bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-mono text-sm font-bold">1</span>
+                            <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-gold-300">The Shemitot (Cosmic Sabbatical Cycles)</h2>
+                        </div>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Rabbinic Kabbalah identifies that creation moves through <strong>Shemitot (7,000-year Sabbatical cycles)</strong>. Rav Yitzchak of Acco revealed that our current human cycle is not the first, but is preceded by <strong>6 complete Shemitah cycles</strong> (6 active cycles $\times$ 7,000 years = <strong>42,000 Divine Years</strong>).
+                        </p>
+
+                        <div class="flex items-center space-x-3 pt-2">
+                            <span class="w-8 h-8 rounded-lg bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-mono text-sm font-bold">2</span>
+                            <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-gold-300">The Divine Time Conversion (Psalm 90:4)</h2>
+                        </div>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Because these early cycles occurred prior to human solar clocks, their duration is measured in <strong>Divine Years</strong>. As King David declares in Psalm 90:4: <em>"For a thousand years in Your sight are like yesterday when it is past."</em>
+                        </p>
+                    </div>
+
+                    <!-- Formula Display Right -->
+                    <div class="lg:col-span-5 bg-cosmic-950/90 p-6 sm:p-8 rounded-2xl border border-gold-500/30 space-y-6">
+                        <div class="text-xs uppercase font-mono tracking-widest text-gold-400 font-bold border-b border-slate-800 pb-2">
+                            Exact Mathematical Proof
+                        </div>
+
+                        <div class="space-y-4 font-mono text-xs sm:text-sm">
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">1 Divine Day:</span>
+                                <span class="text-gold-300 font-bold">1,000 Solar Years</span>
+                            </div>
+
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">1 Divine Year (365.25 Divine Days):</span>
+                                <span class="text-amber-300 font-bold">365.25 × 1,000 = 365,250 Solar Years</span>
+                            </div>
+
+                            <div class="bg-cosmic-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block text-[11px]">Total Macro-Epoch Divine Duration:</span>
+                                <span class="text-gold-400 font-bold">6 Cycles × 7,000 Yrs = 42,000 Divine Yrs</span>
+                            </div>
+                        </div>
+
+                        <!-- Grand Calculation Result -->
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-gold-500/20 to-amber-500/20 border border-gold-500/60 text-center space-y-1">
+                            <span class="text-[11px] uppercase font-mono tracking-wider text-slate-300 block">Calculated Structural Cosmic Age</span>
+                            <div class="font-cinzel text-2xl sm:text-3xl font-black text-white glow-gold">
+                                42,000 × 365,250
+                            </div>
+                            <div class="font-mono text-xl sm:text-2xl font-bold text-gold-300">
+                                = 15,340,500,000 Solar Years
+                            </div>
+                            <span class="text-xs text-emerald-400 font-semibold block pt-1">
+                                ★ Exactly ~15.34 Billion Solar Years ★
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MANDATORY TOP SECTION 2: BREAKDOWN OF THE 6 DAYS OF CREATION -->
+        <!-- ========================================================================= -->
+        <section id="creation-days" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section II</span>
+                <h2 class="font-cinzel text-2xl sm:text-4xl font-bold text-white">The 6 Days of Creation as Macro-Cosmic Epochs</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Reconciling literal Genesis "Days" with ~2.55 Billion Solar Years per Day before local Earth solar clocks existed.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-8">
+                <div class="text-slate-300 text-sm leading-relaxed space-y-3">
+                    <p>
+                        As the <strong>Ramban (Nachmanides)</strong> notes in his Genesis commentary, time during the Six Days of Creation could not be defined by local solar rotations because the sun and moon were not established in their earthly orbital relationships until Day Four.
+                    </p>
+                    <p>
+                        Under Rav Acco’s framework, each of the <strong>6 Days of Genesis</strong> represents one full macro-cosmic Shemitah epoch—spanning exactly <strong>7,000 Divine Years</strong> ($\approx \mathbf{2.556 \text{ Billion Solar Years}}$ per Day). Below is the unified timeline mapping Genesis, Rav Acco, and astrophysics:
+                    </p>
+                </div>
+
+                <!-- 6 Creation Epoch Interactive Timeline Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Epoch 1 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 1: Light & Darkness</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">15.34B – 12.78B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">The Cosmic Primordial Spark</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> <em>"Let there be light."</em> Creation out of nothing (<em>Yesh MiAyin</em>).<br>
+                            <strong>Astrophysics:</strong> The Big Bang, cosmic inflation, plasma nucleosynthesis, and photon decoupling.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 2 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 2: The Firmament</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">12.78B – 10.22B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Galactic Structure & Waters</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Separation of upper and lower waters by the <em>Rakia</em>.<br>
+                            <strong>Astrophysics:</strong> Formation of first-generation quasars, early galaxies, and interstellar gas clouds.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 3 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 3: Dry Land & Plants</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">10.22B – 7.66B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Heavy Elements & Protostars</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Gathering of waters, appearance of dry ground and early vegetation.<br>
+                            <strong>Astrophysics:</strong> Stellar nucleosynthesis producing carbon, iron, silicates necessary for rocky planets.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 4 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 4: Luminaries Set</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">7.66B – 5.10B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Solar System Formation</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Sun, Moon, and stars established to govern days and seasons.<br>
+                            <strong>Astrophysics:</strong> Coalescence of our Solar System (~4.6B yrs ago), stable Earth orbit and atmospheric clearing.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 5 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 5: Aquatic & Birds</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">5.10B – 2.55B Yrs Ago</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Oceanic Life Expansion</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Swarming sea creatures and winged birds.<br>
+                            <strong>Astrophysics:</strong> Archean/Proterozoic oceans, cellular life, photosynthesis, and atmospheric oxygenation.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                    <!-- Epoch 6 -->
+                    <div class="bg-cosmic-950 p-6 rounded-2xl border border-slate-800 space-y-3 hover:border-gold-500/50 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-cinzel font-bold text-gold-400">Day 6: Mammals & Adam</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gold-500/10 text-gold-300 border border-gold-500/30">2.55B Yrs – Present</span>
+                        </div>
+                        <h3 class="font-cinzel text-lg text-white font-semibold">Terrestrial Life & Divine Soul</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong>Torah:</strong> Land animals created, culminating in Adam receiving the divine soul (<em>Neshama</em>).<br>
+                            <strong>Astrophysics:</strong> Cambrian explosion, mammalian dominance, hominids, and modern human consciousness.
+                        </p>
+                        <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800/80">
+                            Epoch Span: ~2.556 Billion Solar Years
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 3: METRIC CONVERSION CALCULATOR (172.75 INTRINSIC UNITS) -->
+        <!-- ========================================================================= -->
+        <section id="units" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section III</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Intrinsic Unit Conversion Matrix (172.75 Units)</h2>
+                <p class="text-slate-400 text-sm">Converting internal container geometry (172.75 units) to Earth-observed light-years (~13.78B LY).</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-ruler-combined text-gold-500"></i>
+                            <span>Gravitational Metric Conversion</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Because light decelerates as it moves out of the high-density container core into lower-potential regions, the intrinsic coordinate measurement of <strong>172.75 spatial units</strong> maps directly onto the <strong>~13.78 Billion Light-Year</strong> lookback horizon measured by Earth instruments (such as the Planck CMB survey).
+                        </p>
+
+                        <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 font-mono text-xs space-y-3">
+                            <div class="flex justify-between text-slate-300">
+                                <span>Intrinsic Geometric Parameter ($U_{\text{int}}$):</span>
+                                <span class="text-gold-400 font-bold">172.75 Units</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Gradient Metric Scaling Constant ($\gamma$):</span>
+                                <span class="text-purple-400 font-bold">0.0797568 B-LY / Unit</span>
+                            </div>
+                            <div class="pt-2 border-t border-slate-800 flex justify-between text-sm">
+                                <span class="text-slate-200">Earth-Observed Horizon:</span>
+                                <span id="convertedLY" class="text-emerald-400 font-bold">13.778 Billion Light-Years</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-slate-300 text-xs font-mono flex justify-between mb-2">
+                                <span>Interactive Intrinsic Parameter Slider:</span>
+                                <span id="intrinsicSliderVal" class="text-gold-400 font-bold">172.75</span>
+                            </label>
+                            <input type="range" id="intrinsicSlider" min="100" max="220" step="0.25" value="172.75" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 bg-cosmic-950/90 p-6 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="text-xs uppercase font-mono tracking-widest text-gold-400 font-bold border-b border-slate-800 pb-2">
+                            Container Hierarchy Bounds
+                        </div>
+
+                        <div class="space-y-3 font-mono text-xs">
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">1. Raw Geometric Scale:</span>
+                                <span class="text-gold-300 font-bold">172.75 Coordinate Units</span>
+                            </div>
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">2. Earth Optical Lookback:</span>
+                                <span class="text-blue-400 font-bold">~13.78 Billion Light-Years</span>
+                            </div>
+                            <div class="p-3 bg-cosmic-900 rounded-xl border border-slate-800/80 flex justify-between">
+                                <span class="text-slate-400">3. Absolute Zero-Gravity Edge:</span>
+                                <span class="text-red-400 font-bold">15.34 Billion Light-Years</span>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 italic pt-2">
+                            "The universe is bounded physically inside a ~15.34B light-year container, which manifests locally to light-bound Earth observers as a 13.78B light-year optical horizon."
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 4: CLOSED-CONTAINER GRADIENT GRAVITY SIMULATION g(r) -->
+        <!-- ========================================================================= -->
+        <section id="ccm" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section IV</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Gradient Gravity $g(r)$ & Zero-Gravity Boundary</h2>
+                <p class="text-slate-400 text-sm">Interactive physics model solving the Hubble Tension without dark matter.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Controls -->
+                    <div class="lg:col-span-4 space-y-5 font-mono text-xs border-b lg:border-b-0 lg:border-r border-slate-800 pr-0 lg:pr-6 pb-6 lg:pb-0">
+                        <h3 class="font-cinzel text-lg font-bold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-gold-500"></i>
+                            <span>Simulation Controls</span>
+                        </h3>
+
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Vacuum Density Gradient ($\alpha$):</span>
+                                <span id="ccmAlphaVal" class="text-gold-400 font-bold">0.85</span>
+                            </label>
+                            <input type="range" id="ccmAlphaInput" min="0.2" max="1.5" step="0.05" value="0.85" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div class="pt-2">
+                            <label class="flex items-center space-x-2 text-slate-300 cursor-pointer">
+                                <input type="checkbox" id="showNewtonian" class="rounded accent-gold-500">
+                                <span>Overlay Standard Newtonian $1/r^2$</span>
+                            </label>
+                        </div>
+
+                        <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 space-y-2 text-[11px]">
+                            <div class="text-gold-400 font-bold uppercase tracking-wider">Boundary Output:</div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>Zero-Gravity Point ($g=0$):</span>
+                                <span class="text-red-400 font-bold">15.34 Billion LY</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>CMB Horizon:</span>
+                                <span class="text-gold-300 font-bold">13.78 Billion LY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Interactive Graph -->
+                    <div class="lg:col-span-8 space-y-3">
+                        <div class="relative w-full h-80 sm:h-96 bg-cosmic-950 rounded-2xl border border-slate-800 p-2 overflow-hidden">
+                            <canvas id="gravityChartCanvas" class="w-full h-full"></canvas>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <strong class="text-gold-300">Hubble Tension Resolution:</strong> Local measurements ($H_0 \approx 73.0 \text{ km/s/Mpc}$) and early CMB measurements ($H_0 \approx 67.4 \text{ km/s/Mpc}$) are unified under the Closed-Container Model. Variable light speed $c(r)$ across the gravitational density gradient resolves the discrepancy without requiring dark energy.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 5: NESHAMA ASCENT & DIVINE VELOCITY ENGINE -->
+        <!-- ========================================================================= -->
+        <section id="ascent" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section V</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Neshama Ascent & Divine Velocity Engine</h2>
+                <p class="text-slate-400 text-sm">Massless consciousness scaling ($v_{\text{Neshama}} = 365,250 \times c$) traversing the zero-gravity boundary.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Calculator Panel -->
+                <div class="lg:col-span-5 gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                    <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-calculator text-gold-500"></i>
+                        <span>Velocity Scaling Calculator</span>
+                    </h3>
+
+                    <!-- Math Display -->
+                    <div class="p-4 bg-cosmic-950 rounded-2xl border border-slate-800 space-y-2 font-mono text-xs">
+                        <div class="text-slate-400">Divine Ratio Formula:</div>
+                        <div id="mathFormula1" class="text-gold-300 text-center py-1"></div>
+                        <div class="text-slate-400">Massless Velocity Scalar:</div>
+                        <div id="mathFormula2" class="text-emerald-400 text-center py-1"></div>
+                    </div>
+
+                    <div class="space-y-4 font-mono text-xs">
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Divine Scalar Ratio:</span>
+                                <span id="scalarVal" class="text-gold-400 font-bold">365,250</span>
+                            </label>
+                            <input type="range" id="scalarInput" min="100000" max="500000" step="5000" value="365250" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <label class="text-slate-300 flex justify-between mb-1">
+                                <span>Target Distance (Billion Light-Years):</span>
+                                <span id="horizonVal" class="text-gold-400 font-bold">100.0 Billion</span>
+                            </label>
+                            <input type="range" id="horizonInput" min="10" max="200" step="5" value="100" class="w-full accent-gold-500 bg-cosmic-950 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Calculated Output Box -->
+                    <div class="p-4 bg-gradient-to-br from-gold-500/10 to-amber-500/10 rounded-2xl border border-gold-500/30 space-y-3">
+                        <div class="text-xs uppercase text-gold-400 font-semibold tracking-wider">Traversal Comparison</div>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                            <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block text-[10px]">Physical Light ($c$):</span>
+                                <span id="lightTimeOut" class="text-amber-400 font-bold">100.00B Yrs</span>
+                            </div>
+                            <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block text-[10px]">Neshama ($v_{\text{Neshama}}$):</span>
+                                <span id="neshamaTimeOut" class="text-emerald-400 font-bold">273.78k Yrs</span>
+                            </div>
+                        </div>
+                        <div class="bg-cosmic-950 p-2.5 rounded-xl border border-slate-800 text-xs flex justify-between items-center font-mono">
+                            <span class="text-slate-300">Divine Time Span:</span>
+                            <span id="divineTimeOut" class="text-gold-300 font-bold">0.75 Divine Yrs (~273 Days)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation Panel -->
+                <div class="lg:col-span-7 gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-feather text-gold-500"></i>
+                            <span>Mechanics of Nightly Ascent</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            During sleep, the lower vegetative soul (*Nefesh*) stays bound to preserve biological organ functions, while the higher intellect (*Neshama*) untethers from physical mass. Because consciousness possesses <strong>zero rest mass ($m=0$)</strong>, it is not restricted by local light-speed limits ($c$).
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Operating on the Divine scaling ratio ($v_{\text{Neshama}} = 365,250 \times c$), the soul traverses across the gravitational potential well—from Earth deep in the core out to <strong>Rakia 7 (Aravot)</strong> situated at the zero-gravity boundary wall ($g \to 0$)—recharging from the primary source of Divine information (*Ginzey Chaim*).
+                        </p>
+                        <div class="p-4 rounded-xl bg-cosmic-950 border-l-4 border-gold-400 text-xs text-slate-300 space-y-1">
+                            <span class="font-bold text-gold-300 block">The 1-Second Traversal Ratio:</span>
+                            At $v_{\text{Neshama}}$, in <strong>1 local Earth second</strong>, massless consciousness covers $365,250 \text{ light-seconds} \approx \mathbf{1 \text{ Light-Day}}$ of cosmic distance!
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-cosmic-950 rounded-xl border border-slate-800 text-xs text-slate-400 flex justify-between font-mono">
+                        <span>Status: <strong class="text-emerald-400">Massless Velocity Active</strong></span>
+                        <span>Destination: <strong class="text-gold-300">Rakia 7 (Aravot)</strong></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 6: 7 RAKIA'IM (SEVEN FIRMAMENTS) COSMIC STRUCTURE MODULE -->
+        <!-- ========================================================================= -->
+        <section id="rakiaim" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section VI</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">7 Rakia'im (Seven Firmaments) Structural Map</h2>
+                <p class="text-slate-400 text-sm">Mapping Talmudic firmament cosmology (*Chagigah 12b*) onto radial container geometry.</p>
+            </div>
+
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    <!-- Radial Map Canvas -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-4">
+                        <div class="relative w-full h-80 sm:h-96 bg-cosmic-950 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-center">
+                            <canvas id="rakiaCanvas" class="w-full h-full"></canvas>
+                            <div class="absolute top-3 left-3 bg-cosmic-900/90 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono text-gold-300">
+                                <i class="fa-solid fa-arrows-to-eye mr-1"></i> Interactive Radial Firmaments
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firmament Description -->
+                    <div class="lg:col-span-5 space-y-4 flex flex-col justify-between">
+                        <div>
+                            <h3 id="rakiaTitle" class="font-cinzel text-xl font-bold text-gold-300 border-b border-slate-800 pb-2">
+                                7. Aravot (עֲרָבוֹת)
+                            </h3>
+                            <div class="mt-4 space-y-3 text-xs text-slate-300">
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Gravitational Status:</span>
+                                    <span id="rakiaGrav" class="font-mono text-red-400 font-bold">$g(r) \to 0$ (Zero-Gravity Wall)</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Radial Boundary:</span>
+                                    <span id="rakiaDist" class="font-mono text-gold-400">~15.34 Billion Light-Years</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Primary Contents:</span>
+                                    <span id="rakiaContents" class="font-mono text-emerald-300">Treasuries of Life (*Ginzey Chaim*) & Throne of Glory</span>
+                                </div>
+                                <p id="rakiaDesc" class="text-slate-300 leading-relaxed pt-2">
+                                    The ultimate outer realm located at the absolute edge of physical space-time. Here effective gravity drops to zero, mass dissolves into unified information, and souls reside in pure spiritual light (*Olam HaNeshamot*).
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 7 Buttons -->
+                        <div class="grid grid-cols-7 gap-1.5 pt-4 border-t border-slate-800">
+                            <button onclick="selectRakia(0)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">1</button>
+                            <button onclick="selectRakia(1)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">2</button>
+                            <button onclick="selectRakia(2)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">3</button>
+                            <button onclick="selectRakia(3)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">4</button>
+                            <button onclick="selectRakia(4)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">5</button>
+                            <button onclick="selectRakia(5)" class="rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500">6</button>
+                            <button onclick="selectRakia(6)" class="rakia-btn p-2 rounded bg-gold-500/20 border border-gold-500 text-[10px] font-mono text-gold-300 font-bold">7</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION 7: SFORNO BIO-DECAY & PRE-ADAMITE BONES OF HORBANOT -->
+        <!-- ========================================================================= -->
+        <section id="sforno" class="space-y-8 scroll-mt-28">
+            <div class="border-l-4 border-gold-500 pl-4">
+                <span class="text-gold-400 text-xs font-mono tracking-widest uppercase">Section VII</span>
+                <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white">Sforno Bio-Decay & Bones of Horbanot</h2>
+                <p class="text-slate-400 text-sm">Post-Mabul atmospheric shift and fossil evidence from earlier Shemitah cycles.</p>
+            </div>
+
+            <!-- Lifespan Chart -->
+            <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 space-y-4">
+                        <h3 class="font-cinzel text-xl font-semibold text-gold-300 flex items-center space-x-2">
+                            <i class="fa-solid fa-dna text-gold-500"></i>
+                            <span>Sforno on Post-Mabul Bio-Decay</span>
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            In his commentary on Genesis 8:22, <strong>Rabbi Ovadia Sforno</strong> explains that prior to the Great Deluge (*Mabul*), Earth's solar alignment created a perpetual equilibrium where humans lived for 900+ years.
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            During the Deluge, an orbital tilt displacement introduced harsh seasonal variance, atmospheric degradation, and exponential biological wear—dropping human lifespans down to 70–80 years by the era of King David.
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-2">
+                        <div class="text-xs font-mono text-slate-300 flex justify-between">
+                            <span>Biblical Lifespan Decay Curve (Noah to Modern)</span>
+                            <span class="text-gold-400">Exponential Half-Life Model</span>
+                        </div>
+                        <div class="h-64 sm:h-72 w-full bg-cosmic-950 rounded-2xl p-3 border border-slate-800">
+                            <canvas id="sfornoChartCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pre-Adamite Bones of Horbanot Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-xl">
+                        <i class="fa-solid fa-bone"></i>
+                    </div>
+                    <h3 class="font-cinzel text-xl font-semibold text-gold-300">"Bones of Horbanot" & Pre-Adamite Fossils</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        The Midrash (*Bereshit Rabbah 3:7*) states that God built earlier worlds and destroyed them before our current 6,000-year cycle.
+                    </p>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        In the 1840s, <strong>Rabbi Israel Lipschutz (Tiferet Yisrael)</strong> explained that discovered dinosaur bones were physical remnants of these earlier Shemitah cycles (*Atzamot HaHorbanot*), proving paleontological discoveries affirm Rabbinic tradition.
+                    </p>
+                </div>
+
+                <div class="gradient-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xl">
+                        <i class="fa-solid fa-water"></i>
+                    </div>
+                    <h3 class="font-cinzel text-xl font-semibold text-blue-300">The Objective River of Time</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Time is not an illusion or a static block. It is a <strong>real, objective, river-like flow</strong> with a directional arrow and a bounded container limit.
+                    </p>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        While local clocks tick at different rates depending on gravitational potential, all points in the universe share the same underlying event simultaneity (coordinate present), flowing together toward the 7th Millennium threshold.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-cosmic-950 py-8 text-center text-xs text-slate-500 font-mono">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="text-slate-400">The Bounded Cosmic River: Closed-Container Cosmology & Kabbalistic Synthesis</p>
+            <p class="text-slate-600">Built with HTML5, Tailwind CSS, Chart.js & KaTeX</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPT ENGINE -->
+    <script>
+        // --- 1. KATEX MATHEMATICAL FORMULA RENDERING ---
+        document.addEventListener("DOMContentLoaded", function() {
+            katex.render("1 \\text{ Divine Yr} = 365.25 \\times 1,000 = 365,250 \\text{ Solar Yrs}", document.getElementById("mathFormula1"), { throwOnError: false });
+            katex.render("v_{\\text{Neshama}} = 365,250 \\times c \\implies 1 \\text{ sec} = 1 \\text{ Light-Day}", document.getElementById("mathFormula2"), { throwOnError: false });
+        });
+
+        // --- 2. MOBILE NAVIGATION TOGGLE ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- 3. NESHAMA ASCENT CALCULATOR ---
+        const scalarInput = document.getElementById('scalarInput');
+        const horizonInput = document.getElementById('horizonInput');
+        const scalarVal = document.getElementById('scalarVal');
+        const horizonVal = document.getElementById('horizonVal');
+        const lightTimeOut = document.getElementById('lightTimeOut');
+        const neshamaTimeOut = document.getElementById('neshamaTimeOut');
+        const divineTimeOut = document.getElementById('divineTimeOut');
+
+        function updateAscentCalc() {
+            const scalar = parseInt(scalarInput.value);
+            const horizon = parseFloat(horizonInput.value);
+
+            scalarVal.textContent = scalar.toLocaleString();
+            horizonVal.textContent = `${horizon.toFixed(1)} Billion`;
+
+            lightTimeOut.textContent = `${horizon.toFixed(2)}B Yrs`;
+
+            const solarYrsNeshama = (horizon * 1e9) / scalar;
+            if (solarYrsNeshama >= 1000) {
+                neshamaTimeOut.textContent = `${(solarYrsNeshama / 1000).toFixed(2)}k Yrs`;
+            } else {
+                neshamaTimeOut.textContent = `${solarYrsNeshama.toFixed(1)} Yrs`;
+            }
+
+            const divineYrs = solarYrsNeshama / 365250;
+            const divineDays = divineYrs * 365.25;
+            divineTimeOut.textContent = `${divineYrs.toFixed(2)} Divine Yrs (~${Math.round(divineDays)} Days)`;
+        }
+
+        scalarInput.addEventListener('input', updateAscentCalc);
+        horizonInput.addEventListener('input', updateAscentCalc);
+        updateAscentCalc();
+
+        // --- 4. 7 RAKIA'IM CANVA VISUALIZER ---
+        const rakiaData = [
+            { name: "1. Vilon (וִילוֹן)", dist: "0.001 B-LY", grav: "Surface Gravity (1.0g)", contents: "Atmospheric curtain & daily solar cycle", desc: "The innermost layer shielding Earth's immediate biological ecosystem." },
+            { name: "2. Rakia (רָקִיעַ)", dist: "0.10 B-LY", grav: "High Gravitational Potential", contents: "Sun, Moon, Stars & Planetary Spheres", desc: "The visible physical celestial firmament containing astronomical bodies." },
+            { name: "3. Shechakim (שְׁחָקִים)", dist: "2.50 B-LY", grav: "Moderate Gravitational Drag", contents: "Millstones grinding Manna for Righteous", desc: "The atmospheric spiritual processing realm of upper light." },
+            { name: "4. Zevul (זְבוּל)", dist: "6.80 B-LY", grav: "Intermediate Potential Well", contents: "Heavenly Jerusalem & Celestial Altar", desc: "The spiritual temple midpoint where Archangel Michael offers souls." },
+            { name: "5. Ma'on (מָעוֹן)", dist: "10.20 B-LY", grav: "Low Gravitational Drag", contents: "Ministering Angels singing nightly praises", desc: "The angelic domain of song and Divine resonance." },
+            { name: "6. Machon (מָכוֹן)", dist: "13.78 B-LY", grav: "Near-Zero Gravitational Potential", contents: "Treasuries of Snow, Hail & Cosmic Storms", desc: "The boundary of observable light corresponding to the CMB horizon." },
+            { name: "7. Aravot (עֲרָבוֹת)", dist: "15.34 B-LY", grav: "g(r) -> 0 (Zero-Gravity Boundary)", contents: "Ginzey Chaim & Divine Throne (Kisse HaKavod)", desc: "The ultimate outer boundary wall where physical space ends and pure spiritual reality begins." }
+        ];
+
+        const rakiaCanvas = document.getElementById('rakiaCanvas');
+        const rakiaCtx = rakiaCanvas.getContext('2d');
+        let selectedRakiaIndex = 6;
+
+        function resizeRakiaCanvas() {
+            rakiaCanvas.width = rakiaCanvas.parentElement.clientWidth;
+            rakiaCanvas.height = rakiaCanvas.parentElement.clientHeight;
+            drawRakiaMap();
+        }
+
+        function drawRakiaMap() {
+            const w = rakiaCanvas.width;
+            const h = rakiaCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxR = Math.min(cx, cy) * 0.85;
+
+            rakiaCtx.clearRect(0, 0, w, h);
+
+            for (let i = 6; i >= 0; i--) {
+                const r = maxR * ((i + 1) / 7);
+                rakiaCtx.beginPath();
+                rakiaCtx.arc(cx, cy, r, 0, Math.PI * 2);
+
+                if (i === selectedRakiaIndex) {
+                    rakiaCtx.strokeStyle = '#facc15';
+                    rakiaCtx.lineWidth = 3;
+                    rakiaCtx.fillStyle = 'rgba(250, 204, 21, 0.08)';
+                    rakiaCtx.fill();
+                } else if (i === 6) {
+                    rakiaCtx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+                    rakiaCtx.lineWidth = 2;
+                } else {
+                    rakiaCtx.strokeStyle = `rgba(35, 50, 110, ${0.3 + (i * 0.1)})`;
+                    rakiaCtx.lineWidth = 1.5;
+                }
+                rakiaCtx.stroke();
+            }
+
+            rakiaCtx.beginPath();
+            rakiaCtx.arc(cx, cy, 8, 0, Math.PI * 2);
+            rakiaCtx.fillStyle = '#3b82f6';
+            rakiaCtx.fill();
+        }
+
+        function selectRakia(idx) {
+            selectedRakiaIndex = idx;
+            const data = rakiaData[idx];
+            document.getElementById('rakiaTitle').textContent = data.name;
+            document.getElementById('rakiaGrav').textContent = data.grav;
+            document.getElementById('rakiaDist').textContent = data.dist;
+            document.getElementById('rakiaContents').textContent = data.contents;
+            document.getElementById('rakiaDesc').textContent = data.desc;
+
+            const btns = document.querySelectorAll('.rakia-btn');
+            btns.forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = "rakia-btn p-2 rounded bg-gold-500/20 border border-gold-500 text-[10px] font-mono text-gold-300 font-bold";
+                } else {
+                    btn.className = "rakia-btn p-2 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono hover:border-gold-500";
+                }
+            });
+
+            drawRakiaMap();
+        }
+
+        window.addEventListener('resize', resizeRakiaCanvas);
+        resizeRakiaCanvas();
+
+        // --- 5. GRADIENT GRAVITY CANVAS CHART ---
+        const gravityCanvas = document.getElementById('gravityChartCanvas');
+        const gravCtx = gravityCanvas.getContext('2d');
+        const ccmAlphaInput = document.getElementById('ccmAlphaInput');
+        const ccmAlphaVal = document.getElementById('ccmAlphaVal');
+        const showNewtonian = document.getElementById('showNewtonian');
+
+        function drawGravityChart() {
+            gravityCanvas.width = gravityCanvas.parentElement.clientWidth;
+            gravityCanvas.height = gravityCanvas.parentElement.clientHeight;
+
+            const w = gravityCanvas.width;
+            const h = gravityCanvas.height;
+            const alpha = parseFloat(ccmAlphaInput.value);
+            ccmAlphaVal.textContent = alpha;
+
+            gravCtx.clearRect(0, 0, w, h);
+
+            gravCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            gravCtx.lineWidth = 1;
+            for (let x = 40; x < w; x += 40) {
+                gravCtx.beginPath();
+                gravCtx.moveTo(x, 0);
+                gravCtx.lineTo(x, h - 30);
+                gravCtx.stroke();
+            }
+            for (let y = 20; y < h - 30; y += 30) {
+                gravCtx.beginPath();
+                gravCtx.moveTo(40, y);
+                gravCtx.lineTo(w, y);
+                gravCtx.stroke();
+            }
+
+            gravCtx.beginPath();
+            gravCtx.strokeStyle = '#facc15';
+            gravCtx.lineWidth = 3;
+
+            const paddingLeft = 40;
+            const paddingBottom = 30;
+            const graphW = w - paddingLeft - 20;
+            const graphH = h - paddingBottom - 20;
+
+            for (let px = 0; px <= graphW; px++) {
+                const rNorm = px / graphW;
+                const gEff = (1.0 - Math.pow(rNorm, 2 * alpha)) * Math.exp(-rNorm * 1.5);
+                const py = (h - paddingBottom) - (gEff * graphH);
+
+                if (px === 0) gravCtx.moveTo(paddingLeft + px, py);
+                else gravCtx.lineTo(paddingLeft + px, py);
+            }
+            gravCtx.stroke();
+
+            if (showNewtonian.checked) {
+                gravCtx.beginPath();
+                gravCtx.strokeStyle = '#ef4444';
+                gravCtx.lineWidth = 1.5;
+                gravCtx.setLineDash([4, 4]);
+
+                for (let px = 5; px <= graphW; px++) {
+                    const rNorm = px / graphW;
+                    const gNewt = 0.15 / (rNorm * rNorm + 0.05);
+                    const py = (h - paddingBottom) - (Math.min(gNewt, 1) * graphH);
+
+                    if (px === 5) gravCtx.moveTo(paddingLeft + px, py);
+                    else gravCtx.lineTo(paddingLeft + px, py);
+                }
+                gravCtx.stroke();
+                gravCtx.setLineDash([]);
+            }
+
+            gravCtx.fillStyle = '#94a3b8';
+            gravCtx.font = '10px JetBrains Mono';
+            gravCtx.fillText('0', paddingLeft, h - 10);
+            gravCtx.fillText('13.78B LY (CMB)', paddingLeft + graphW * 0.85 - 40, h - 10);
+            gravCtx.fillText('15.34B LY (g=0)', paddingLeft + graphW - 70, h - 10);
+        }
+
+        ccmAlphaInput.addEventListener('input', drawGravityChart);
+        showNewtonian.addEventListener('change', drawGravityChart);
+        window.addEventListener('resize', drawGravityChart);
+        drawGravityChart();
+
+        // --- 6. INTRINSIC UNIT SLIDER LOGIC ---
+        const intrinsicSlider = document.getElementById('intrinsicSlider');
+        const intrinsicSliderVal = document.getElementById('intrinsicSliderVal');
+        const convertedLY = document.getElementById('convertedLY');
+
+        intrinsicSlider.addEventListener('input', () => {
+            const val = parseFloat(intrinsicSlider.value);
+            intrinsicSliderVal.textContent = val.toFixed(2);
+            const ly = val * 0.0797568;
+            convertedLY.textContent = `${ly.toFixed(3)} Billion Light-Years`;
+        });
+
+        // --- 7. SFORNO CHART.JS BIO-DECAY ---
+        const sfornoCtx = document.getElementById('sfornoChartCanvas').getContext('2d');
+        new Chart(sfornoCtx, {
+            type: 'line',
+            data: {
+                labels: ['Adam', 'Seth', 'Enosh', 'Noah', 'Arpachshad', 'Shelah', 'Eber', 'Peleg', 'Terah', 'Abraham', 'Moses', 'David'],
+                datasets: [{
+                    label: 'Biblical Lifespan (Solar Years)',
+                    data: [930, 912, 905, 950, 438, 433, 464, 239, 205, 175, 120, 70],
+                    borderColor: '#facc15',
+                    backgroundColor: 'rgba(250, 204, 21, 0.1)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#fde047',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
