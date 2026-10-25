@@ -67,6 +67,12 @@ The black hole theory:
 When a star is dying it's collapsing toward its center, then as the compression reach a certain level, there is a broken effect where everyhtign get ejected inside and outside the black hole, the fragments are joined to create stars, the stars star to fight against gravity, and once the density is lower, gravity became lower too, and then suddenly the black hole became a galaxy, because now the gravity and density is lower and allow the light to escape.
 This can solve the fact that we can see suddenly a light far in the space, that was not expected to be there.
 
+We can also explains the univers as a big star collapsed like a black hole, then created our univers in that case the expansion is mandatory too like inside the black hole, its not changing the gradient gravity its just an additional step.
+
+In that case we would be able to see if an expansion is still hapening by just testing light from the same star along time, if the univers is expanding we are suppose to see diff in the redshift of the same star and not only between stars, the expansion was maybe a already stopped back then.
+
+
+
 
 ===========================
 
