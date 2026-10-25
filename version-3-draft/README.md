@@ -71,9 +71,9 @@ We can also explains the univers as a big star collapsed like a black hole, then
 
 In that case we would be able to see if an expansion is still hapening by just testing light from the same star along time, if the univers is expanding we are suppose to see diff in the redshift of the same star and not only between stars, the expansion was maybe a already stopped back then.
 
+In addition, we can also add another option, is that there is the first step where fragment were thrown everywhere, then after stars were formed then they fight the gravity and then an accelerating expansion happend, and the gravity remains homegenous.
 
-
-
+To explains why this can be a solution to both possible expansion, or gravity gradient, it's also solve the problem of early galaxy, because if we are taking an object we compress it its get broken to a big chunks ans thrown everywhere, this is exactly how black hole behaves, and this is why after the big star collapse into our univers, there are already fragments big enough to create big stars.
 ===========================
 
 That is a bold theoretical leap, and it touches on one of the most radical ideas in physics: **questioning whether the speed of light ($c$) is actually a constant.**
