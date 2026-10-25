@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en" class="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  let isUpdatingSelection = false;
+  let lastSentText = '';
+  let lastSentRect = null;
+  let selectionTimeoutId = null;
+  let isMouseDown = false;
+  let mousedownPos = {x: 0, y: 0};
+
+  function notifyParentSelectionCleared() {
+    if (!lastSentText) return;
+    lastSentText = '';
+    lastSentRect = null;
+    window.parent.postMessage({
+      type: 'textSelectionCleared',
+    }, '*');
+  }
+
+  function clearSelectionAndNotifyParent() {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      selection.removeAllRanges();
+    }
+    notifyParentSelectionCleared();
+  }
+
+  function handleSelection() {
+    if (isUpdatingSelection) return;
+
+    const selection = window.getSelection();
+    const selectedText = selection ? selection.toString().trim() : '';
+
+    if (selectedText.length > 0 && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      let rect = range.getBoundingClientRect();
+      if (rect.width === 0 && rect.height === 0) {
+        const rects = range.getClientRects();
+        if (rects.length > 0) {
+          rect = rects[0];
+        }
+      }
+
+      if (
+        selectedText === lastSentText &&
+        lastSentRect &&
+        Math.abs(rect.top - lastSentRect.top) < 1 &&
+        Math.abs(rect.left - lastSentRect.left) < 1 &&
+        Math.abs(rect.width - lastSentRect.width) < 1 &&
+        Math.abs(rect.height - lastSentRect.height) < 1
+      ) {
+        return;
+      }
+
+      isUpdatingSelection = true;
+      try {
+        // Detect backwards selection before DOM manipulation so direction can be restored.
+        const isBackward =
+          selection.anchorNode &&
+          (selection.anchorNode !== range.startContainer ||
+            selection.anchorOffset !== range.startOffset);
+
+        const originalRange = range.cloneRange();
+
+        const startTag = document.createTextNode('<selection-tag>');
+        const endTag = document.createTextNode('</selection-tag>');
+
+        const rangeStart = range.cloneRange();
+        rangeStart.collapse(true);
+
+        const rangeEnd = range.cloneRange();
+        rangeEnd.collapse(false);
+
+        // Insert end tag first to avoid shifting start boundary if they are in the same node.
+        rangeEnd.insertNode(endTag);
+        rangeStart.insertNode(startTag);
+
+        const fullTextWithTags = document.body.innerText
+          .replace(/<selection-tag>/gi, '<selection-tag>')
+          .replace(new RegExp('</selection-tag>', 'gi'), '</selection-tag>');
+
+        if (startTag.parentNode) {
+          startTag.parentNode.removeChild(startTag);
+        }
+        if (endTag.parentNode) {
+          endTag.parentNode.removeChild(endTag);
+        }
+
+        // Explicitly restore the user's original selection range, preserving backwards
+        // direction via setBaseAndExtent if applicable.
+        selection.removeAllRanges();
+        if (isBackward && selection.setBaseAndExtent) {
+          selection.setBaseAndExtent(
+            originalRange.endContainer,
+            originalRange.endOffset,
+            originalRange.startContainer,
+            originalRange.startOffset,
+          );
+        } else {
+          selection.addRange(originalRange);
+        }
+
+        lastSentText = selectedText;
+        lastSentRect = {
+          top: rect.top,
+          left: rect.left,
+          bottom: rect.bottom,
+          right: rect.right,
+          width: rect.width,
+          height: rect.height,
+        };
+
+        window.parent.postMessage({
+          type: 'textSelection',
+          text: selectedText,
+          fullTextWithTags: fullTextWithTags,
+          rect: lastSentRect,
+        }, '*');
+      } finally {
+        isUpdatingSelection = false;
+      }
+    } else {
+      notifyParentSelectionCleared();
+    }
+  }
+
+  // Dismiss co-creation input on keyboard slide navigation or Escape key.
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      clearSelectionAndNotifyParent();
+      return;
+    }
+    const target = e.target;
+    const isEditing = target instanceof Element && (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable
+    );
+    if (!isEditing && !e.shiftKey && ['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp', 'Home', 'End'].includes(e.key)) {
+      clearSelectionAndNotifyParent();
+    }
+  }, true);
+
+  // Dismiss co-creation input or handle selection when selection changes via keyboard.
+  document.addEventListener('keyup', function() {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+      notifyParentSelectionCleared();
+    } else {
+      handleSelection();
+    }
+  }, true);
+
+  // Listen to selectionchange for screen readers (e.g. VoiceOver), assistive technologies, and accessibility APIs.
+  // Skips handleSelection() while the mouse button is held down to avoid
+  // interfering with an in-progress drag selection (especially backwards).
+  document.addEventListener('selectionchange', function() {
+    if (isUpdatingSelection) return;
+    if (isMouseDown) return;
+    if (selectionTimeoutId) {
+      clearTimeout(selectionTimeoutId);
+    }
+    selectionTimeoutId = setTimeout(function() {
+      selectionTimeoutId = null;
+      handleSelection();
+    }, 50);
+  });
+
+  // Dismiss co-creation input on hash/page navigation.
+  window.addEventListener('hashchange', function() {
+    clearSelectionAndNotifyParent();
+  });
+
+  // Track selection state and mouse position at mousedown to distinguish
+  // plain clicks (which should dismiss) from drag-to-select (which should not).
+  let selectionAtMousedown = '';
+  document.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    isMouseDown = true;
+    mousedownPos = {x: e.clientX, y: e.clientY};
+    const selection = window.getSelection();
+    selectionAtMousedown = selection ? selection.toString().trim() : '';
+  }, true);
+
+  document.addEventListener('mouseup', function(e) {
+    if (e.button !== 0) return;
+    isMouseDown = false;
+    const selection = window.getSelection();
+    const selectedText = selection ? selection.toString().trim() : '';
+
+    // Determine if the mouse moved significantly (drag vs plain click).
+    const dx = Math.abs(e.clientX - mousedownPos.x);
+    const dy = Math.abs(e.clientY - mousedownPos.y);
+    const isPlainClick = dx < 4 && dy < 4;
+
+    // If the selection text is the same as at mousedown and the mouse
+    // barely moved, the user performed a plain click (possibly on a nav
+    // arrow) rather than dragging to create a new selection. In this case,
+    // if there was a prior selection, dismiss the co-creation input.
+    if (isPlainClick && selectedText.length > 0 && selectedText === selectionAtMousedown) {
+      clearSelectionAndNotifyParent();
+      return;
+    }
+
+    handleSelection();
+  }, true);
+
+  // Reset mouse drag state if a context menu opens.
+  window.addEventListener('contextmenu', function() {
+    isMouseDown = false;
+  });
+
+  // Handle the case where the user starts a drag inside the iframe but
+  // releases the mouse button outside it. Without this, isMouseDown would
+  // remain true and selectionchange would never fire handleSelection().
+  window.addEventListener('blur', function() {
+    if (isMouseDown) {
+      isMouseDown = false;
+      const selection = window.getSelection();
+      const selectedText = selection ? selection.toString().trim() : '';
+      if (selectedText.length > 0) {
+        handleSelection();
+      }
+    }
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+  
+  <title>The Static Gravitational Well Framework</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: #f8fafc; }
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      margin: 0 auto;
+      overflow: hidden;
+      box-sizing: border-box;
+      position: relative;
+    }
+  </style>
+<style>.lms-source-label {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #e0e0e0;
+    color: #333;
+    border-radius: 10px;
+    padding: 4px 4px;
+    font-family: sans-serif;
+    font-size: 10px;
+    pointer-events: none;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+</style><style>/* The container that fills available space and centers the slide. */
+#slideshow-holder {
+    flex-grow: 1;
+    width: 100%;
+    padding: 0.25rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* UI controls should not be text-selectable. */
+#nav-controls.select-none,
+#theme-toggle.select-none {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* The slide canvas, scaled via CSS zoom to fit available space. */
+#slideshow-wrapper {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    overflow: hidden;
+}
+
+/* Update slide container styles */
+.slide-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Make the active slide visible */
+.slide-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+</style><script src="https://cdn.tailwindcss.com/3.4.17"></script><script>tailwind.config = {
+  darkMode: 'class',
+  corePlugins: {
+    preflight: false,
+  },
+};
+</script><style>*, ::before, ::after {--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x:  ;--tw-pan-y:  ;--tw-pinch-zoom:  ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position:  ;--tw-gradient-via-position:  ;--tw-gradient-to-position:  ;--tw-ordinal:  ;--tw-slashed-zero:  ;--tw-numeric-figure:  ;--tw-numeric-spacing:  ;--tw-numeric-fraction:  ;--tw-ring-inset:  ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / 0.5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur:  ;--tw-brightness:  ;--tw-contrast:  ;--tw-grayscale:  ;--tw-hue-rotate:  ;--tw-invert:  ;--tw-saturate:  ;--tw-sepia:  ;--tw-drop-shadow:  ;--tw-backdrop-blur:  ;--tw-backdrop-brightness:  ;--tw-backdrop-contrast:  ;--tw-backdrop-grayscale:  ;--tw-backdrop-hue-rotate:  ;--tw-backdrop-invert:  ;--tw-backdrop-opacity:  ;--tw-backdrop-saturate:  ;--tw-backdrop-sepia:  ;--tw-contain-size:  ;--tw-contain-layout:  ;--tw-contain-paint:  ;--tw-contain-style:  
+}::backdrop {--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x:  ;--tw-pan-y:  ;--tw-pinch-zoom:  ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position:  ;--tw-gradient-via-position:  ;--tw-gradient-to-position:  ;--tw-ordinal:  ;--tw-slashed-zero:  ;--tw-numeric-figure:  ;--tw-numeric-spacing:  ;--tw-numeric-fraction:  ;--tw-ring-inset:  ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / 0.5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur:  ;--tw-brightness:  ;--tw-contrast:  ;--tw-grayscale:  ;--tw-hue-rotate:  ;--tw-invert:  ;--tw-saturate:  ;--tw-sepia:  ;--tw-drop-shadow:  ;--tw-backdrop-blur:  ;--tw-backdrop-brightness:  ;--tw-backdrop-contrast:  ;--tw-backdrop-grayscale:  ;--tw-backdrop-hue-rotate:  ;--tw-backdrop-invert:  ;--tw-backdrop-opacity:  ;--tw-backdrop-saturate:  ;--tw-backdrop-sepia:  ;--tw-contain-size:  ;--tw-contain-layout:  ;--tw-contain-paint:  ;--tw-contain-style:  
+}.z-20 {z-index: 20
+}.flex {display: flex
+}.inline-flex {display: inline-flex
+}.hidden {display: none
+}.h-5 {height: 1.25rem
+}.h-8 {height: 2rem
+}.h-9 {height: 2.25rem
+}.h-screen {height: 100vh
+}.w-5 {width: 1.25rem
+}.w-8 {width: 2rem
+}.w-full {width: 100%
+}.flex-shrink-0 {flex-shrink: 0
+}.cursor-pointer {cursor: pointer
+}.select-none {-webkit-user-select: none;user-select: none
+}.flex-col {flex-direction: column
+}.items-center {align-items: center
+}.justify-center {justify-content: center
+}.justify-between {justify-content: space-between
+}.gap-3 {gap: 0.75rem
+}.overflow-hidden {overflow: hidden
+}.rounded-\[48px\] {border-radius: 48px
+}.rounded-full {border-radius: 9999px
+}.border-none {border-style: none
+}.bg-\[\#FAF9F9\] {--tw-bg-opacity: 1;background-color: rgb(250 249 249 / var(--tw-bg-opacity, 1))
+}.bg-transparent {background-color: transparent
+}.bg-white {--tw-bg-opacity: 1;background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1))
+}.bg-white\/50 {background-color: rgb(255 255 255 / 0.5)
+}.p-0 {padding: 0px
+}.p-1 {padding: 0.25rem
+}.p-2 {padding: 0.5rem
+}.px-8 {padding-left: 2rem;padding-right: 2rem
+}.py-2 {padding-top: 0.5rem;padding-bottom: 0.5rem
+}.font-normal {font-weight: 400
+}.tabular-nums {--tw-numeric-spacing: tabular-nums;font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
+}.leading-\[0\] {line-height: 0
+}.text-black {--tw-text-opacity: 1;color: rgb(0 0 0 / var(--tw-text-opacity, 1))
+}.text-gray-700 {--tw-text-opacity: 1;color: rgb(55 65 81 / var(--tw-text-opacity, 1))
+}.shadow-md {--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}.backdrop-blur-sm {--tw-backdrop-blur: blur(4px);-webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
+}.transition-all {transition-property: all;transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);transition-duration: 150ms
+}.transition-colors {transition-property: color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);transition-duration: 150ms
+}.duration-300 {transition-duration: 300ms
+}.hover\:text-black:hover {--tw-text-opacity: 1;color: rgb(0 0 0 / var(--tw-text-opacity, 1))
+}.disabled\:cursor-not-allowed:disabled {cursor: not-allowed
+}.disabled\:opacity-30:disabled {opacity: 0.3
+}.dark\:bg-\[\#1f1f1f\]:is(.dark *) {--tw-bg-opacity: 1;background-color: rgb(31 31 31 / var(--tw-bg-opacity, 1))
+}.dark\:bg-gray-800:is(.dark *) {--tw-bg-opacity: 1;background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1))
+}.dark\:bg-gray-800\/50:is(.dark *) {background-color: rgb(31 41 55 / 0.5)
+}.dark\:text-gray-200:is(.dark *) {--tw-text-opacity: 1;color: rgb(229 231 235 / var(--tw-text-opacity, 1))
+}.dark\:text-gray-300:is(.dark *) {--tw-text-opacity: 1;color: rgb(209 213 219 / var(--tw-text-opacity, 1))
+}.dark\:hover\:text-white:hover:is(.dark *) {--tw-text-opacity: 1;color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+}</style></head>
+<body class="bg-white dark:bg-[#1f1f1f] flex flex-col h-screen transition-colors duration-300 gap-3">
+
+  <!-- Slide 1: Title Slide (Dark Ground #1) -->
+  
+
+  <!-- Slide 2: Core Paradigm Shift (Light) -->
+  
+
+  <!-- Slide 3: Gravitational Wave Propagation (Light) -->
+  
+
+  <!-- Slide 4: Covariant Action Principle (Light) -->
+  
+
+  <!-- Slide 5: Steady-State Nucleosynthesis (Light) -->
+  
+
+  <!-- Slide 6: Static Structure Formation (Light) -->
+  
+
+  <!-- Slide 7: Closing Summary (Dark Ground #2) -->
+  
+
+
+
+<div id="nav-controls" class="select-none flex-shrink-0 w-full flex items-center justify-between py-2 px-8">
+    <div class="inline-flex items-center h-9 bg-[#FAF9F9] dark:bg-gray-800 rounded-[48px] p-1 gap-3 overflow-hidden">
+        <button id="prev-slide" class="flex items-center justify-center h-8 w-8 text-black dark:text-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border-none bg-transparent p-0 leading-[0] cursor-pointer transition-colors overflow-hidden">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <span id="slide-counter" data-format="compact" class="font-normal text-black dark:text-gray-200 tabular-nums select-none" style="font-size:15px;line-height:20px;">7 of 7</span>
+        <button id="next-slide" class="flex items-center justify-center h-8 w-8 text-black dark:text-gray-200 disabled:opacity-30 disabled:cursor-not-allowed border-none bg-transparent p-0 leading-[0] cursor-pointer transition-colors overflow-hidden" disabled="">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+    <button id="theme-toggle" class="select-none bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-2 rounded-full shadow-md text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-all duration-300 z-20 border-none leading-[0] cursor-pointer">
+        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        <svg id="theme-toggle-light-icon" class="w-5 h-5" fill="currentColor" viewBox="0 -960 960 960"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"></path></svg>
+    </button>
+</div>
+
+<div id="slideshow-holder"><div id="slideshow-wrapper" style="zoom: 0.633333;"><div class="slide-container" id="slide1" style="background:#090d16;display:flex;flex-direction:column;justify-content:center;padding:64px 80px;">
+    <p contenteditable="true" style="font-size:14px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px 0;">Advanced Theoretical Synthesis</p>
+    <h1 contenteditable="true" style="font-size:52px;font-weight:800;color:#ffffff;margin:0 0 20px 0;line-height:1.15;max-width:900px;">The Static Gravitational Well Framework</h1>
+    <p contenteditable="true" style="font-size:20px;color:#94a3b8;margin:0;max-width:700px;line-height:1.5;">A complete cosmological alternative replacing expansion, dark energy, and dark matter with a bounded, resonant macro-cavity.</p>
+    <div style="width:64px;height:4px;background:#38bdf8;margin:36px 0 0 0;border-radius:2px;"></div>
+  </div><div class="slide-container" id="slide2" style="background:#ffffff;color:#1e293b;display:flex;flex-direction:column;padding:56px 80px;box-sizing:border-box;">
+    <h2 contenteditable="true" style="font-size:32px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">The Paradigm Shift</h2>
+    <p contenteditable="true" style="font-size:18px;color:#64748b;margin:0 0 40px 0;">Moving from expanding spacetime to a stationary bounded resonator.</p>
+    
+    <div style="display:flex;gap:32px;align-items:center;flex-grow:1;align-items:center;justify-content:center;margin-bottom:40px;">
+      <div style="background:#f1f5f9;border-radius:16px;padding:36px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#ef4444;margin:0 0 12px 0;">Standard ΛCDM Paradigm</h3>
+        <p contenteditable="true" style="font-size:18px;color:#334155;margin:0;line-height:1.6;">Expanding universe driven by dark energy, requiring unobserved dark matter halos and a hot Big Bang temporal origin.</p>
+      </div>
+      <div style="background:#eff6ff;border-radius:16px;padding:36px;flex:1 1 0;border:2px solid #38bdf8;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#0284c7;margin:0 0 12px 0;">Static Cavity Framework</h3>
+        <p contenteditable="true" style="font-size:18px;color:#1e293b;margin:0;line-height:1.6;">A 134.1 Gly bounded resonant metric shell structure where scaling profile $S(r)$ governs dynamics natively.</p>
+      </div>
+    </div>
+  </div><div class="slide-container" id="slide3" style="background:#ffffff;color:#1e293b;display:flex;flex-direction:column;padding:56px 80px;box-sizing:border-box;">
+    <h2 contenteditable="true" style="font-size:32px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Gravitational Wave Propagation</h2>
+    <p contenteditable="true" style="font-size:18px;color:#64748b;margin:0 0 40px 0;">Replacing expanding-space luminosity distance with proper metric attenuation.</p>
+    
+    <div style="display:flex;gap:24px;align-items:center;flex-grow:1;align-items:center;justify-content:center;margin-bottom:40px;">
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Tensor Perturbations</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Waves traverse background $S(r)$ without spatial expansion.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Proper Volume Scaling</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Spatial volume scale $V \propto S(r)^3$ governs wave energy.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Strain Attenuation</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Amplitude scales as $h \propto 1 / (S(r)^2 r)$ matching LIGO.</p>
+      </div>
+    </div>
+  </div><div class="slide-container" id="slide4" style="background:#ffffff;color:#1e293b;display:flex;flex-direction:column;padding:56px 80px;box-sizing:border-box;">
+    <h2 contenteditable="true" style="font-size:32px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Covariant Action Principle</h2>
+    <p contenteditable="true" style="font-size:18px;color:#64748b;margin:0 0 40px 0;">Deriving static metric potentials from modified field equations.</p>
+    
+    <div style="display:flex;gap:32px;align-items:center;flex-grow:1;align-items:center;justify-content:center;margin-bottom:40px;">
+      <div style="background:#f8fafc;border-radius:16px;padding:36px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 12px 0;">Scalar-Tensor Cavity Action</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;line-height:1.6;">Incorporates a preferred-frame temporal scalar field $\phi$ whose vacuum expectation value sets the stationary scaling profile $S(r)$.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:16px;padding:36px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 12px 0;">Modified Field Equations</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;line-height:1.6;">$G_{\mu\nu} = 8\pi G_0 (T_{\mu\nu}^{\text{matter}} + T_{\mu\nu}^{(\phi)})$ yielding stable Dirichlet boundary solutions at $R_{\text{edge}}$.</p>
+      </div>
+    </div>
+  </div><div class="slide-container" id="slide5" style="background:#ffffff;color:#1e293b;display:flex;flex-direction:column;padding:56px 80px;box-sizing:border-box;">
+    <h2 contenteditable="true" style="font-size:32px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Steady-State Primordial BBN</h2>
+    <p contenteditable="true" style="font-size:18px;color:#64748b;margin:0 0 40px 0;">Replacing temporary cooling plasmas with permanent thermodynamic eigenmodes.</p>
+    
+    <div style="display:flex;gap:24px;align-items:center;flex-grow:1;align-items:center;justify-content:center;margin-bottom:40px;">
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Core Thermal Environs</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Inner galactic metric wells maintain fusion-level temperatures ($S \sim 1$).</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Metric Temperature Gradient</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Local thermal eigenmode follows $T(r) = T_0 / S(r)$ across concentric shells.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:28px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Equilibrium Abundances</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;">Helium-4 ($\sim 25\%$ mass fraction) maintained by continuous recycling.</p>
+      </div>
+    </div>
+  </div><div class="slide-container" id="slide6" style="background:#ffffff;color:#1e293b;display:flex;flex-direction:column;padding:56px 80px;box-sizing:border-box;">
+    <h2 contenteditable="true" style="font-size:32px;font-weight:700;color:#0f172a;margin:0 0 8px 0;">Static Cosmic Structure ($f\sigma_8$)</h2>
+    <p contenteditable="true" style="font-size:18px;color:#64748b;margin:0 0 40px 0;">Replacing chronological collapse with spatial eigenmode density settling.</p>
+    
+    <div style="display:flex;gap:32px;align-items:center;flex-grow:1;align-items:center;justify-content:center;margin-bottom:40px;">
+      <div style="background:#f8fafc;border-radius:16px;padding:36px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 12px 0;">Standing Wave Resonator</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;line-height:1.6;">Matter naturally segregates into nodes and antinodes of the master metric potential $S(r)$ without requiring 13.8 billion years of growth.</p>
+      </div>
+      <div style="background:#f8fafc;border-radius:16px;padding:36px;flex:1 1 0;">
+        <h3 contenteditable="true" style="font-size:20px;font-weight:700;color:#0f172a;margin:0 0 12px 0;">Spatial Covariance ($\sigma_8$)</h3>
+        <p contenteditable="true" style="font-size:18px;color:#475569;margin:0;line-height:1.6;">Measures spatial covariance of metric eigenmode density fluctuations across intermediate shells, reproducing observed survey clustering.</p>
+      </div>
+    </div>
+  </div><div class="slide-container active" id="slide7" style="background:#090d16;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:64px 80px;">
+    <p contenteditable="true" style="font-size:14px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:2px;margin:0 0 16px 0;">Complete Framework Synthesis</p>
+    <h2 contenteditable="true" style="font-size:44px;font-weight:800;color:#ffffff;margin:0 0 24px 0;max-width:800px;line-height:1.2;">A Fully Airtight Static Universe</h2>
+    <p contenteditable="true" style="font-size:20px;color:#94a3b8;margin:0 0 40px 0;max-width:650px;line-height:1.5;">Unified macro-cosmology, galactic dynamics, chemistry, particle physics, and gravitational waves under one geometric framework.</p>
+    <div style="display:inline-block;padding:16px 32px;background:#0284c7;color:#ffffff;border-radius:8px;font-weight:700;font-size:18px;">Ready for Empirical Testing</div>
+  </div></div></div><script>/**
+ * Fetches an image blob using a method that attempts to bypass CORS issues
+ * by adding 'alr=yes' to the URL and following redirects.
+ * @param {string} urlString
+ * @return {!Promise<!Blob>}
+ */
+async function fetchFifeImageBlobUsingAlr(urlString) {
+  if (urlString.startsWith('blob:') || urlString.startsWith('data:')) {
+    throw new Error('Input URL is already a blob or data URL.');
+  }
+  let url = new URL(urlString, window.location.href);
+  url.searchParams.set('alr', 'yes');
+  for (let i = 0; i < 5; i++) {
+    const response = await fetch(url.toString(), {credentials: 'include'});
+    if (!response.ok) {
+      throw new Error(`Fetch received not OK response: ${response.status}`);
+    }
+    if (!response.headers.get('content-type')?.startsWith('text/plain')) {
+      const blob = await response.blob();
+      if (blob.size > 0 && blob.type.startsWith('image/')) {
+        return blob;
+      }
+      throw new Error('Fetched blob is not a valid image.');
+    }
+    url = new URL(await response.text());
+  }
+  throw new Error('Exceeded maximum number of redirects.');
+}
+
+/**
+ * Updates image sources using ALR.
+ * @return {!Promise<void>}
+ */
+async function updateImageSourcesUsingAlr() {
+  // Use Promise.all to handle all updates concurrently for better performance.
+  await Promise.all(
+      Array.from(document.querySelectorAll('img'), async (img) => {
+        // Only proceed if the img tag has a valid 'src' attribute with a
+        // googleusercontent URL.
+        if (img.src && img.src.includes('googleusercontent')) {
+          try {
+            const blob = await fetchFifeImageBlobUsingAlr(img.src);
+            // Create a new URL from the Blob and set it as the image's source.
+            img.src = URL.createObjectURL(blob);
+          } catch (error) {
+            // Do nothing.
+          }
+        }
+      }));
+}
+
+/**
+ * Updates background images using ALR.
+ * @return {!Promise<void>}
+ */
+async function updateBackgroundImagesUsingAlr() {
+  // Find all elements with a googleusercontent background image.
+  const elementsToProcess =
+      document.querySelectorAll('[style*="googleusercontent"]');
+  const urlRegex = /url\((['"]?)(https?:\/\/.*?googleusercontent.*?)\1\)/;
+
+  await Promise.all(Array.from(elementsToProcess, async (element) => {
+    const backgroundImage = element.style.backgroundImage;
+    const match = backgroundImage.match(urlRegex);
+
+    if (match && match[2]) {
+      const originalUrl = match[2];
+      try {
+        const blob = await fetchFifeImageBlobUsingAlr(originalUrl);
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Directly update the element's style property.
+        element.style.backgroundImage =
+            backgroundImage.replace(originalUrl, blobUrl);
+      } catch (error) {
+        // Do nothing.
+      }
+    }
+  }));
+}
+
+// --- SLIDESHOW LOGIC ---
+/**
+ * Initializes the slideshow UI logic.
+ */
+function initializeSlideshowUi() {
+  const slides = document.querySelectorAll('.slide-container');
+  const prevButton = document.getElementById('prev-slide');
+  const nextButton = document.getElementById('next-slide');
+  const slideCounter = document.getElementById('slide-counter');
+  let currentSlide = 0;
+
+  function updateUi() {
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === currentSlide);
+    });
+    prevButton.disabled = currentSlide === 0;
+    nextButton.disabled = currentSlide === slides.length - 1;
+    slideCounter.textContent = slideCounter.dataset.format === 'compact'
+        ? `${currentSlide + 1} of ${slides.length}`
+        : `Slide ${currentSlide + 1} of ${slides.length}`;
+  }
+
+  function showNextSlide() {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateUi();
+    }
+  }
+
+  function showPrevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateUi();
+    }
+  }
+
+  nextButton.addEventListener('click', showNextSlide);
+  prevButton.addEventListener('click', showPrevSlide);
+  document.addEventListener('keydown', (e) => {
+    // Don't intercept arrow keys when the user is editing text.
+    const el = e.target;
+    if (el.isContentEditable || el.tagName === 'INPUT' ||
+        el.tagName === 'TEXTAREA') {
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      showNextSlide();
+    } else if (e.key === 'ArrowLeft') {
+      showPrevSlide();
+    }
+  });
+
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const darkIcon = document.getElementById('theme-toggle-dark-icon');
+  const lightIcon = document.getElementById('theme-toggle-light-icon');
+  const htmlEl = document.documentElement;
+
+  function setTheme(isDark) {
+    htmlEl.classList.toggle('dark', isDark);
+    darkIcon.classList.toggle('hidden', isDark);
+    lightIcon.classList.toggle('hidden', !isDark);
+    localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+  }
+  const isDarkMode = localStorage.getItem('color-theme') === 'dark' ||
+      (!('color-theme' in localStorage) &&
+       window.matchMedia('(prefers-color-scheme: dark)').matches);
+  setTheme(isDarkMode);
+  themeToggleBtn.addEventListener(
+      'click', () => setTheme(!htmlEl.classList.contains('dark')));
+
+  function updateScale() {
+    const baseWidth = 1280;
+    const baseHeight = 720;
+    const slideshowWrapper = document.getElementById('slideshow-wrapper');
+    const slideshowHolder = document.getElementById('slideshow-holder');
+
+    // Subtract padding to get the actual content area dimensions.
+    const holderStyle = getComputedStyle(slideshowHolder);
+    const paddingX = parseFloat(holderStyle.paddingLeft) +
+        parseFloat(holderStyle.paddingRight);
+    const paddingY = parseFloat(holderStyle.paddingTop) +
+        parseFloat(holderStyle.paddingBottom);
+    const availableWidth = slideshowHolder.clientWidth - paddingX;
+    const availableHeight = slideshowHolder.clientHeight - paddingY;
+
+    // Calculate the scale ratio based on both width and height.
+    const scaleX = availableWidth / baseWidth;
+    const scaleY = availableHeight / baseHeight;
+
+    // Use the smaller of the two ratios to ensure it fits.
+    const finalScale = Math.min(scaleX, scaleY);
+
+    // CSS zoom scales both visual appearance and layout box size,
+    // unlike transform:scale() which only affects visual rendering.
+    slideshowWrapper.style.zoom = finalScale;
+  }
+
+  updateUi();
+  updateScale();
+  window.addEventListener('resize', updateScale);
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+  await Promise.all(
+      [updateImageSourcesUsingAlr(), updateBackgroundImagesUsingAlr()]);
+  initializeSlideshowUi();
+});
+</script></body></html>

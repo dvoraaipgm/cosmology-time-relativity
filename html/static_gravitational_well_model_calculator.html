@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Gravitational Well Model - Gestation & Uncorking Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+    <div class="max-w-4xl w-full bg-slate-900/80 border border-slate-800 rounded-2xl shadow-2xl p-6 md:p-10 backdrop-blur-md">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <span class="text-xs uppercase tracking-widest text-indigo-400 font-semibold bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-800/50">Cosmic Web Simulator</span>
+            <h1 class="text-3xl md:text-4xl font-bold mt-3 bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                Static Gravitational Well Calculator
+            </h1>
+            <p class="text-slate-400 text-sm mt-2 max-w-xl mx-auto">
+                Calculate pocket-universe gestation timing ($T_{\text{gest}}$) based on progenitor seed mass and external metric pressure.
+            </p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            <!-- Controls Form -->
+            <div class="space-y-6 bg-slate-950/50 p-6 rounded-xl border border-slate-800/80">
+                
+                <!-- Environment Preset -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Cosmic Environment Preset</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setPreset('void')" id="btn-void" class="py-2 px-3 text-xs font-semibold rounded-lg border border-indigo-500/40 bg-indigo-950/30 text-indigo-300 hover:bg-indigo-900/50 transition">Low-Pressure Void</button>
+                        <button onclick="setPreset('cluster')" id="btn-cluster" class="py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 transition">Dense Cluster</button>
+                    </div>
+                </div>
+
+                <!-- Seed Mass Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-sm font-medium text-slate-300">Initial Seed Mass ($M_0$)</label>
+                        <span id="mass-val" class="text-indigo-400 font-mono font-bold text-sm">10,000 $M_\odot$</span>
+                    </div>
+                    <input type="range" id="slider-mass" min="1000" max="100000" step="1000" value="10000" 
+                           class="w-full accent-indigo-500 bg-slate-800 rounded-lg h-2 cursor-pointer" oninput="updateCalculations()">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>1,000 $M_\odot$</span>
+                        <span>100,000 $M_\odot$</span>
+                    </div>
+                </div>
+
+                <!-- External Pressure Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-sm font-medium text-slate-300">External Metric Pressure ($P_{\text{ext}}$)</label>
+                        <span id="pressure-val" class="text-purple-400 font-mono font-bold text-sm">1.0 units</span>
+                    </div>
+                    <input type="range" id="slider-pressure" min="0.2" max="3.0" step="0.1" value="1.0" 
+                           class="w-full accent-purple-500 bg-slate-800 rounded-lg h-2 cursor-pointer" oninput="updateCalculations()">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>0.2 (Void)</span>
+                        <span>3.0 (Cluster)</span>
+                    </div>
+                </div>
+
+                <!-- Outputs Panel -->
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 block">Gestation Time ($T_{\text{gest}}$)</span>
+                        <span id="output-time" class="text-xl font-bold font-mono text-indigo-300 mt-1 block">--</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 block">Critical Radius ($R_{\text{crit}}$)</span>
+                        <span id="output-radius" class="text-xl font-bold font-mono text-purple-300 mt-1 block">--</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Visualization / Chart -->
+            <div class="bg-slate-950/50 p-6 rounded-xl border border-slate-800/80 flex flex-col justify-center items-center">
+                <h3 class="text-xs uppercase tracking-wider text-slate-400 mb-4 text-center">Gestation Dilution Curve to $R_{\text{crit}}$</h3>
+                <div class="w-full h-64 relative">
+                    <canvas id="gestationChart"></canvas>
+                </div>
+                <p id="env-description" class="text-xs text-slate-400 text-center mt-4">
+                    Standard Web environment. Gestation dilution proceeding at moderate rate.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Footer Note -->
+        <footer class="mt-8 pt-4 border-t border-slate-800/60 text-center text-xs text-slate-500">
+            Static Gravitational Well Model &bull; Pocket Universe Gestation & Uncorking Framework
+        </footer>
+    </div>
+
+    <script>
+        let chartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('gestationChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0%', '25%', '50%', '75%', '100% (Uncork)'],
+                    datasets: [{
+                        label: 'Internal Density / Horizon Dilution',
+                        data: [100, 75, 45, 20, 0],
+                        borderColor: '#818cf8',
+                        backgroundColor: 'rgba(129, 140, 248, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCalculations() {
+            const mass = parseFloat(document.getElementById('slider-mass').value);
+            const pressure = parseFloat(document.getElementById('slider-pressure').value);
+
+            document.getElementById('mass-val').innerText = mass.toLocaleString() + ' $M_\\odot$';
+            document.getElementById('pressure-val').innerText = pressure.toFixed(1) + ' units';
+
+            // Formula: T_gest = k * (M_0 * P_ext)^0.5 * ln(rho_initial / rho_crit)
+            // Constants: k = 2.0e5, ln factor = 45.0
+            const k = 200000;
+            const lnFactor = 45.0;
+            const tGestYears = k * Math.pow(mass * pressure, 0.5) * lnFactor;
+
+            // Format time display
+            let timeDisplay = '';
+            if (tGestYears >= 1e9) {
+                timeDisplay = (tGestYears / 1e9).toFixed(2) + ' Billion yrs';
+            } else {
+                timeDisplay = (tGestYears / 1e6).toFixed(1) + ' Million yrs';
+            }
+
+            // Critical Radius estimation in kpc proportional to mass and pressure
+            const rCrit = (Math.pow(mass, 0.33) * (1.5 / pressure)).toFixed(1) + ' kpc';
+
+            document.getElementById('output-time').innerText = timeDisplay;
+            document.getElementById('output-radius').innerText = rCrit;
+
+            // Update description based on pressure
+            const descEl = document.getElementById('env-description');
+            if (pressure <= 0.5) {
+                descEl.innerText = "Low-pressure void environment detected. Gestation is fast-tracked, matching early JWST galaxy anomalies.";
+                document.getElementById('btn-void').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-indigo-500 bg-indigo-950/60 text-indigo-300 shadow-lg transition";
+                document.getElementById('btn-cluster').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 transition";
+            } else if (pressure >= 2.0) {
+                descEl.innerText = "High-pressure cluster environment. External metric compression extends gestation timeline significantly.";
+                document.getElementById('btn-cluster').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-purple-500 bg-purple-950/60 text-purple-300 shadow-lg transition";
+                document.getElementById('btn-void').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 transition";
+            } else {
+                descEl.innerText = "Moderate cosmic web environment. Standard balanced gestation timeline.";
+                document.getElementById('btn-void').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 transition";
+                document.getElementById('btn-cluster').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 transition";
+            }
+        }
+
+        function setPreset(type) {
+            if (type === 'void') {
+                document.getElementById('slider-pressure').value = 0.3;
+                document.getElementById('slider-mass').value = 15000;
+            } else if (type === 'cluster') {
+                document.getElementById('slider-pressure').value = 2.5;
+                document.getElementById('slider-mass').value = 50000;
+            }
+            updateCalculations();
+        }
+
+        window.onload = () => {
+            initChart();
+            updateCalculations();
+        };
+    </script>
+</body>
+</html>

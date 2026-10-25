@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Gravitational Well Model - Comprehensive Interactive Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #060913;
+            color: #f1f5f9;
+        }
+        /* Custom scrollbar for panels */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 overflow-x-hidden">
+
+    <!-- Top Header Navigation -->
+    <header class="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 md:px-6 shadow-2xl backdrop-blur-md mb-4 gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                    Static Gravitational Well Model
+                </h1>
+                <p class="text-xs text-slate-400">Pocket-Universe Gestation, Grand Reveal, and Galactic Recycling Engine</p>
+            </div>
+        </div>
+
+        <!-- Mode Switcher Tabs -->
+        <div class="flex bg-slate-950/80 p-1.5 rounded-xl border border-slate-800/80 w-full md:w-auto justify-center">
+            <button onclick="switchMode('gestating')" id="tab-gestating" class="flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition bg-indigo-600 text-white shadow-md">
+                1. Gestating Womb
+            </button>
+            <button onclick="switchMode('reveal')" id="tab-reveal" class="flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white">
+                2. Grand Reveal
+            </button>
+            <button onclick="switchMode('recycling')" id="tab-recycling" class="flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white">
+                3. Open Core & Recycling
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow mb-4">
+        
+        <!-- Left Panel: Interactive Simulation Canvas -->
+        <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col relative shadow-xl backdrop-blur-md overflow-hidden min-h-[420px] sm:min-h-[500px]">
+            <div class="flex justify-between items-center mb-3 z-10">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <h2 id="canvas-title" class="text-sm font-semibold tracking-wide uppercase text-slate-300">Phase Visualizer: Gestation Chamber</h2>
+                </div>
+                <div class="text-xs font-mono bg-slate-950/60 border border-slate-800 px-3 py-1 rounded-lg text-indigo-300" id="phase-status-badge">
+                    Status: Sealed Womb
+                </div>
+            </div>
+
+            <!-- HTML Canvas for Animation -->
+            <div class="flex-grow relative w-full h-full rounded-xl overflow-hidden bg-slate-950/80 border border-slate-800/50 flex items-center justify-center">
+                <canvas id="simCanvas" class="w-full h-full absolute inset-0 cursor-pointer"></canvas>
+                
+                <!-- Overlay helper prompt -->
+                <div class="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/60 px-3 py-2 rounded-lg backdrop-blur-md pointer-events-none max-w-xs">
+                    <p class="text-[11px] text-slate-300 leading-snug" id="canvas-helper-text">
+                        Showing hyper-massive stellar core collapse under extreme internal pressure and external metric confinement.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Parameters & Calculator -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between shadow-xl backdrop-blur-md space-y-4">
+            <div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center justify-between">
+                    <span>Gestation Parameters</span>
+                    <span class="text-[10px] text-indigo-400 font-mono">Model v2.4</span>
+                </h3>
+
+                <!-- Preset Environment Selector -->
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <button onclick="setEnvironment('void')" id="btn-void" class="py-2 px-3 text-xs font-semibold rounded-lg border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 hover:bg-indigo-900/50 transition">
+                        Cosmic Void (Low $P_{\text{ext}}$)
+                    </button>
+                    <button onclick="setEnvironment('cluster')" id="btn-cluster" class="py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-950 text-slate-400 hover:bg-slate-800 transition">
+                        Dense Cluster (High $P_{\text{ext}}$)
+                    </button>
+                </div>
+
+                <!-- Slider 1: Initial Seed Mass -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-medium text-slate-300">Seed Mass ($M_0$)</label>
+                        <span id="label-mass" class="text-indigo-400 font-mono font-bold text-xs">10,000 $M_\odot$</span>
+                    </div>
+                    <input type="range" id="slider-mass" min="1000" max="100000" step="1000" value="10000" 
+                           class="w-full accent-indigo-500 bg-slate-950 rounded-lg h-2 cursor-pointer" oninput="recalculateModel()">
+                </div>
+
+                <!-- Slider 2: External Metric Pressure -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-medium text-slate-300">Metric Pressure ($P_{\text{ext}}$)</label>
+                        <span id="label-pressure" class="text-purple-400 font-mono font-bold text-xs">1.0 units</span>
+                    </div>
+                    <input type="range" id="slider-pressure" min="0.2" max="3.0" step="0.1" value="1.0" 
+                           class="w-full accent-purple-500 bg-slate-950 rounded-lg h-2 cursor-pointer" oninput="recalculateModel()">
+                </div>
+
+                <!-- Slider 3: Density Dilution Factor -->
+                <div class="mb-5">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-medium text-slate-300">Density Dilution ($\ln\frac{\rho_i}{\rho_c}$)</label>
+                        <span id="label-dilution" class="text-pink-400 font-mono font-bold text-xs">45.0</span>
+                    </div>
+                    <input type="range" id="slider-dilution" min="20.0" max="70.0" step="0.5" value="45.0" 
+                           class="w-full accent-pink-500 bg-slate-950 rounded-lg h-2 cursor-pointer" oninput="recalculateModel()">
+                </div>
+            </div>
+
+            <!-- Mathematical Results Card -->
+            <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-800/80">
+                    <span class="text-[11px] text-slate-400 uppercase tracking-wider">Calculated Gestation Time ($T_{\text{gest}}$)</span>
+                    <span id="result-time" class="text-base font-bold font-mono text-indigo-300">--</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[11px] text-slate-400 uppercase tracking-wider">Critical Uncork Radius ($R_{\text{crit}}$)</span>
+                    <span id="result-radius" class="text-base font-bold font-mono text-purple-300">--</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Explanatory Concept Bar -->
+    <footer class="w-full max-w-7xl mx-auto bg-slate-900/80 border border-slate-800/80 rounded-2xl p-5 shadow-2xl backdrop-blur-md">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                <h4 class="font-bold text-indigo-400 mb-1 flex items-center space-x-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                    <span>1. The Gestating Womb</span>
+                </h4>
+                <p class="text-slate-400 leading-relaxed">
+                    Hyper-massive stellar collapse creates a protected pocket universe. Severe time dilation decouples the interior clock from the external cosmic web.
+                </p>
+            </div>
+            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                <h4 class="font-bold text-purple-400 mb-1 flex items-center space-x-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                    <span>2. The Grand Reveal</span>
+                </h4>
+                <p class="text-slate-400 leading-relaxed">
+                    Once interior density dilutes below $R_{\text{crit}}$, the temporary horizon dissolves. Pre-structured spiral arms and star clusters burst into the open universe.
+                </p>
+            </div>
+            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                <h4 class="font-bold text-pink-400 mb-1 flex items-center space-x-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+                    <span>3. Permanent Open Core</span>
+                </h4>
+                <p class="text-slate-400 leading-relaxed">
+                    The absolute center (e.g., Sagittarius A*) stays permanently dense and hidden, acting as a gravitational anchor and processing engine for ongoing stellar recycling.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Simulation Engine Script -->
+    <script>
+        // State Management
+        let currentMode = 'gestating'; // 'gestating' | 'reveal' | 'recycling'
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let animationFrameId;
+        let particleAngle = 0;
+        let pulseTimer = 0;
+
+        // Resize Canvas to fit container
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // Switch Modes
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update Tab styles
+            document.getElementById('tab-gestating').className = mode === 'gestating' 
+                ? 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition bg-indigo-600 text-white shadow-md'
+                : 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white';
+
+            document.getElementById('tab-reveal').className = mode === 'reveal' 
+                ? 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition bg-purple-600 text-white shadow-md'
+                : 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white';
+
+            document.getElementById('tab-recycling').className = mode === 'recycling' 
+                ? 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition bg-pink-600 text-white shadow-md'
+                : 'flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition text-slate-400 hover:text-white';
+
+            // Update Badges and Text
+            const titleEl = document.getElementById('canvas-title');
+            const badgeEl = document.getElementById('phase-status-badge');
+            const helperEl = document.getElementById('canvas-helper-text');
+
+            if (mode === 'gestating') {
+                titleEl.innerText = "Phase Visualizer: Gestation Chamber (Black Hole Womb)";
+                badgeEl.innerText = "Status: Sealed Horizon";
+                badgeEl.className = "text-xs font-mono bg-indigo-950/80 border border-indigo-800 px-3 py-1 rounded-lg text-indigo-300";
+                helperEl.innerText = "The progenitor star's collapse forms a sealed incubator. Severe time dilation protects internal pocket-universe expansion.";
+            } else if (mode === 'reveal') {
+                titleEl.innerText = "Phase Visualizer: The Grand Reveal (Uncorking Event)";
+                badgeEl.innerText = "Status: Horizon Dissolving";
+                badgeEl.className = "text-xs font-mono bg-purple-950/80 border border-purple-800 px-3 py-1 rounded-lg text-purple-300";
+                helperEl.innerText = "Internal density reaches R_crit. The temporary trapping boundary wall ruptures, letting pre-structured galactic arms sweep outward.";
+            } else {
+                titleEl.innerText = "Phase Visualizer: Open Core & Galactic Recycling Engine";
+                badgeEl.innerText = "Status: Active Core & Fermi Bubbles";
+                badgeEl.className = "text-xs font-mono bg-pink-950/80 border border-pink-800 px-3 py-1 rounded-lg text-pink-300";
+                helperEl.innerText = "Sagittarius A* operates in the open. Spent stellar debris falls inward, gets processed by magnetic centrifuging, and is exhaled as thermal winds.";
+            }
+        }
+
+        // Recalculate Model Equations
+        function recalculateModel() {
+            const mass = parseFloat(document.getElementById('slider-mass').value);
+            const pressure = parseFloat(document.getElementById('slider-pressure').value);
+            const dilution = parseFloat(document.getElementById('slider-dilution').value);
+
+            document.getElementById('label-mass').innerText = mass.toLocaleString() + ' M☉';
+            document.getElementById('label-pressure').innerText = pressure.toFixed(1) + ' units';
+            document.getElementById('label-dilution').innerText = dilution.toFixed(1);
+
+            // Formula: T_gest = k * (M_0 * P_ext)^0.5 * dilution_factor
+            const k = 200000;
+            const tGestYears = k * Math.pow(mass * pressure, 0.5) * dilution;
+
+            let timeDisplay = '';
+            if (tGestYears >= 1e9) {
+                timeDisplay = (tGestYears / 1e9).toFixed(2) + ' Billion yrs';
+            } else {
+                timeDisplay = (tGestYears / 1e6).toFixed(1) + ' Million yrs';
+            }
+
+            const rCrit = (Math.pow(mass, 0.33) * (1.8 / pressure)).toFixed(1) + ' kpc';
+
+            document.getElementById('result-time').innerText = timeDisplay;
+            document.getElementById('result-radius').innerText = rCrit;
+        }
+
+        function setEnvironment(type) {
+            if (type === 'void') {
+                document.getElementById('slider-pressure').value = 0.3;
+                document.getElementById('slider-mass').value = 12000;
+                document.getElementById('btn-void').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-indigo-500 bg-indigo-950/60 text-indigo-300 shadow-lg transition";
+                document.getElementById('btn-cluster').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-950 text-slate-400 hover:bg-slate-800 transition";
+            } else {
+                document.getElementById('slider-pressure').value = 2.6;
+                document.getElementById('slider-mass').value = 75000;
+                document.getElementById('btn-cluster').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-purple-500 bg-purple-950/60 text-purple-300 shadow-lg transition";
+                document.getElementById('btn-void').className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-950 text-slate-400 hover:bg-slate-800 transition";
+            }
+            recalculateModel();
+        }
+
+        // Animation Loop Rendering
+        function renderScene() {
+            const width = canvas.parentElement.clientWidth;
+            const height = canvas.parentElement.clientHeight;
+            
+            ctx.clearRect(0, 0, width, height);
+            const cx = width / 2;
+            const cy = height / 2;
+
+            particleAngle += 0.015;
+            pulseTimer += 0.04;
+
+            if (currentMode === 'gestating') {
+                // Draw Gestating Womb (Black Hole Phase)
+                // 1. External Metric Pressure Field Rings
+                for (let i = 4; i > 0; i--) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 60 + i * 35 + Math.sin(pulseTimer + i) * 3, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(99, 102, 241, ${0.08 * i})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                // 2. Sealed Horizon Boundary Shell
+                const horizonRadius = 55 + Math.sin(pulseTimer * 2) * 2;
+                ctx.beginPath();
+                ctx.arc(cx, cy, horizonRadius, 0, Math.PI * 2);
+                const gradH = ctx.createRadialGradient(cx, cy, 5, cx, cy, horizonRadius);
+                gradH.addColorStop(0, '#000000');
+                gradH.addColorStop(0.8, '#1e1b4b');
+                gradH.addColorStop(1, '#818cf8');
+                ctx.fillStyle = gradH;
+                ctx.fill();
+                ctx.strokeStyle = '#c084fc';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // 3. Dense Hidden Core
+                ctx.beginPath();
+                ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#818cf8';
+                ctx.shadowBlur = 20;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+            } else if (currentMode === 'reveal') {
+                // Draw Grand Reveal / Uncorking
+                // 1. Expanding Pocket Universe Shockwave
+                const expandRadius = 90 + (Math.sin(pulseTimer) * 15);
+                ctx.beginPath();
+                ctx.arc(cx, cy, expandRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(216, 180, 254, 0.4)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 2. Bursting Spiral Arms
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(particleAngle * 0.8);
+                for (let arm = 0; arm < 2; arm++) {
+                    ctx.rotate(Math.PI);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(40, 40, 100, 100, 160, 20);
+                    ctx.strokeStyle = 'rgba(192, 132, 252, 0.7)';
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+
+                    // Star nodes bursting out
+                    for (let s = 1; s <= 5; s++) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(s * 30, s * 10, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                ctx.restore();
+
+                // 3. Permanent Core Staying Behind
+                ctx.beginPath();
+                ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+                ctx.fillStyle = '#f43f5e';
+                ctx.shadowColor = '#f43f5e';
+                ctx.shadowBlur = 25;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+            } else {
+                // Draw Open Core & Recycling (Sagittarius A* & Fermi Bubbles)
+                // 1. Hourglass Fermi Bubbles
+                ctx.beginPath();
+                ctx.ellipse(cx, cy - 80, 45, 80, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx, cy + 80, 45, 80, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(236, 72, 153, 0.12)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(236, 72, 153, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 2. Galactic Disk & Orbiting Stars
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(particleAngle * 0.5);
+                for (let i = 0; i < 30; i++) {
+                    const angle = (i / 30) * Math.PI * 2;
+                    const dist = 50 + (i * 3) % 90;
+                    const px = Math.cos(angle) * dist;
+                    const py = Math.sin(angle) * (dist * 0.35); // Elliptical disk view
+                    
+                    ctx.fillStyle = i % 2 === 0 ? '#38bdf8' : '#e879f9';
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // 3. Permanent Luminous Core (Sagittarius A*)
+                ctx.beginPath();
+                ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+                const gradCore = ctx.createRadialGradient(cx, cy, 2, cx, cy, 16);
+                gradCore.addColorStop(0, '#ffffff');
+                gradCore.addColorStop(0.5, '#f43f5e');
+                gradCore.addColorStop(1, 'rgba(244, 63, 94, 0)');
+                ctx.fillStyle = gradCore;
+                ctx.fill();
+            }
+
+            animationFrameId = requestAnimationFrame(renderScene);
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            resizeCanvas();
+            recalculateModel();
+            renderScene();
+        };
+    </script>
+</body>
+</html>

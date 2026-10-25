@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed Container Cosmological Model (CCM) & Rabbinic Alignment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Interactive Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cosmic: {
+                            900: '#070913',
+                            800: '#0f172a',
+                            700: '#1e293b',
+                            gold: '#fbbf24',
+                            cyan: '#06b6d4',
+                            purple: '#a855f7',
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        
+        body {
+            background-color: #05070f;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(251, 191, 36, 0.03) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(6, 182, 212, 0.1);
+        }
+
+        .math-box {
+            background: rgba(7, 9, 19, 0.8);
+            border-left: 3px solid #06b6d4;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05070f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24 0%, #06b6d4 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-cyan-500 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid to-atom text-slate-950 font-bold text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight gradient-text">CCM Alignment Hub</span>
+                        <span class="hidden sm:inline-block text-xs text-slate-400 border-l border-slate-700 ml-2 pl-2">Closed Container Cosmological Model</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1 text-sm font-medium text-slate-300">
+                    <a href="#summary" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-cyan-400 transition">Summary</a>
+                    <a href="#creation-week" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-amber-400 transition text-amber-300"><i class="fa-solid fa-sun mr-1"></i> Day 6 & 7,000 Yrs</a>
+                    <a href="#physics" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-cyan-400 transition">Physics & Gradient</a>
+                    <a href="#hubble" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-cyan-400 transition">Hubble Tension</a>
+                    <a href="#rabbinic" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-cyan-400 transition">Rav Ako & Shemitot</a>
+                    <a href="#timeline" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-cyan-400 transition">Dual Timelines</a>
+                    <a href="#interactive" class="px-3 py-2 rounded-lg hover:bg-slate-800/60 hover:text-amber-400 transition text-amber-300"><i class="fa-solid fa-calculator mr-1"></i> Calculators</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO & EXECUTIVE SUMMARY -->
+        <section id="summary" class="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-4xl">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold mb-4">
+                    <i class="fa-solid fa-infinity"></i>
+                    <span>Theoretical Physics & Kabbalistic Synthesis</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-4">
+                    The Closed Container Cosmological Model
+                </h1>
+                <p class="text-slate-300 text-base md:text-lg leading-relaxed mb-6">
+                    The <strong class="text-white">Closed Container Cosmological Model (CCM)</strong> establishes that our physical universe is a static, bounded spherical container of coordinate radius <span class="text-cyan-400 font-mono font-semibold">R_box = 175 Billion Light-Years</span> where net gravity vanishes at the outer wall (<span class="text-amber-400 font-mono font-semibold">g = 0</span>). Central mass compression creates a steep gravitational potential gradient, causing exponential light deceleration that recursively compresses the observable horizon down to <span class="text-emerald-400 font-mono font-semibold">15.3 Billion Earth Years</span>—in exact convergence with Rabbi Isaac of Akko's pre-Adam cosmic timeline.
+                </p>
+
+                <!-- Core Statistics Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-cyan-500">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Physical Wall Radius</div>
+                        <div class="text-xl md:text-2xl font-bold font-mono text-cyan-400 mt-1">175B LY</div>
+                        <div class="text-xs text-slate-500 mt-1">Coordinate Boundary ($g=0$)</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-emerald-500">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Observable Horizon</div>
+                        <div class="text-xl md:text-2xl font-bold font-mono text-emerald-400 mt-1">15.34B Yrs</div>
+                        <div class="text-xs text-slate-500 mt-1">Gradient-Scaled Earth Clock</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-amber-500">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">Current Creation Stage</div>
+                        <div class="text-xl md:text-2xl font-bold font-mono text-amber-400 mt-1">Day 6 (Friday)</div>
+                        <div class="text-xs text-slate-500 mt-1">Year 5787 / Human Creation</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-purple-500">
+                        <div class="text-xs text-slate-400 uppercase tracking-wider">To 7th Millennium</div>
+                        <div class="text-xl md:text-2xl font-bold font-mono text-purple-400 mt-1">~213 Yrs</div>
+                        <div class="text-xs text-slate-500 mt-1">Countdown to Messianic Shabbat</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW EXPLICIT SECTION: THE 7 DAYS OF BERESHIT & DAY 6 OF HUMAN CREATION -->
+        <section id="creation-week" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-sun"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white">The 7 Days of Genesis: Our World's 7,000-Year Creation Epoch</h2>
+            </div>
+
+            <div class="glass-panel p-6 md:p-8 rounded-2xl space-y-6 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-4xl space-y-4">
+                    <h3 class="text-xl font-bold text-amber-300 flex items-center">
+                        <i class="fa-solid fa-user-gear mr-2"></i> We Are Currently on Day 6: Human Creation Concludes in ~213 Years
+                    </h3>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        In classical Talmudic and Rabbinic cosmology (<em class="text-amber-200">Sanhedrin 97a, Derech Hashem</em>), the <strong class="text-white">7 Days of Genesis (Bereshit)</strong> represent the exact <strong class="text-amber-400">7,000-year historical framework</strong> of our current physical world starting from <strong>Adam HaRishon</strong>. Because 1 Divine Day equals 1,000 Human Earth Years (Psalm 90:4), human history mirrors the 7-day creation week:
+                    </p>
+                </div>
+
+                <!-- Day 1 to Day 7 Breakdown Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <!-- Day 1-4 -->
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-slate-600">
+                        <div class="text-xs text-slate-400 font-bold uppercase">Days 1–4 (Years 1–4000)</div>
+                        <div class="text-md font-bold text-slate-200 mt-1">Foundational Antiquity</div>
+                        <p class="text-xs text-slate-400 mt-2">Adam to Abraham, Second Temple era foundation. 4 Divine Days of developmental history.</p>
+                    </div>
+
+                    <!-- Day 5 -->
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-slate-500">
+                        <div class="text-xs text-slate-400 font-bold uppercase">Day 5 (Years 4000–5000)</div>
+                        <div class="text-md font-bold text-slate-200 mt-1">Global Dispersion</div>
+                        <p class="text-xs text-slate-400 mt-2">Expansion of nations, technological sprouting, spiritual exile and preparation.</p>
+                    </div>
+
+                    <!-- Day 6 (CURRENT) -->
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-amber-500 bg-amber-500/5 relative">
+                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase">Current Era</div>
+                        <div class="text-xs text-amber-400 font-bold uppercase">Day 6 (Years 5000–6000)</div>
+                        <div class="text-md font-bold text-amber-300 mt-1">Creation of Adam & Man</div>
+                        <p class="text-xs text-slate-300 mt-2">
+                            <strong>We are in Year 5787 (~2026/2027 CE).</strong> Day 6 is the exact era where human creation and spiritual completion take place ("Friday Afternoon"). Human creation ends at Year 6000 (~2239 CE)—<strong>leaving ~213 years</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Day 7 -->
+                    <div class="glass-card p-4 rounded-xl border-l-4 border-purple-500">
+                        <div class="text-xs text-purple-400 font-bold uppercase">Day 7 (Years 6000–7000)</div>
+                        <div class="text-md font-bold text-purple-300 mt-1">The 7th Millennium Shabbat</div>
+                        <p class="text-xs text-slate-300 mt-2">
+                            The 1,000-year Messianic Shabbat of rest, global integration, and total spiritual harmony for our current world.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Explanatory Box -->
+                <div class="math-box p-4 rounded-xl text-xs md:text-sm space-y-2">
+                    <div class="text-amber-300 font-bold font-sans flex items-center">
+                        <i class="fa-solid fa-link mr-2"></i> How This Connects to Tohu va-Vohu & Rav Ako's 15.3 Billion Years:
+                    </div>
+                    <p class="text-slate-300 leading-relaxed font-sans">
+                        Prior to Adam HaRishon, the closed cosmic container matured across 6 Grand Cosmic <em>Shemitot</em> (<span class="text-cyan-400">15.34 Billion Earth Years</span> calculated by Rav Ako). Genesis 1:2 describes this pre-existing matured physical container as <strong class="text-white">Tohu va-Vohu</strong> (<em>"unformed/empty, but existing"</em>). Once human consciousness (Adam) entered the container, the local clock switched to the 7,000-year Earth framework—where we now stand at the final hours of <strong>Day 6</strong>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: THE PHYSICS OF THE CLOSED CONTAINER -->
+        <section id="physics" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">1</div>
+                <h2 class="text-2xl font-bold text-white">Physics of the Closed Container & Gradient Scaling</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Column: Narrative Physics -->
+                <div class="glass-panel p-6 rounded-xl space-y-4">
+                    <h3 class="text-lg font-semibold text-cyan-300 flex items-center">
+                        <i class="fa-solid fa-cube mr-2"></i> Static Bounded Geometry & Gravity Balance
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Standard expanding cosmology assumes an infinite or unconstrained geometry suffering from the Horizon and Flatness paradoxes. CCM models the universe as a closed, spherical shell filled with mass distributed under self-gravitating equilibrium.
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+                        <li><strong class="text-white">Zero Gravity Outer Limit ($g=0$):</strong> At the 175 Billion coordinate light-year radius, vector sum gravitational forces balance completely ($g_{\text{net}} = 0$).</li>
+                        <li><strong class="text-white">Central Mass Compression:</strong> Inward gravitational support forces central regions (containing the Milky Way) into high mass compression density, deepening the local potential well $\Phi(r)$.</li>
+                        <li><strong class="text-white">Exponential Light Deceleration:</strong> Photons traveling inward from the outer wall must climb a steep gravitational gradient, causing effective propagation speed $c_{\text{eff}}(r)$ to diminish exponentially as light approaches Earth.</li>
+                    </ul>
+                </div>
+
+                <!-- Right Column: Core Mathematical Formulations -->
+                <div class="glass-panel p-6 rounded-xl space-y-4">
+                    <h3 class="text-lg font-semibold text-amber-300 flex items-center">
+                        <i class="fa-solid fa-square-root-variable mr-2"></i> Core Mathematical Equations
+                    </h3>
+                    
+                    <!-- Formula 1 -->
+                    <div class="math-box p-3 rounded-lg text-xs space-y-1">
+                        <div class="text-slate-400 font-sans font-semibold">1. Effective Light Speed Propagation:</div>
+                        <div class="text-cyan-300 font-mono text-sm">c_eff(r) = c_0 \cdot \exp\left(-\frac{\Phi(r) - \Phi_0}{c_0^2}\right)</div>
+                        <div class="text-slate-500 text-[11px] font-sans">Where $\Phi(r)$ is the cumulative gravitational potential inside the container.</div>
+                    </div>
+
+                    <!-- Formula 2 -->
+                    <div class="math-box p-3 rounded-lg text-xs space-y-1">
+                        <div class="text-slate-400 font-sans font-semibold">2. Coordinate to Earth-Referenced Time Compression:</div>
+                        <div class="text-emerald-300 font-mono text-sm">T_obs = \int_0^{R_box} \frac{dr}{c_eff(r)} = 15.34 \text{ Billion Earth Years}</div>
+                        <div class="text-slate-500 text-[11px] font-sans">Integrates 175B coordinate LY travel down to local terrestrial clock rate.</div>
+                    </div>
+
+                    <!-- Formula 3 -->
+                    <div class="math-box p-3 rounded-lg text-xs space-y-1">
+                        <div class="text-slate-400 font-sans font-semibold">3. Zero-Gravity Outer Boundary Condition:</div>
+                        <div class="text-purple-300 font-mono text-sm">\nabla \Phi(R_box) = 0 \implies g(R_box) = 0</div>
+                        <div class="text-slate-500 text-[11px] font-sans">Defines the immutable structural boundary of the cosmic container.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: HUBBLE TENSION RESOLUTION -->
+        <section id="hubble" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">2</div>
+                <h2 class="text-2xl font-bold text-white">Resolution of the Hubble Tension</h2>
+            </div>
+
+            <div class="glass-panel p-6 rounded-xl space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-emerald-300 mb-3">
+                            <i class="fa-solid fa-chart-line mr-2"></i> Gradient Artifact vs. Metric Expansion
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                            Modern astrophysics is paralyzed by the "Hubble Tension"—a severe mismatch between local measurements ($H_0 \approx 73\text{ km/s/Mpc}$) and early-universe CMB measurements ($H_0 \approx 67.4\text{ km/s/Mpc}$).
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Under CCM, <strong class="text-white">space is not expanding</strong>. The apparent redshift is purely a <span class="text-emerald-400 font-semibold">gravitational gradient artifact</span>. Because measurements at different distances probe distinct depths of the central compression well, the calculated "expansion rate" varies deterministically based on observational distance, perfectly resolving the tension into a static 15.3B light-year travel horizon.
+                        </p>
+                    </div>
+
+                    <!-- Visual Comparison Table -->
+                    <div class="glass-card p-4 rounded-xl overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="text-slate-400 border-b border-slate-700">
+                                <tr>
+                                    <th class="py-2 px-3">Model Aspect</th>
+                                    <th class="py-2 px-3 text-red-400">Standard LCDM</th>
+                                    <th class="py-2 px-3 text-emerald-400">CCM Framework</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                <tr>
+                                    <td class="py-2 px-3 font-semibold">Space Metric</td>
+                                    <td class="py-2 px-3">Expanding Balloon</td>
+                                    <td class="py-2 px-3 text-emerald-300">Static Closed Container ($175\text{B LY}$)</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-3 font-semibold">Hubble Tension Cause</td>
+                                    <td class="py-2 px-3">Measurement Crisis / Dark Energy</td>
+                                    <td class="py-2 px-3 text-emerald-300">Local Potential Gradient Artifact</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-3 font-semibold">Outer Limit</td>
+                                    <td class="py-2 px-3">Infinite / Unknown</td>
+                                    <td class="py-2 px-3 text-emerald-300">Zero Gravity Edge ($g=0$)</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-3 font-semibold">Observable Limit</td>
+                                    <td class="py-2 px-3">13.8B Years (Ad-hoc)</td>
+                                    <td class="py-2 px-3 text-emerald-300">15.34B Years (Exact Convergence)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: RABBINIC & KABBALISTIC CONVERGENCE -->
+        <section id="rabbinic" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">3</div>
+                <h2 class="text-2xl font-bold text-white">Rabbinic Convergence: Rav Ako & Tohu va-Vohu</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1: Divine Time Scaling -->
+                <div class="glass-panel p-6 rounded-xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <h3 class="text-md font-bold text-amber-300">Divine Time Scaling</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Based on Psalm 90:4 (<em>"1,000 years in Your sight are like yesterday..."</em>), 1 Divine Day equals 1,000 human years.
+                    </p>
+                    <div class="math-box p-2 rounded text-[11px] text-amber-200">
+                        1 Divine Year = 1,000 × 365.25 <br>= 365,250 Earth Years
+                    </div>
+                </div>
+
+                <!-- Card 2: Rav Ako Calculation -->
+                <div class="glass-panel p-6 rounded-xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <i class="fa-solid fa-scroll"></i>
+                    </div>
+                    <h3 class="text-md font-bold text-cyan-300">Pre-Adam Shemitot</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Rabbi Isaac of Akko (13th century) calculated the pre-Adam cosmic timeline spanning 6 prior Sabbatical Cycles (Shemitot).
+                    </p>
+                    <div class="math-box p-2 rounded text-[11px] text-cyan-200">
+                        42,000 Divine Yrs × 365,250 <br>= 15,340,500,000 Earth Yrs
+                    </div>
+                </div>
+
+                <!-- Card 3: Tohu va-Vohu Substrate -->
+                <div class="glass-panel p-6 rounded-xl space-y-3">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <h3 class="text-md font-bold text-purple-300">Tohu va-Vohu Substrate</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Genesis 1:2 describes the earth as <em>Tohu va-Vohu</em> ("unformed and void"). In Kabbalah, this signifies an <strong>empty but existing physical substrate</strong>—the matured container from prior Shemitot awaiting human activation.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DUAL-TIMELINE ARCHITECTURE & COSMIC YOVEL -->
+        <section id="timeline" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">4</div>
+                <h2 class="text-2xl font-bold text-white">Dual-Timeline Architecture & The Cosmic Yovel</h2>
+            </div>
+
+            <div class="glass-panel p-6 rounded-xl space-y-6">
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    The CCM framework harmonizes two distinct fractal scales of time: the <strong class="text-white">Macro Cosmic Shemita Scale</strong> governing universal container structure, and the <strong class="text-white">Micro Human Historical Scale</strong> governing terrestrial human consciousness.
+                </p>
+
+                <!-- Architectural Map -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-cyan-500">
+                        <h4 class="text-cyan-400 font-bold text-sm uppercase tracking-wider mb-2">Micro Human Scale (Current World)</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li>• <strong class="text-white">Origin:</strong> Starts from Adam HaRishon (~5787 Hebrew years ago).</li>
+                            <li>• <strong class="text-white">Active Era (6,000 Years):</strong> Currently at Year ~5787 (~2026 CE).</li>
+                            <li>• <strong class="text-white">Remaining Time:</strong> ~213 Years remaining until Year 6000 (~2239 CE).</li>
+                            <li>• <strong class="text-white">7th Millennium Shabbat:</strong> 1,000 years of global peace and Messianic integration (Years 6000–7000).</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-xl border-l-4 border-amber-500">
+                        <h4 class="text-amber-400 font-bold text-sm uppercase tracking-wider mb-2">Macro Cosmic Yovel (Grand Cosmos)</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li>• <strong class="text-white">Pre-Adam Container Build:</strong> 6 Shemitot = 15.34 Billion Earth Years.</li>
+                            <li>• <strong class="text-white">7th Cosmic Shemita (Cosmic Shabbat):</strong> 7,000 Divine Years = 2.55 Billion Earth Years.</li>
+                            <li>• <strong class="text-white">Total Cosmic Container Lifetime:</strong> 15.34B + 2.55B = <span class="text-amber-300 font-bold">17.89 Billion Earth Years</span>.</li>
+                            <li>• <strong class="text-white">Cosmic Yovel (Jubilee):</strong> Absolute completion and return to root divine equilibrium.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: INTERACTIVE CALCULATORS & SIMULATORS -->
+        <section id="interactive" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold"><i class="fa-solid fa-calculator"></i></div>
+                <h2 class="text-2xl font-bold text-white">Interactive Dynamic Calculators</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Calculator 1: Divine Time Converter -->
+                <div class="glass-panel p-6 rounded-2xl space-y-5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="text-md font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-clock-rotate-left mr-2"></i> Divine to Human Year Converter
+                        </h3>
+                        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">Rav Ako Metric</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Divine Years Input:</label>
+                            <input type="number" id="divineYearsInput" value="42000" step="1000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                                <div class="text-[11px] text-slate-400">1 Divine Day =</div>
+                                <div class="text-xs font-mono font-bold text-slate-200 mt-1">1,000 Human Yrs</div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                                <div class="text-[11px] text-slate-400">1 Divine Year =</div>
+                                <div class="text-xs font-mono font-bold text-slate-200 mt-1">365,250 Human Yrs</div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-xl border-l-4 border-amber-500">
+                            <div class="text-xs text-slate-400 uppercase">Converted Earth-Referenced Years</div>
+                            <div id="divineToEarthResult" class="text-2xl font-bold font-mono text-amber-400 mt-1">15.34 Billion Years</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator 2: Hebrew Calendar & 7th Millennium Countdown -->
+                <div class="glass-panel p-6 rounded-2xl space-y-5">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="text-md font-bold text-purple-400 flex items-center">
+                            <i class="fa-solid fa-calendar-check mr-2"></i> 7th Millennium Countdown (~Year 6000)
+                        </h3>
+                        <span class="text-xs px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">Micro Human Clock</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">Current Hebrew Year:</label>
+                                <input type="number" id="hebrewYearInput" value="5787" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">Gregorian Equivalent:</label>
+                                <input type="number" id="gregorianYearInput" value="2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-purple-500">
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar to Year 6000 -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-400">Progress to Year 6000 (Shabbat)</span>
+                                <span id="progressPercent" class="text-purple-400 font-mono">96.45%</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                                <div id="progressBar" class="bg-gradient-to-r from-purple-600 to-cyan-400 h-full rounded-full" style="width: 96.45%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="glass-card p-3 rounded-xl border-l-4 border-purple-500">
+                                <div class="text-[11px] text-slate-400">Years Remaining to 6000</div>
+                                <div id="yearsRemaining" class="text-xl font-bold font-mono text-purple-300 mt-1">213 Years</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl border-l-4 border-cyan-500">
+                                <div class="text-[11px] text-slate-400">Target Gregorian Year</div>
+                                <div id="targetGregorian" class="text-xl font-bold font-mono text-cyan-300 mt-1">2239 CE</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator 3: Gravitational Gradient Simulator -->
+                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="text-md font-bold text-cyan-400 flex items-center">
+                            <i class="fa-solid fa-sliders mr-2"></i> Gravitational Gradient & Light Deceleration Simulator
+                        </h3>
+                        <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">CCM Physical Engine</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Controls -->
+                        <div class="space-y-4 md:col-span-1">
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Outer Container Boundary ($R_{\text{box}}$):</span>
+                                    <span id="rBoxVal" class="font-mono text-cyan-400 font-bold">175B LY</span>
+                                </div>
+                                <input type="range" id="rBoxRange" min="100" max="250" value="175" class="w-full accent-cyan-500">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Central Mass Compression Density ($\rho_0$):</span>
+                                    <span id="rhoVal" class="font-mono text-amber-400 font-bold">1.00x</span>
+                                </div>
+                                <input type="range" id="rhoRange" min="0.5" max="2.0" step="0.05" value="1.0" class="w-full accent-amber-500">
+                            </div>
+
+                            <div class="glass-card p-4 rounded-xl border-l-4 border-emerald-500 space-y-2">
+                                <div class="text-xs text-slate-400 uppercase">Simulated Earth-Referenced Horizon ($T_{\text{obs}}$)</div>
+                                <div id="simHorizon" class="text-2xl font-bold font-mono text-emerald-400">15.34 Billion Yrs</div>
+                                <div class="text-[11px] text-slate-500">Recursively scaled light propagation travel limit.</div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Chart Container -->
+                        <div class="md:col-span-2 bg-slate-950/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-center">
+                            <canvas id="gradientChart" class="max-h-60 w-full"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator 4: Cosmic Yovel Visualizer -->
+                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-4">
+                    <h3 class="text-md font-bold text-amber-300 flex items-center">
+                        <i class="fa-solid fa-chart-pie mr-2"></i> Total Cosmic Container Lifetime (Including Cosmic Yovel)
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-4 rounded-xl border-l-4 border-cyan-500">
+                            <div class="text-xs text-slate-400">Pre-Adam Cosmic Preparation (6 Shemitot)</div>
+                            <div class="text-xl font-bold font-mono text-cyan-400 mt-1">15.34 Billion Yrs</div>
+                            <div class="text-[11px] text-slate-500 mt-1">42,000 Divine Years</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-xl border-l-4 border-purple-500">
+                            <div class="text-xs text-slate-400">7th Cosmic Shemita (Cosmic Sabbath)</div>
+                            <div class="text-xl font-bold font-mono text-purple-400 mt-1">2.55 Billion Yrs</div>
+                            <div class="text-[11px] text-slate-500 mt-1">7,000 Divine Years</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-xl border-l-4 border-amber-500">
+                            <div class="text-xs text-slate-400">Total Container Maturity (Cosmic Yovel)</div>
+                            <div class="text-xl font-bold font-mono text-amber-400 mt-1">17.89 Billion Yrs</div>
+                            <div class="text-[11px] text-slate-500 mt-1">49,000 Divine Years Total</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Closed Container Cosmological Model (CCM) & Rabbinic Alignment Dashboard &bull; Generated for Theoretical Cosmology Exploration
+        </div>
+    </footer>
+
+    <!-- Interactive Script Mechanics -->
+    <script>
+        // --- 1. Divine Year Converter JS Logic ---
+        const divineInput = document.getElementById('divineYearsInput');
+        const divineResult = document.getElementById('divineToEarthResult');
+
+        function updateDivineConversion() {
+            const val = parseFloat(divineInput.value) || 0;
+            const humanYears = val * 365250;
+            const billions = (humanYears / 1e9).toFixed(2);
+            divineResult.textContent = `${billions} Billion Years`;
+        }
+        divineInput.addEventListener('input', updateDivineConversion);
+
+        // --- 2. Hebrew Countdown Logic ---
+        const hebInput = document.getElementById('hebrewYearInput');
+        const gregInput = document.getElementById('gregorianYearInput');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressBar = document.getElementById('progressBar');
+        const yearsRemaining = document.getElementById('yearsRemaining');
+        const targetGregorian = document.getElementById('targetGregorian');
+
+        function updateHebrewCountdown() {
+            const hebYr = parseInt(hebInput.value) || 5787;
+            const gregYr = parseInt(gregInput.value) || 2026;
+            
+            const rem = 6000 - hebYr;
+            const targetGreg = gregYr + rem;
+            const pct = ((hebYr / 6000) * 100).toFixed(2);
+
+            yearsRemaining.textContent = `${rem > 0 ? rem : 0} Years`;
+            targetGregorian.textContent = `${targetGreg} CE`;
+            progressPercent.textContent = `${pct}%`;
+            progressBar.style.width = `${Math.min(pct, 100)}%`;
+        }
+        hebInput.addEventListener('input', updateHebrewCountdown);
+        gregInput.addEventListener('input', updateHebrewCountdown);
+
+        // --- 3. Gravitational Gradient Simulator & Chart.js ---
+        const rBoxRange = document.getElementById('rBoxRange');
+        const rhoRange = document.getElementById('rhoRange');
+        const rBoxVal = document.getElementById('rBoxVal');
+        const rhoVal = document.getElementById('rhoVal');
+        const simHorizon = document.getElementById('simHorizon');
+
+        let gradientChart;
+
+        function initChart() {
+            const ctx = document.getElementById('gradientChart').getContext('2d');
+            gradientChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Effective Light Speed c_eff(r) / c_0',
+                            data: [],
+                            borderColor: '#06b6d4',
+                            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Gravitational Potential Φ(r)',
+                            data: [],
+                            borderColor: '#fbbf24',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94a3b8', font: { size: 10 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b', font: { size: 10 } },
+                            title: { display: true, text: 'Coordinate Radius (Billion Light-Years)', color: '#94a3b8', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+            updateSimulation();
+        }
+
+        function updateSimulation() {
+            const rBox = parseFloat(rBoxRange.value);
+            const rho = parseFloat(rhoRange.value);
+
+            rBoxVal.textContent = `${rBox}B LY`;
+            rhoVal.textContent = `${rho.toFixed(2)}x`;
+
+            // Scaled horizon computation
+            const baseHorizon = 15.34;
+            const scaledHorizon = (baseHorizon * (rBox / 175) * (1 / Math.sqrt(rho))).toFixed(2);
+            simHorizon.textContent = `${scaledHorizon} Billion Yrs`;
+
+            // Chart Data Generation
+            const points = 10;
+            const labels = [];
+            const cEffData = [];
+            const phiData = [];
+
+            for (let i = 0; i <= points; i++) {
+                const r = (rBox / points) * i;
+                labels.push(r.toFixed(0));
+                
+                // Exponential gradient deceleration curve
+                const normR = r / rBox;
+                const cEff = Math.exp(-rho * (1 - normR));
+                const phi = rho * (1 - Math.pow(normR, 2));
+
+                cEffData.push(cEff.toFixed(3));
+                phiData.push(phi.toFixed(3));
+            }
+
+            gradientChart.data.labels = labels;
+            gradientChart.data.datasets[0].data = cEffData;
+            gradientChart.data.datasets[1].data = phiData;
+            gradientChart.update();
+        }
+
+        rBoxRange.addEventListener('input', updateSimulation);
+        rhoRange.addEventListener('input', updateSimulation);
+
+        // Initialize on page load
+        window.onload = function() {
+            updateDivineConversion();
+            updateHebrewCountdown();
+            initChart();
+        };
+    </script>
+</body>
+</html>

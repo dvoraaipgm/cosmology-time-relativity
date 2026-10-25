@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed Container Cosmological Model (CCM) - Summary & Master Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0b1120;
+            --card-bg: #1e293b;
+            --card-accent: #0f172a;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border-color: #334155;
+            --formula-bg: #020617;
+            --gold-accent: #fbbf24;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .draft-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: #fca5a5;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+
+
+        h1,
+        h2,
+        h3 {
+            color: #fff;
+            margin-top: 0;
+        }
+
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            color: var(--accent-cyan);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .meta-author {
+            color: var(--gold-accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .meta-links {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .meta-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .meta-links a:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+        }
+
+        /* Grid for Interactive Modules */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-color);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            padding: 10px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Card Boxes for Summary Content */
+        .card-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+
+        .card-box h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .formula-card {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            font-family: "Courier New", Courier, monospace;
+            color: #e2e8f0;
+            border-radius: 0 6px 6px 0;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 1.05rem;
+        }
+
+        ul,
+        ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .section-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-card h1,
+        .section-card h2,
+        .section-card h3 {
+            color: #fff;
+            margin-top: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .draft-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: #fca5a5;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .formula-box {
+            background-color: var(--bg-secondary);
+            border-left: 4px solid var(--accent-gold);
+            padding: 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .metric-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            margin: 0.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--accent-cyan);
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Closed Container Cosmological Model (CCM)</h1>
+            <div class="meta-author">Author: Dvorah Ashkenazi</div>
+            <div class="meta-links">
+                Repository: <a href="https://github.com/dvoraaipgm/cosmology-time-relativity"
+                    target="_blank">github.com/dvoraaipgm/cosmology-time-relativity</a> |
+                Zenodo DOI: <a href="https://zenodo.org/records/23531288"
+                    target="_blank">zenodo.org/records/23531288</a>
+            </div>
+        </header>
+        <div class="draft-banner">
+            ⚠️ <strong>DRAFT VERSION:</strong> This document, its repository files (Version 3), and underlying
+            calculations are currently a working draft by <strong>Dvorah Ashkenazi</strong> and have not yet undergone
+            complete peer verification (better to look on the md files on the project in zenodo).
+
+        </div>
+
+                    <p>
+                # Explanation
+
+The code and html file are not locked yet.
+
+It is a draft version the formula are not fully verified but this is the logic and the main idea.
+
+This model idea is to solve the hubble tension, by removing space expansion and dark matter and black energy and introducing a gradient gravity toward earth.
+
+The cosmos is a sphere the total mass inside the sphere locks everything inside and create a gravity horizon, when the edge is the maximum gravity zone where gravity became higher as we arrived to the center and the edge is where gravity is 0.
+
+Earth should be near the center (might not need to be calculated).
+
+Now in order to calculate light distance the normal gradient should be towrd the center.
+To get star to earth light we need to calculate asymmetric wave.
+
+Now, how do we calculate the distance from earth to the stars? 
+We have the parralax(ths shadow) distance, and we have blueshift or redshift effect.
+The science invented the expansion to explains why there is a drift between the parralx distance and the redshift distance.
+
+
+In addition, this expansion rate is not fix because when calcualting the distance for edge stars (far away) we get different drift, means the redshift is smaller of what is expected on far stars, as we go far the drift grow.
+
+Now, let's understand how the redshift blueshift is calculated:
+(Wavelength * atom tick rate (frequency) / Earth tick rate)
+
+Now we can see that both wavelength and atom tick rate affect the blueshit and redshift.
+
+The wavelength is growing when traversing distance, or when the light fight again a rotation.
+The frequency rate depends by the gravity.
+
+So both distance, or motion (dopler effect) and gravity they affect the final result blueshift or redshift.
+
+Now, if the space was void, no gravity why the redshift is not consistent across distances?
+Here we have a solution the gradient gravity, when a light come from a star toward earth the distance is streching the wavelength and causing a redshift, but because the frequency is also updated because of the gradient gravity climbing, the atom is slowing down, causeing the redshift to be smaller of what expected by only updating the wavelength.
+This is solving the hubble tension, far distance 67 instead of near 73.
+
+So in order to get the real distance we have to use first teh geometry, then we can age the light.
+Then we can understand how wavelenth strech and frequency over distance and build the formula or the model for the all univers.
+
+Now, in this model we don't need dark matter, becasue we can understand from where the gravity comes, from teh all cosmos mass.
+
+In this model we are not using space-time, because the idea is wrong also if some equations can give the same result.
+
+How a space from inside can be bigger than the space from inside (stretch effect?) and why to say time dilate instead of calcualting the atom tick rate relative to teh gravity?
+
+The real understanding is that everything is related to the same mass propery, the mass create the gravity, that dictate the velocity of motion and movement, and the teh space compression dicated the gravity.
+
+Means its easier not to use time at all, we just track relation between gravity, motion and compression (space).
+
+Now, if we use light speed C as the light speed at earth(we cross check it it might be wrong too), but changing in the cosmos (instead of saying space is stretching or time is dilate).
+
+So, as a first step we will use the geometry distance to get the real distance, so then we can get the gravity gradient.
+
+In addition, in order to map out the exact coordinates of the milky way, we will use the parralax effects, we are taking some stars around the milky way, then based on the shadow angles, and light effect of the stars there (depends on the gravity gradient) we can know where the earth and the milky way is.
+
+Now we only have light in the milky way, so we will use the redhsift data in order to calcualte the gravity gradient, then using assymetric gradient, we will map where is the center, and the speed of light on the center.
+
+Then we can map every star it's exact coordinates and distance.
+
+We can find the edge by using the fromula and putting gravity zero.
+
+We have to create a formula also for the milky way, the doppler effect against the position and gravity, where in the milky way too there is a gradient gravity.
+
+In order to get the distance in light years, we have to take the normal light years base on constanc c and apply the exponenential deceleration toward the center of gravity or earth based on the asymmetric line.
+
+The black hole theory:
+When a star is dying it's collapsing toward its center, then as the compression reach a certain level, there is a broken effect where everyhtign get ejected inside and outside the black hole, the fragments are joined to create stars, the stars star to fight against gravity, and once the density is lower, gravity became lower too, and then suddenly the black hole became a galaxy, because now the gravity and density is lower and allow the light to escape.
+This can solve the fact that we can see suddenly a light far in the space, that was not expected to be there.
+
+We can also explains the univers as a big star collapsed like a black hole, then created our univers in that case the expansion is mandatory too like inside the black hole, its not changing the gradient gravity its just an additional step.
+
+In that case we would be able to see if an expansion is still hapening by just testing light from the same star along time, if the univers is expanding we are suppose to see diff in the redshift of the same star and not only between stars, the expansion was maybe a already stopped back then.
+
+In addition, we can also add another option, is that there is the first step where fragment were thrown everywhere, then after stars were formed then they fight the gravity and then an accelerating expansion happend, and the gravity remains homegenous.
+To explains why this can be a solution to both possible expansion, or gravity gradient, it's also solve the problem of early galaxy, because if we are taking an object we compress it its get broken to a big chunks ans thrown everywhere, this is exactly how black hole behaves, and this is why after the big star collapse into our univers, there are already fragments big enough to create big stars.
+            </p>
+
+        <!-- Interactive Modules Grid -->
+        <h2 class="section-title">Interactive Modules & Simulations</h2>
+        <div class="grid">
+            <div class="card">
+                <div>
+                    <h3>The Protective Incubator & Uncorking Engine</h3>
+                    <p></p>
+                </div>
+                <a href="html/black_hole_mechanism_simulator.html" class="btn">Launch Black hole</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>Static Gravitational Well Calculator</h3>
+                    <p>Calculate pocket-universe gestation timing ($T_{\text{gest}}$) based on progenitor seed mass and external metric pressure.</p>
+                </div>
+                <a href="html/static_gravitational_well_model_calculator.html" class="btn">Launch Gravitational Well Calculator</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>Static Gravitational Well Model</h3>
+                    <p>Pocket-Universe Gestation, Grand Reveal, and Galactic Recycling Engine.</p>
+                </div>
+                <a href="html/static_gravitational_well_model.html" class="btn">Launch Gravitational Well Model</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>Definitive Technical Compendium</h3>
+                    <p>A complete synthesis of macro-cosmology, real astrometric star data, metric equations, solutions to cosmological anomalies, and simulation code.</p>
+                </div>
+                <a href="html/static_model_compendium.html" class="btn">Definitive Technical Compendium</a>
+            </div>
+            <div class="card">
+                <div>
+                    <h3>The Closed Container Cosmological Model</h3>
+                    <p>The Closed Container Cosmological Model (CCM) establishes that our physical universe is a static, bounded spherical container of coordinate radius R_box = 175 Billion Light-Years where net gravity vanishes at the outer wall (g = 0). Central mass compression creates a steep gravitational potential gradient, causing exponential light deceleration that recursively compresses the observable horizon down to 15.3 Billion Earth Years—in exact convergence with Rabbi Isaac of Akko's pre-Adam cosmic timeline..</p>
+                </div>
+                <a href="html/ccm_dashboard.html" class="btn">Launch  Closed Container Cosmological</a>
+            </div>
+        </div>
+    <h2 class="section-title">Why the Cosmos is a Sphere & Gravitational Hierarchy</h2>
+        <div class="card-box">
+            <p>The Closed Container Cosmological Model structures the universe as a physical sphere containing the totality of all mass, past and present, in its proper place:</p>
+            <ul>
+                <li><strong>Spherical Architecture:</strong> The cosmos forms a closed spherical boundary enclosing all matter within a stable, finite volume holded by the gravity of all the mass contained by themself and the rotation of stars fight the gravity and keep the place and density of the all system.</li>
+                <li><strong>Vertical Gradient & Bottom Support:</strong> As you move downward through the cosmological container, gravity increases because the lower sections must physically support the cumulative gravitational load and pressure from all the mass distributed from the top down to the bottom.</li>
+                <li><strong>Earth & Milky Way Core Position:</strong> Earth and the Milky Way are situated near the center of this spherical structure, which is precisely why they experience higher gravitational potential and forces.</li>
+                <li><strong>The Horizon as a Zero-Gravity Boundary:</strong> The horizon represents the outer boundary shell where net gravity reaches zero. This zero-gravity horizon signifies the exact point where the gravitational influence and pulling force of all the internal mass combined is fully balanced and finished.</li>
+            </ul>
+        </div>
+        <!-- Master Project Summary Content -->
+        <h2 class="section-title">1. Resolution of the Hubble Tension</h2>
+        <div class="card-box">
+            <p>The <strong>Hubble Tension</strong>—the systemic discrepancy between early-universe CMB measurements
+                (~67.4 km/s/Mpc) and local distance-ladder measurements (~73–74 km/s/Mpc)—is naturally resolved under
+                the CCM framework. Rather than requiring dark energy driving an accelerated spatial expansion, redshift
+                is governed by <em>gravitational energy loss as light climbs out of varying cosmic potential
+                    gradients</em> within a bounded spherical container.</p>
+            <p>Because local measurements are taken across regions of higher localized potential gradients, photons
+                experience localized gravitational climbing resistance, yielding higher apparent recession rates
+                ($H_0$). The CMB measurements reach equilibrium near the boundary zone, naturally producing the lower
+                measured baseline. Adjusting for gradient-based climbing removes the tension completely without
+                requiring dark energy.</p>
+        </div>
+
+        <h2 class="section-title">2. Non-Precise Cosmological Concepts & Paradox Solutions</h2>
+        <div class="card-box">
+            <p>CCM reinterprets several standard physics concepts that stem from an unbounded, isotropic assumption:</p>
+            <ul>
+                <li><strong>Dark Energy:</strong> Eliminated. Accelerated expansion observations are an illusion caused
+                    by exponential light deceleration and gravitational potential gradients near container boundary
+                    zones.</li>
+                <li><strong>Dark Matter:</strong> Replaced by gradient gravity density dynamics. Cosmic containment and
+                    inward-directed gravitational potential wells mimic dark matter halo rotation curves without
+                    requiring unknown particles.</li>
+                <li><strong>Sudden Galaxies & Early Light Paradox:</strong> Fully mature, massive galaxies observed at
+                    high redshifts ($z > 10$) by modern telescopes (JWST) contradict standard Big Bang assembly
+                    timelines. In CCM, the cosmos is in a continuous equilibrium state inside a sphere; high redshift is
+                    caused by gradient potential climbing rather than extreme cosmological lookback time.</li>
+            </ul>
+        </div>
+
+        <h2 class="section-title">3. Black Holes & Paradox Resolutions</h2>
+        <div class="card-box">
+            <p>Within the Closed Container Cosmological Model, <strong>Black Holes</strong> do not represent infinite
+                singularities or information-destroying traps. Instead, they function as <em>localized internal gravity
+                    sinks</em> that regulate matter density and recycle energy back into the systemic cosmic
+                circulation.</p>
+            <p><strong>Paradoxes Solved by CCM Black Hole Mechanics:</strong></p>
+            <ul>
+                <li><strong>Information Loss Paradox:</strong> Solved because matter compressed within container sinks
+                    is reintegrated through the global gravitational feedback loop of the bounded sphere, preserving
+                    systemic information.</li>
+                <li><strong>Singularity Infinity Paradox:</strong> Eliminated since the container enforces strict finite
+                    density boundaries, preventing infinite values of mass or curvature.</li>
+            </ul>
+            <div class="grid-2">
+                <h2>Modern Astrophysical Paradoxes & Fallacies</h2>
+                <div>
+                    <h3>The Hubble Tension Paradox</h3>
+                    <p>
+                        Local measurements (Cepheids/Supernovae) yield $H_0 \approx 73.0 \text{ km/s/Mpc}$, while early
+                        CMB measurements yield $H_0 \approx 67.4 \text{ km/s/Mpc}$. Standard cosmology treats this as an
+                        irreconcilable crisis.
+                    </p>
+                </div>
+                <div>
+                    <h3>Dark Matter & Dark Energy Fallacies</h3>
+                    <p>
+                        To compensate for missing gravity in rotation curves and accelerated expansion, standard models
+                        invent non-baryonic Dark Matter (~27%) and Dark Energy (~68%), leaving only 5% of the universe
+                        accounted for by baryonic matter.
+                    </p>
+                </div>
+                <div>
+                    <h3>JWST Early Over-Luminous Galaxies</h3>
+                    <p>
+                        JWST discovers massive, fully formed galaxies at high redshift ($z > 10$) where big-bang
+                        expansion models predict insufficient time for stellar coalescence.
+                    </p>
+                </div>
+                <div>
+                    <h3>Singularity Paradoxes</h3>
+                    <p>
+                        Standard general relativity predicts infinite density points ($r = 0$), breaking down quantum
+                        mechanics and information conservation.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <h2>Black Hole</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-xs leading-relaxed text-gray-300">
+            <!-- Card 1 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-cyan-500/30 transition">
+                <div class="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
+                    <span class="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs">1</span>
+                    <span>Single Progenitor Collapse</span>
+                </div>
+                <p class="text-gray-400">
+                    A giant parent star collapses under self-gravity toward its absolute center. Mass packs into an
+                    increasingly dense central point, forming a dark boundary layer.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-indigo-500/30 transition">
+                <div class="flex items-center gap-2 text-indigo-400 font-semibold text-sm">
+                    <span
+                        class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs">2</span>
+                    <span>Dark Core / Black Hole Trap</span>
+                </div>
+                <p class="text-gray-400">
+                    The collapsed mass forms a pitch-black central core (black hole boundary). Vacuum gravity around the
+                    core is so intense that light is completely trapped within the dark horizon.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-rose-500/30 transition">
+                <div class="flex items-center gap-2 text-rose-400 font-semibold text-sm">
+                    <span class="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-xs">3</span>
+                    <span>Fracture INSIDE the Black Hole</span>
+                </div>
+                <p class="text-gray-400">
+                    Mechanical pressure exceeds the core's structural yield limit. Electric stress fractures flash
+                    <strong class="text-amber-300">DEEP INSIDE the pitch-black core shell</strong>, shattering the
+                     Internal structure BEFORE blasting fragments inside the black all and also some fragment through the event horizon into space.
+
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-yellow-500/30 transition">
+                <div class="flex items-center gap-2 text-yellow-400 font-semibold text-sm">
+                    <span
+                        class="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center text-xs">4</span>
+                    <span>Multi-Star Coalescence & Rotation</span>
+                </div>
+                <p class="text-gray-400">
+                    The ejected fragments condense into <strong class="text-gray-200">MULTIPLE new stars</strong>.
+                    Conservation of angular momentum sets these stars into stable orbital rotation around the center,
+                    forming a sprawling galactic disk.
+                </p>
+            </div>
+
+            <!-- Card 5 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-purple-500/30 transition">
+                <div class="flex items-center gap-2 text-purple-400 font-semibold text-sm">
+                    <span
+                        class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">5</span>
+                    <span>Mass Redistribution & Gravity Drop</span>
+                </div>
+                <p class="text-gray-400">
+                    As orbital rotation carries stellar mass outward away from the center, the central core density
+                    drops significantly. This causes the vacuum gravity in the central region to weaken.
+                </p>
+            </div>
+
+            <!-- Card 6 -->
+            <div
+                class="bg-slate-900/60 border border-white/5 rounded-xl p-4 space-y-2 hover:border-emerald-500/30 transition">
+                <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                    <span
+                        class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs">6</span>
+                    <span>Galaxy Awakening & Light Escape</span>
+                </div>
+                <p class="text-gray-400">
+                    With vacuum gravity dropped below the light-trapping threshold, light emitted from the center
+                    escapes freely into space. The dark black hole core opens up, becoming a brightly shining galactic
+                    nucleus.
+                </p>
+            </div>
+
+        </div>
+        <h2 class="section-title">4. Sphere Cosmos & Gradient Gravity Mechanics</h2>
+        <div class="card-box">
+            <p>The CCM models the universe as a closed, spherical container featuring a distinct center, zero-gravity
+                transition shell, and physical container edges. Gravitational potential ($\Phi$) forms a radial gradient
+                decaying from the container core to the boundary.</p>
+            <p><strong>How it Solves Paradoxes:</strong> Light emitted from any point in the container must traverse
+                varying gravitational potential zones. The shift in photon wavelength is directly dependent on the path
+                integrated across the gradient field rather than spatial stretch of metric space, eliminating Olbers'
+                Paradox, horizon issues, and fine-tuning dilemmas.</p>
+        </div>
+
+        <h2 class="section-title">5. Key Mathematical Formulas</h2>
+        <div class="card-box">
+            <h3>Gradient Blueshift & Redshift Formula</h3>
+            <p>The net spectral shift ($z$) incorporating gravitational climbing across potential differences plus
+                velocity component:</p>
+            <div class="formula-card">
+                1 + z = exp(&Delta;&Phi; / c&sup2;) &times; &radic;[ (1 + v/c) / (1 - v/c) ]
+            </div>
+
+            <h3>Exponential Light Deceleration Formula</h3>
+            <p>Light velocity deceleration over extreme cosmic potential distances, scaled by local Earth speed of light
+                measurement ($c$):</p>
+            <div class="formula-card">
+                c<sub>eff</sub>(r) = c &times; exp(&minus; &gamma; &times; &int; g(r) dr / c&sup2;)
+            </div>
+            <p><em>Where $c$ remains the constant reference speed of light as measured locally on Earth.</em></p>
+        </div>
+
+        <h2 class="section-title">6. Absolute Observational Geometry & Vector Mechanics</h2>
+        <!-- Section 5: Observational Geometry & Coordinates -->
+        <section class="card-box">
+            
+
+            <h3>A. Triangulating Milky Way Coordinates via Stellar Parallax</h3>
+            <p>
+                Because Earth is off-center within the cosmic container, absolute coordinates $(X_0, Y_0, Z_0)$ are
+                derived by measuring parallax angles ($\theta_1, \dots, \theta_n$) of reference stars external to the
+                local galactic disk.
+            </p>
+
+            <h3>B. Finding the Absolute Cosmic Center ($r = 0$) & Edge ($R_0$)</h3>
+            <p>
+                The cosmic center is pinpointed by analyzing isotropic dipole asymmetry in cosmic gradient redshift
+                vector fields. Note that <strong>15.34 Billion Years</strong> represents the total coordinate age
+                ($T_{\text{universe}}$), while the actual physical spatial boundary edge ($R_0$) is derived strictly by
+                integrating the non-linear light deceleration path from center to edge:
+            </p>
+
+            <div class="formula-box">
+                $$R_{\text{Earth LY}} = \int_{0}^{R_0} \frac{dr}{c(r)} = \int_{0}^{R_0} \frac{dr}{c_0 \cdot e^{-k \cdot
+                g(r)}}$$
+            </div>
+
+            <div class="grid-2">
+                <div class="metric-box">
+                    <div>Universal Coordinate Age (Rav Acco)</div>
+                    <div class="metric-value">15.34 Billion Years</div>
+                    <small>Absolute Divine Coordinate Time ($42,000 \times 365,250$)</small>
+                </div>
+                <div class="metric-box">
+                    <div>True Zero-Gravity Edge ($R_0$)</div>
+                    <div class="metric-value">Integrated Light Distance</div>
+                    <small>Derived strictly from light deceleration integral $\int \frac{dr}{c(r)}$</small>
+                </div>
+            </div>
+        </section>
+        <h2 class="section-title">7. Philosophical & Rabbinic Alignment (Sforno & Rabbi Avraham of Akko)</h2>
+        <div class="card-box">
+            <p>The Closed Container Cosmological Model uniquely aligns with ancient philosophical and classical Rabbinic
+                commentaries regarding a bounded, closed universe:</p>
+            <ul>
+                <li><strong>Sforno (Ovadia ben Yakov Sforno):</strong> In his commentary on Creation (Genesis), Sforno
+                    describes the universe as a contained, finite sphere bounded by physical containment parameters
+                    governed by fixed divine potential measures, directly matching the closed boundary condition of CCM.
+                </li>
+                <li><strong>Rabbi Avraham of Akko (13th Century Kabbalist):</strong> In <em>Me'irat Eynayim</em>, Rabbi
+                    Avraham calculated cosmic time cycles and potential scaling that point to a vast, non-linear
+                    evolutionary universe operating within finite spherical bounds, directly supporting the gradient
+                    time-dilation and stationary closed-system dynamics of CCM.</li>
+            </ul>
+        </div>
+        <!-- Section 6: Rabbinic Cosmology Synthesis (Acco & Sforno) -->
+        <section class="section-card">
+            <h2>Rabbinic Synthesis: Rabbi Yitzchak of Acco & Sforno</h2>
+
+            <h3>Rabbi Yitzchak of Acco (13th Century)</h3>
+            <p>
+                In <em>Otzar HaChayim</em>, Rabbi Yitzchak of Acco calculated the total coordinate age of the universe
+                based on the kabbalistic <em>Shemitot</em> cycles. Using Psalm 90:4:
+            </p>
+            <div class="formula-box">
+                $$1 \text{ Divine Day} = 1,000 \text{ Solar Years}$$
+                $$1 \text{ Divine Year} = 365,250 \text{ Solar Years}$$
+                $$\text{Total Coordinate Age} = 42,000 \times 365,250 = \mathbf{15.3405 \text{ Billion Solar Years}}$$
+            </div>
+
+            <h3>Sforno & Post-Mabul Environmental Decay</h3>
+            <p>
+                Obadiah ben Jacob Sforno (16th Century) explained that before the Deluge (*Mabul*), atmospheric and
+                cosmic radiation alignment enabled human longevity (~900 years), which subsequently underwent
+                exponential biological decay following structural shifts in cosmic potential.
+            </p>
+        </section>
+        <h2 class="section-title">8. References & Citations</h2>
+        <div class="card-box">
+            <ol>
+                <li><strong>Ashkenazi, Dvorah.</strong> <em>Closed Container Cosmological Model (CCM) & Relativity
+                        Analysis</em>. Zenodo (2026). DOI/URL: <a href="https://zenodo.org/records/23531288"
+                        target="_blank">zenodo.org/records/23531288</a>[cite: 3].</li>
+                <li><strong>Ashkenazi, Dvorah.</strong> Repository Version 3 codebase:
+                    <code>dvoraaipgm/cosmology-time-relativity</code>. <a
+                        href="https://github.com/dvoraaipgm/cosmology-time-relativity" target="_blank">GitHub
+                        Repository</a>[cite: 3].
+                </li>
+                <li><strong>Sforno, Ovadia ben Yakov.</strong> <em>Commentary on Bereshit (Genesis)</em>. Classical
+                    Rabbinic Cosmological Commentary.</li>
+                <li><strong>Rabbi Avraham of Akko.</strong> <em>Me'irat Eynayim</em>. 13th Century Cosmological and Time
+                    Cycle Analysis.</li>
+            </ol>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 Closed Container Cosmological Model (CCM) | Author: Dvorah Ashkenazi | Version 3 Master Hub
+            </p>
+        </footer>
+    </div>
+
+</body>
+<script>
+    const ctx = document.getElementById('hubbleFixChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['0 (Earth)', '3B LY', '6B LY', '9B LY', '12B LY', '15.34B LY (Coordinate Age Limit)'],
+            datasets: [
+                {
+                    label: 'Standard FLRW Linear Expansion Model (Hubble Tension Disparity)',
+                    data: [0, 15, 30, 45, 60, 75],
+                    borderColor: '#ef4444',
+                    borderDash: [5, 5],
+                    fill: false
+                },
+                {
+                    label: 'Gradient Gravity Solution (Curved Shift Convergence)',
+                    data: [0, 12, 26, 42, 60, 67.4],
+                    borderColor: '#06b6d4',
+                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#f3f4f6' } },
+                title: { display: true, text: 'Hubble Velocity Redshift vs Distance Curve (CCM Correction)', color: '#f59e0b' }
+            },
+            scales: {
+                x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } },
+                y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' }, title: { display: true, text: 'Effective Velocity (km/s/Mpc)', color: '#9ca3af' } }
+            }
+        }
+    });
+</script>
+
+</html>
