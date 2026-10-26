@@ -1,3 +1,9 @@
+The dark matter, dark energy, hubble tension, gravity 0, can help us to fing the real slope of the gradient, the real univers mass and density
+total mass, univer density dictate the gradient slope of energy and gravuty slope, 
+we can calculate that exactly by using those unexplaned numbers: hubble tension, dark matter, dark mendrgy this is the key to the total mass, total density, slope, and space size.
+we also first need to find 
+the correct gradient formula, how total mass and energy convert to density and slope.
+
 
 The code and html file are not locked yet.
 
@@ -66,10 +72,13 @@ The black hole theory:
 When a star is dying it's collapsing toward its center, then as the compression reach a certain level, there is a broken effect where everyhtign get ejected inside and outside the black hole, the fragments are joined to create stars, the stars star to fight against gravity, and once the density is lower, gravity became lower too, and then suddenly the black hole became a galaxy, because now the gravity and density is lower and allow the light to escape.
 This can solve the fact that we can see suddenly a light far in the space, that was not expected to be there.
 
+Bone holamot umaharivan(Guemara), bereshit tohu vaohu - empty - refers to earth only.
+
 We can also explains the univers as a big star collapsed like a black hole, then created our univers in that case the expansion is mandatory too like inside the black hole, its not changing the gradient gravity its just an additional step.
 
 In that case we would be able to see if an expansion is still hapening by just testing light from the same star along time, if the univers is expanding we are suppose to see diff in the redshift of the same star and not only between stars, the expansion was maybe a already stopped back then.
 
 In addition, we can also add another option, is that there is the first step where fragment were thrown everywhere, then after stars were formed then they fight the gravity and then an accelerating expansion happend, and the gravity remains homegenous.
-
+Also this possibility is not probable, there is no reason to create a world evolving slowly.
+The evolution too is a misunderstanding of multiple earth reset (Sefer hatemuna shemitot).
 To explains why this can be a solution to both possible expansion, or gravity gradient, it's also solving the problem of early galaxies, because if we are taking an object we compress it its get broken to a big chunks and thrown everywhere, this is exactly how black hole behaves, and this is why after the big star collapsed into our univers, there are already fragments big enough to create big stars.
