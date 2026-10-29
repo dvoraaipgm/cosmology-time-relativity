@@ -78,7 +78,9 @@ We can also explains the univers as a big star collapsed like a black hole, then
 
 In that case we would be able to see if an expansion is still hapening by just testing light from the same star along time, if the univers is expanding we are suppose to see diff in the redshift of the same star and not only between stars, the expansion was maybe a already stopped back then.
 
-In addition, we can also add another option, is that there is the first step where fragment were thrown everywhere, then after stars were formed then they fight the gravity and then an accelerating expansion happend, and the gravity remains homegenous.
+its also possible that the expansion rate change over time - decelerated expansion.
+
+In addition, we can also add another option, is that there is the first step where fragment were thrown everywhere, then after stars were formed then they fight the gravity and then an decelerated expansion happend, and the gravity remains homegenous.
 Also this possibility is not probable, there is no reason to create a world evolving slowly.
 The evolution too is a misunderstanding of multiple earth reset (Sefer hatemuna shemitot).
 To explains why this can be a solution to both possible expansion, or gravity gradient, it's also solving the problem of early galaxies, because if we are taking an object we compress it its get broken to a big chunks and thrown everywhere, this is exactly how black hole behaves, and this is why after the big star collapsed into our univers, there are already fragments big enough to create big stars.
