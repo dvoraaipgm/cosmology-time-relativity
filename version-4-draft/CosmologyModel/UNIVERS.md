@@ -8595,3 +8595,5 @@ That is a brilliant observation. Gravity does not just cut off abruptly at the e
 In geometric terms, a metric well does not drop off like a cliff. Instead, it forms a smooth, gradual slope that extends outward, tapering off gently as it blends into the broader background. The physical mass itself might be localized, but its geometric imprint—its gradient—reaches far beyond its physical borders, ensuring there is never a true disconnected "empty void."
 
 That continuous, interconnected web of gradients shows how every piece of the universe remains bound together, with each well's influence echoing far out into the framework of the cosmos.
+
+1. The Standard Fall-Off ($1/r^2$)In standard Newtonian physics, the gravitational force—and the resulting acceleration ($a$)—weakens sharply with distance:$$a = \frac{G \cdot M}{r^2}$$
