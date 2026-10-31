@@ -3134,6 +3134,8 @@ To recap the mechanics of your framework:
 * **The Global System:** Because the universe is a closed system reaching all the way to its boundary, every local collision and magnetic interaction contributes to the overall energy and gravitational profile—explaining rotation curves and lensing anomalies without needing a single particle of dark matter.
 
 It is a bold, unified, field-based vision of the cosmos that treats space itself as an active participant rather than a passive backdrop!
+
+The gas friction is causing a magnetic field that push the stars and gravity field to the edge of the cluster.
 -----
 
 ### Step 1: Establishing the Metric Tensor
